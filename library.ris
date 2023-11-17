@@ -1,0 +1,242 @@
+TY  - CONF
+AU  - Heinrichs, Felix
+AU  - Schreiber, Daniel
+AU  - Schöning, Johannes
+CY  - New York, NY, USA
+DA  - 2011/8//
+DO  - 10.1145/2037373.2037411
+PB  - ACM
+PY  - 2011
+SN  - 9781450305419
+SP  - 251
+EP  - 254
+TI  - The hybrid shopping list
+T2  - Proceedings of the 13th International Conference on Human Computer Interaction with Mobile Devices and Services
+ER  -
+TY  - CONF
+AU  - Adaji, Ifeoma
+AU  - Oyibo, Kiemute
+AU  - Vassileva, Julita
+DA  - 2018/7//
+DO  - 10.14236/ewic/HCI2018.81
+PY  - 2018
+TI  - List It: A Shopping List App That Influences Healthy Shopping Habits
+ER  -
+TY  - JOUR
+AB  - “Scripted behaviour” underpins many repetitive and routine tasks, such as grocery shopping, where it is observed that some shoppers take a list and others do not. The notion of “scripts” is used to examine the underlying reasons for the presence and absence of grocery shopping lists on major weekly or two‐weekly shopping trips to supermarkets. Little if any current information exists in marketing literature to fully explain the reasons for the presence or absence of lists, though it is known that such behaviour affects purchase activity in supermarkets. Set in New Zealand, this exploratory and preliminary study examines the shopping list being a moderator of purchase behaviour. It confirms previous research into the differences between list and non‐list grocery shoppers and suggests that far more planning occurs amongst all grocery shoppers than might be expected. The study reveals that some grocery shoppers, regardless of the presence or absence of a written shopping list, have a flexible approach to grocery shopping that is part of their overall shopping script. It is suggested that supermarket retailing planners could act on this intelligence in such a way as to support shoppers' pre‐planning, and thereby protect or increase their share of custom.
+AU  - Thomas, Art
+AU  - Garland, Ron
+DA  - 2004/1//
+DO  - 10.1108/02634500410559015
+IS  - 6
+PB  - Emerald Group Publishing Limited
+PY  - 2004
+SP  - 623
+EP  - 635
+TI  - Grocery shopping: list and non‐list usage
+T2  - Marketing Intelligence & Planning
+UR  - https://doi.org/10.1108/02634500410559015
+VL  - 22
+ER  -
+TY  - JOUR
+AU  - Li, Li
+AU  - Bissyandé, Tegawendé F.
+AU  - Papadakis, Mike
+AU  - Rasthofer, Siegfried
+AU  - Bartel, Alexandre
+AU  - Octeau, Damien
+AU  - Klein, Jacques
+AU  - Traon, Le
+DA  - 2017/8//
+DO  - 10.1016/j.infsof.2017.04.001
+PY  - 2017
+SP  - 67
+EP  - 95
+TI  - Static analysis of android apps: A systematic literature review
+T2  - Information and Software Technology
+VL  - 88
+ER  -
+TY  - GEN
+AU  - Hall Mark
+AU  - Hosch William
+DA  - 2023/11//
+PY  - 2023
+TI  - Google
+T2  - https://www.britannica.com/topic/Google-Inc
+ER  -
+TY  - JOUR
+AU  - Rajinder Singh
+IS  - 2
+PY  - 2014
+SP  - 519
+EP  - 521
+TI  - An Overview of Android Operating System and Its Security Features
+T2  - Journal of Engineering Research and Applications
+UR  - https://www.gadgetgyani.com/wp-content/uploads/2016/03/android-features-pdf.pdf
+VL  - 4
+ER  -
+TY  - JOUR
+AU  - Krishna Sundara
+AU  - Devarakonda Mohan
+IS  - 3
+PY  - 2015
+SP  - 73
+EP  - 76
+TI  - A Survey on Architectures of Mobile Operating Systems: Challenges and Issues
+T2  - International Journal of Research Studies in Computer Science and Engineering
+VL  - 2
+ER  -
+TY  - GEN
+AU  - Curry David
+DA  - 2023/2//
+PY  - 2023
+TI  - Android Statistics
+T2  - https://www.businessofapps.com/data/android-statistics/
+ER  -
+TY  - BOOK
+AU  - Brahler Stefan
+PY  - 2010
+TI  - Analysis of the Android Architecture
+ER  -
+TY  - JOUR
+AU  - Khan Jamil
+AU  - Shahzad Sara
+IS  - 2
+PY  - 2015
+TI  - Android Architecture and Related Security Risks
+T2  - Asian Journal of Technology & Management Research
+VL  - 5
+ER  -
+TY  - JOUR
+AB  - As smartphones have become indispensable personal devices, the number of smartphone users has increased dramatically over the last decade. These personal devices, which are supported by a variety of smartphone apps, allow people to access Internet services in a convenient and ubiquitous manner. App developers and service providers can collect fine-grained app usage traces, revealing connections between users, apps, and smartphones. We present a comprehensive review of the most recent research on smartphone app usage analysis in this survey. Our survey summarizes advanced technologies and key patterns in smartphone app usage behaviors, all of which have significant implications for all relevant stakeholders, including academia and industry. We begin by describing four data collection methods: surveys, monitoring apps, network operators, and app stores, as well as nine publicly available app usage datasets. We then systematically summarize the related studies of app usage analysis in three domains: app domain, user domain, and smartphone domain. We make a detailed taxonomy of the problem studied, the datasets used, the methods used, and the significant results obtained in each domain. Finally, we discuss future directions in this exciting field by highlighting research challenges.
+AU  - Li, T
+AU  - Xia, T
+AU  - Wang, H
+AU  - Tu, Z
+AU  - Tarkoma, S
+AU  - Han, Z
+AU  - Hui, P
+DO  - 10.1109/COMST.2022.3163176
+IS  - 2
+PY  - 2022
+SP  - 937
+EP  - 966
+TI  - Smartphone App Usage Analysis: Datasets, Methods, and Applications
+T2  - IEEE Communications Surveys & Tutorials
+VL  - 24
+ER  -
+TY  - JOUR
+AB  - <p>The extensive growth and expansion of smartphones and tablets and therewith the use of mobile web applications that utilize HTML5 and related technologies are frequently discussed and debated in media as possible replacements for native applications. The aim of this study was to explore the viability of replacing native applications with mobile web applications in a developing country setting. Two mobile web applications were developed. The first mobile web application tracked runs and the second mobile web application was a booking system for scheduling â??slum runsâ?&#157;. The subjects who tested these apps were elite, semi-professional Kenyan runners primarily from the Kibera slum area outside of Nairobi. After a 6-month test period the participants concluded and results indicated that the mobile web application for tracking runs performed poorly compared to native applications due to poor GPS performance, while the mobile web application for booking slum runs performed well. The conclusion from this study is that mobile web applications that require hardware interaction such as using the GPS, GPU, or camera are not yet viable alternatives for native applications. However, mobile applications that only require a native interface and content consumption are suitable substitutes for native applications.</p>
+AU  - Jobe, William
+DA  - 2013/10//
+DO  - 10.3991/ijim.v7i4.3226
+IS  - 4
+PY  - 2013
+SP  - 27
+EP  - 27
+TI  - Native Apps Vs. Mobile Web Apps
+T2  - International Journal of Interactive Mobile Technologies (iJIM)
+VL  - 7
+ER  -
+TY  - JOUR
+AU  - Rakestraw Thomas L.
+AU  - Eunni Rangamohan V.
+AU  - Kasuganti Rammohan R.
+PY  - 2013
+TI  - The mobile apps industry
+T2  - Journal of Business Cases and Applications 
+UR  - https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=8b668d99bbb2b762e98578b1ab664a0d9b2cab22
+ER  -
+TY  - CONF
+AU  - Harsha Jayawilal, W. A.
+AU  - Premeratne, Saminda
+DA  - 2017/11//
+DO  - 10.1109/MICC.2017.8311745
+PB  - IEEE
+PY  - 2017
+SN  - 978-1-5386-3132-4
+SP  - 124
+EP  - 129
+TI  - The smart shopping list: An effective mobile solution for grocery list-creation process
+T2  - 2017 IEEE 13th Malaysia International Conference on Communications (MICC)
+ER  -
+TY  - JOUR
+AB  - Purpose The purpose of this paper is to develop a comprehensive model of impulse-buying that considers the impact of mobile device use on shopping behaviour as a tool for shopping preparation or as a tool for self-regulation. Design/methodology/approach Data were obtained through a single-stage mall intercept survey method using a structured questionnaire involving 406 respondents interviewed after checkout. Data analysis was conducted using a structural equation modelling approach with LISREL 8.8. Findings The results support most elements of the hypothesis of the proposed conceptual framework. Specifically, findings show the impact of mobile usage on shopping behaviour, which results in fewer impulse purchases. Practical implications The research demonstrates how shoppers using mobile devices in-store felt less of an urge to purchase during shopping, resulting in fewer unplanned purchases. The effects of mobile device use on in-store purchasing decisions are designed to create a new scenario for the practice of shopper marketing, and retailers and manufacturers will have to seek new ways to capture consumers’ attention in-store and to influence shoppers’ perceptions early in the shopping cycle without diminishing the role of in-store marketing levers. Originality/value Prior research found the antecedents of impulse-buying in individual characteristics, situational variables and endogenous variables. However, it did not consider mobile pre-shopping factors or mobile usage. Filling the gap in the existing literature, this work sets out to develop a comprehensive model of impulse-buying that considers the impact of mobile usage on shopping behaviour.
+AU  - Aiolfi, Simone
+AU  - Bellini, Silvia
+AU  - Grandi, Benedetta
+DA  - 2022/1//
+DO  - 10.1108/JCM-05-2020-3823
+IS  - 5
+PB  - Emerald Publishing Limited
+PY  - 2022
+SP  - 432
+EP  - 444
+TI  - Using mobile while shopping in-store: a new model of impulse-buying behaviour
+T2  - Journal of Consumer Marketing
+UR  - https://doi.org/10.1108/JCM-05-2020-3823
+VL  - 39
+ER  -
+TY  - GEN
+AU  - Statista
+DA  - 2020/5//
+PY  - 2020
+TI  - Share of consumers worldwide comfortable with using their mobile phones at different points in the in-store customer journey as of October 2019
+UR  - www.statista.com/statistics/517424/global-in-store-mobile-shopping-activities
+ER  -
+TY  - GEN
+AU  - PYMNTS
+DA  - 2019/5//
+PY  - 2019
+TI  - Consumers Who Use Mobile In-Store Are More Frequent Brick-And-Mortar Shoppers
+UR  - https://www.pymnts.com/news/mobile-payments/2019/in-store-smartphones/#:%E2%88%BC:text=In%20the%20study%2C%20nearly%20half,percent)%20look%20up%20product%20information
+ER  -
+TY  - JOUR
+AU  - Schopfer Sandro
+AU  - Keller Thorben
+DA  - 2014/10//
+PY  - 2014
+TI  - Long Term Recommender Benchmarking for Mobile Shopping List Applications using Markov Chains
+T2  - RecSys Posters
+ER  -
+TY  - JOUR
+AB  - <p>Research in consumer science has proven that grocery shopping is a complex and distressing process. Further, the task of generating the grocery lists for the grocery shopping is always undervalued as the effort and time took to create and manage the grocery lists are unseen and unrecognized. Even though grocery lists represent consumers’ purchase intention, research pertaining the grocery lists does not get much attention from researchers; therefore, limited studies about the topic are found in the literature. Hence, this study aims at bridging the gap by designing and developing a mobile app (application) for creating and managing grocery lists using modern smartphones. Smartphones are pervasive and become a necessity for everyone today. Hence, a smartphone app that can facilitate the process of creating and managing grocery lists for busy and working people is beneficial. The design and development of the app followed the rapid application development methodology. First, the functional requirements were gathered through interviews and content analysis. Then, a prototype named SMART LIST has been developed based on the gathered requirements, and a field study was carried out to evaluate the usability of the prototype. The results of the evaluation suggested that SMART LIST is useful and easy to use. The respondents also satisfied with the functions for managing grocery lists offered by SMART LIST. The study contributes towards an understanding the system requirements and user interface of a mobile app for managing grocery list. It can be a reference model for developers and researchers in the area to develop similar apps or enhancing the capabilities in creating and managing grocery lists.</p>
+AU  - Katuk Norliza
+AU  - Jayasangar Tamilarasi
+AU  - Yusof Yuhanis
+DA  - 2019/6//
+DO  - 10.21123/bsj.2019.16.2(SI).0462
+IS  - 2(SI)
+PY  - 2019
+SP  - 0462
+EP  - 0462
+TI  - Design and Development of Smart List: A Mobile App for Creating and Managing Grocery Lists
+T2  - Baghdad Science Journal
+VL  - 16
+ER  -
+TY  - JOUR
+AB  - <p>Over the last decade, retailers and manufacturers alike are increasing their attention to the role of instore mobile technology use with the aim to understand its impact on consumers’ decision making process. The rise of the mobile channel, in fact, has produced disruptive changes in shopping habits designed to gradually reduce the effectiveness of in-store marketing levers in influencing shopping behaviour.This topic is of paramount importance in grocery sector since retailers and manufacturers devote a lot of investments in instore marketing activities with the aim to influence consumers’ decisions and stimulate impulse purchases. Nevertheless, there are few contributions about the influence of the mobile technology in a retail setting and its effects on buying behavior inside the store.Our research intends to explore the impact of in-store mobile technology use on shopper behavior instore in order to understand its effects on planned versus unplanned purchases. According to our preliminary results, consumers using mobile technology instore make less unplanned items and fail to purchase more planned items. Moreover, the use of mobile technology negatively impacts shoppers’ ability to recall in-store stimuli. Our findings are interesting for both retailers and manufacturers who are looking for new ways to better address their marketing efforts and increase consumers’ engagement instore.</p>
+AU  - Bellini, Silvia
+AU  - Aiolfi, Simone
+DA  - 2017/3//
+DO  - 10.5539/ibr.v10n4p58
+IS  - 4
+PY  - 2017
+SP  - 58
+EP  - 58
+TI  - The Impact of Mobile Device Use on Shopper Behaviour in Store: An Empirical Research on Grocery Retailing
+T2  - International Business Research
+VL  - 10
+ER  -
+TY  - JOUR
+AU  - Schmidt, Marcus
+DA  - 2012/1//
+DO  - 10.1016/j.jretconser.2011.08.006
+IS  - 1
+PY  - 2012
+SP  - 36
+EP  - 44
+TI  - Retail shopping lists: Reassessment and new insights
+T2  - Journal of Retailing and Consumer Services
+VL  - 19
+ER  -
