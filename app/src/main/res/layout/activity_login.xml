@@ -7,14 +7,14 @@
     android:gravity="center">
 
     <EditText
-        android:id="@+id/username_edit_text"
+        android:id="@+id/email_et"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Username"
+        android:hint="Email"
         android:inputType="text" />
 
     <EditText
-        android:id="@+id/password_edit_text"
+        android:id="@+id/password_et"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Password"
@@ -28,7 +28,7 @@
         android:layout_marginTop="8dp">
 
         <Button
-            android:id="@+id/login_button"
+            android:id="@+id/login_btn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -36,7 +36,7 @@
             android:layout_margin="8dp"/>
 
         <Button
-            android:id="@+id/register_button"
+            android:id="@+id/register_btn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
