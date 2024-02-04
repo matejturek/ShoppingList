@@ -1,34 +1,50 @@
 <?php
-session_start();
+// Include the configuration file
+require_once 'config.php';
 
-include_once 'config.php';
+// Check if data is sent via POST
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-$conn = new mysqli($servername, $username, $password, $database);
+    // Read raw POST data
+    $rawPostData = file_get_contents("php://input");
 
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+    // Decode JSON data
+    $jsonData = json_decode($rawPostData, true);
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+    // Check if required fields are present
+    if (isset($jsonData['email']) && isset($jsonData['password'])) {
+        // Your processing logic here
 
-    // Verify credentials against database
-    // Assuming you have a table named 'users' with columns 'username' and 'password'
-    $sql = "SELECT * FROM users WHERE username='$username' AND password='$password'";
-    $result = $conn->query($sql);
+        // Assuming you have a MySQLi connection
+        $mysqli = new mysqli($servername, $username, $password, $dbname);
 
-    if ($result->num_rows == 1) {
-        // Credentials are valid, create a session
-        $row = $result->fetch_assoc();
-        $_SESSION['user_id'] = $row['id'];
-        $_SESSION['username'] = $row['username'];
+        // Check for connection errors
+        if ($mysqli->connect_error) {
+            die("Connection failed: " . $mysqli->connect_error);
+        }
 
-        header("Location: dashboard.php"); // Redirect to a secure page
+        // Retrieve hashed password from the database based on the provided email
+        $stmt = $mysqli->prepare("SELECT password FROM users WHERE email = ?");
+        $stmt->bind_param("s", $jsonData['email']);
+        $stmt->execute();
+        $stmt->bind_result($hashedPassword);
+        $stmt->fetch();
+        $stmt->close();
+
+        // Verify the provided password against the stored hashed password
+        if (password_verify($jsonData['password'], $hashedPassword)) {
+            echo "Login successful!";
+        } else {
+            echo "Invalid email or password." . $hashedPassword . " " . $jsonData['password'];
+        }
+
+        // Close the connection
+        $mysqli->close();
     } else {
-        echo "Invalid username or password";
+        // Respond with an error message
+        echo "Invalid request. Please provide email and password in the JSON data.";
     }
+} else {
+    echo "No data received.";
 }
-
-$conn->close();
 ?>

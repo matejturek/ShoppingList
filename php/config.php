@@ -2,5 +2,5 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "objednavky";
+$dbname = "shopping_list";
 ?>
