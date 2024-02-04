@@ -7,28 +7,39 @@
     android:gravity="center">
 
     <EditText
-        android:id="@+id/register_email_edit_text"
+        android:id="@+id/email_et"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Email"
+        android:text="mato.turek@gmail.com"
         android:inputType="text" />
 
     <EditText
-        android:id="@+id/register_password_edit_text"
+        android:id="@+id/name_et"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Name"
+        android:text="mato"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/password_et"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Password"
+        android:text="matej"
         android:inputType="textPassword" />
 
     <EditText
-        android:id="@+id/register_password_edit_text2"
+        android:id="@+id/password_repeat_et"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Password"
+        android:text="matej"
         android:inputType="textPassword" />
 
     <Button
-        android:id="@+id/register_button"
+        android:id="@+id/register_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Register" />

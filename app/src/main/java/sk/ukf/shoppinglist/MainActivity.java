@@ -6,8 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.Toast;
 
-import sk.ukf.shoppinglist.Requests.AccountManager;
+import org.json.JSONObject;
+
+import sk.ukf.shoppinglist.Utils.JsonUtils;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -19,23 +22,37 @@ public class MainActivity extends AppCompatActivity {
         init();
     }
 
-    void init() {
+    private void init() {
         SharedPreferences preferences = getSharedPreferences("SharedPref", Context.MODE_PRIVATE);
 
         String email = preferences.getString("email", "");
         String password = preferences.getString("username", "");
 
         if (email.length() > 0 && password.length() > 0) {
-            String loginResponse = AccountManager.login(email, password);
-            if (loginResponse.equals("SUCCESS")) {
-                // TODO: continue
-
-            } else {
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent);
-            }
+            login(email, password);
+        } else {
+            navigateToLogin();
         }
     }
 
+    void login(String email, String password) {
 
+        JSONObject jsonRequest = JsonUtils.createLoginJson(email, password);
+        NetworkManager.performPostRequest("login.php", jsonRequest, new NetworkManager.ResultCallback() {
+            @Override
+            public void onSuccess(String result) {
+
+            }
+
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> Toast.makeText(MainActivity.this, "Login error", Toast.LENGTH_LONG).show());
+            }
+        });
+    }
+
+    private void navigateToLogin() {
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(intent);
+    }
 }
