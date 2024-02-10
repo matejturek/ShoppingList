@@ -1,27 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:layout_height="match_parent">
 
-    <!-- ListView -->
+    <include
+        layout="@layout/toolbar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:id="@+id/toolbar"/>
+
+    <!-- Content below the header -->
     <ListView
-        android:id="@+id/list_view"
+        android:id="@+id/listView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/floating_button" />
+        android:layout_below="@id/toolbar"
+        android:divider="@android:color/darker_gray"
+        android:dividerHeight="1dp"
+        android:clipToPadding="false"
+        android:paddingTop="?attr/actionBarSize"/>
 
-    <!-- Floating Action Button -->
+    <!-- Floating Action Button (FAB) -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floating_button"
+        android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
         android:layout_margin="16dp"
+        android:layout_gravity="bottom|end"
         android:src="@drawable/ic_add"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        android:backgroundTint="@color/colorAccent"
+        android:elevation="6dp"/>
 
-</RelativeLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
