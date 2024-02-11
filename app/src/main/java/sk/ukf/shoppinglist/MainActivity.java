@@ -14,6 +14,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import sk.ukf.shoppinglist.Utils.JsonUtils;
@@ -46,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         String password = SharedPreferencesManager.getPassword(MainActivity.this);
 
 
-        getLists();
+        getLists(userId);
         if (email.length() > 0 && password.length() > 0 && userId.length() > 0) {
             login(email, password);
         } else {
@@ -95,28 +96,33 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void getLists(){
-//        JSONArray jsonArray = new JSONArray();
-//
-//        // Create first JSON object
-//        JSONObject object1 = new JSONObject();
-//        object1.put("name", "John Doe");
-//
-//        // Create second JSON object
-//        JSONObject object2 = new JSONObject();
-//        object2.put("name", "Jane Smith");
-//
-//        // Add objects to the array
-//        jsonArray.put(object1);
-//        jsonArray.put(object2);
-//
-//        for (int i = 0; i < jsonArray.length(); i++) {
-//            // Get the JSON object at index i
-//            JSONObject jsonObject = jsonArray.getJSONObject(i);
-//
-//            // Access and print values
-//            String name = jsonObject.getString("name");
-//        }
+    private void getLists(String userId){
+
+        JSONObject jsonRequest = JsonUtils.createUserIdJson(userId);
+        NetworkManager.performPostRequest("getLists.php", jsonRequest, new NetworkManager.ResultCallback() {
+            @Override
+            public void onSuccess(String result) {
+                runOnUiThread(() -> {
+                    try {
+                        JSONArray jsonResponse = new JSONArray(result);
+
+                        renderLists();
+
+                    } catch (Exception e) {
+                        Log.e("LOGIN REQUEST", "Error parsing JSON", e);
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> Toast.makeText(MainActivity.this, "Login error", Toast.LENGTH_LONG).show());
+            }
+        });
+    }
+
+    private void renderLists() {
+
         String[] data = {"Item 1", "Item 2", "Item 3", "Item 4", "Item 5"};
 
         CustomAdapter adapter = new CustomAdapter(data);
@@ -124,17 +130,6 @@ public class MainActivity extends AppCompatActivity {
         // Set the adapter for the ListView
         ListView listView = findViewById(R.id.listView);
         listView.setAdapter(adapter);
-
-//        NetworkManager.performPostRequest("`getLists`.php", null, new NetworkManager.ResultCallback() {
-//            @Override
-//            public void onSuccess(String result) {
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//                runOnUiThread(() -> Toast.makeText(MainActivity.this, "Login error", Toast.LENGTH_LONG).show());
-//            }
-//        });
     }
 
     private class CustomAdapter extends BaseAdapter {
