@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -15,7 +16,6 @@ import sk.ukf.shoppinglist.Utils.JsonUtils;
 public class LoginActivity extends AppCompatActivity {
 
     private EditText emailEt, passwordEt;
-    private Button loginBtn, registerBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,8 +24,8 @@ public class LoginActivity extends AppCompatActivity {
 
         emailEt = findViewById(R.id.email_et);
         passwordEt = findViewById(R.id.password_et);
-        loginBtn = findViewById(R.id.login_btn);
-        registerBtn = findViewById(R.id.register_btn);
+        Button loginBtn = findViewById(R.id.login_btn);
+        Button registerBtn = findViewById(R.id.register_btn);
 
         loginBtn.setOnClickListener(v -> {
             String email = emailEt.getText().toString();
@@ -49,8 +49,24 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onSuccess(String result) {
                 runOnUiThread(() -> {
-                    if (result.equals("SUCCESS")) {
-                        finish();
+                    try {
+                        JSONObject jsonResponse = new JSONObject(result);
+                        String status = jsonResponse.getString("status");
+                        String message = jsonResponse.getString("message");
+                        if ("success".equals(status)) {
+                            // Successful response, handle accordingly
+                            String userId = jsonResponse.getString("userId");
+
+                            SharedPreferencesManager.saveEmail(LoginActivity.this, email);
+                            SharedPreferencesManager.savePassword(LoginActivity.this, password);
+                            SharedPreferencesManager.saveUserId(LoginActivity.this, userId);
+                        } else {
+                            // Handle other scenarios
+                            Log.e("LOGIN REQUEST", "Error: " + message);
+                            SharedPreferencesManager.clearData(LoginActivity.this);
+                        }
+                    } catch (Exception e) {
+                        Log.e("LOGIN REQUEST", "Error parsing JSON", e);
                     }
                 });
             }

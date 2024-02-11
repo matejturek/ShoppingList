@@ -1,26 +1,19 @@
 package sk.ukf.shoppinglist;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.MenuItem;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import sk.ukf.shoppinglist.Utils.JsonUtils;
@@ -38,12 +31,9 @@ public class MainActivity extends AppCompatActivity {
         listview = findViewById(R.id.listView);
         profileIv = findViewById(R.id.profileIcon);
 
-        profileIv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
-                startActivity(intent);
-            }
+        profileIv.setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+            startActivity(intent);
         });
 
         init();
@@ -51,18 +41,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init() {
-        SharedPreferences preferences = getSharedPreferences("SharedPref", Context.MODE_PRIVATE);
-
-        String email = preferences.getString("email", "");
-        String password = preferences.getString("username", "");
+        String userId = SharedPreferencesManager.getUserId(MainActivity.this);
+        String email = SharedPreferencesManager.getEmail(MainActivity.this);
+        String password = SharedPreferencesManager.getPassword(MainActivity.this);
 
 
         getLists();
-//        if (email.length() > 0 && password.length() > 0) {
-//            login(email, password);
-//        } else {
-//            navigateToLogin();
-//        }
+        if (email.length() > 0 && password.length() > 0 && userId.length() > 0) {
+            login(email, password);
+        } else {
+            navigateToLogin();
+        }
     }
 
     void login(String email, String password) {
@@ -71,7 +60,27 @@ public class MainActivity extends AppCompatActivity {
         NetworkManager.performPostRequest("login.php", jsonRequest, new NetworkManager.ResultCallback() {
             @Override
             public void onSuccess(String result) {
-                    getLists();
+                runOnUiThread(() -> {
+                    try {
+                        JSONObject jsonResponse = new JSONObject(result);
+                        String status = jsonResponse.getString("status");
+                        String message = jsonResponse.getString("message");
+                        if ("success".equals(status)) {
+                            // Successful response, handle accordingly
+                            String userId = jsonResponse.getString("userId");
+
+                            SharedPreferencesManager.saveEmail(MainActivity.this, email);
+                            SharedPreferencesManager.savePassword(MainActivity.this, password);
+                            SharedPreferencesManager.saveUserId(MainActivity.this, userId);
+                        } else {
+                            // Handle other scenarios
+                            Log.e("LOGIN REQUEST", "Error: " + message);
+                            SharedPreferencesManager.clearData(MainActivity.this);
+                        }
+                    } catch (Exception e) {
+                        Log.e("LOGIN REQUEST", "Error parsing JSON", e);
+                    }
+                });
             }
 
             @Override
@@ -158,22 +167,14 @@ public class MainActivity extends AppCompatActivity {
                 convertView = getLayoutInflater().inflate(R.layout.listview_item, parent, false);
             }
 
-            convertView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(MainActivity.this, ListActivity.class);
-                    startActivity(intent);
-                }
+            convertView.setOnClickListener(view -> {
+                Intent intent = new Intent(MainActivity.this, ListActivity.class);
+                startActivity(intent);
             });
             ImageView menuBtn = convertView.findViewById(R.id.listview_menu);
-            menuBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Handle the button click action here
-                    // For example, show a Toast message
-                    showRecordMenu(v);
-                }
-            });
+            // Handle the button click action here
+            // For example, show a Toast message
+            menuBtn.setOnClickListener(MainActivity.this::showRecordMenu);
 
             // Get the TextView and set the text for the current item
             TextView textView = convertView.findViewById(R.id.listview_name);
@@ -191,25 +192,22 @@ public class MainActivity extends AppCompatActivity {
         popupMenu.getMenuInflater().inflate(R.menu.list_menu, popupMenu.getMenu());
 
         // Set an item click listener for the menu items
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                // Handle menu item clicks here
-                if (item.getItemId() == R.id.menu_edit) {
-                    // Handle Edit click
-                    Toast.makeText(MainActivity.this, "Edit clicked", Toast.LENGTH_SHORT).show();
-                    return true;
-                } else if (item.getItemId() == R.id.menu_invite) {
-                    // Handle Invite click
-                    Toast.makeText(MainActivity.this, "Invite clicked", Toast.LENGTH_SHORT).show();
-                    return true;
-                } else if (item.getItemId() == R.id.menu_delete) {
-                    // Handle Delete click
-                    Toast.makeText(MainActivity.this, "Delete clicked", Toast.LENGTH_SHORT).show();
-                    return true;
-                } else {
-                    return false;
-                }
+        popupMenu.setOnMenuItemClickListener(item -> {
+            // Handle menu item clicks here
+            if (item.getItemId() == R.id.menu_edit) {
+                // Handle Edit click
+                Toast.makeText(MainActivity.this, "Edit clicked", Toast.LENGTH_SHORT).show();
+                return true;
+            } else if (item.getItemId() == R.id.menu_invite) {
+                // Handle Invite click
+                Toast.makeText(MainActivity.this, "Invite clicked", Toast.LENGTH_SHORT).show();
+                return true;
+            } else if (item.getItemId() == R.id.menu_delete) {
+                // Handle Delete click
+                Toast.makeText(MainActivity.this, "Delete clicked", Toast.LENGTH_SHORT).show();
+                return true;
+            } else {
+                return false;
             }
         });
 
