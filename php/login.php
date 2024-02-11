@@ -23,28 +23,31 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             die("Connection failed: " . $mysqli->connect_error);
         }
 
-        // Retrieve hashed password from the database based on the provided email
-        $stmt = $mysqli->prepare("SELECT password FROM users WHERE email = ?");
+        // Retrieve id and hashed password from the database based on the provided email
+        $stmt = $mysqli->prepare("SELECT id, password FROM users WHERE email = ?");
         $stmt->bind_param("s", $jsonData['email']);
         $stmt->execute();
-        $stmt->bind_result($hashedPassword);
+        $stmt->bind_result($userId, $hashedPassword);
         $stmt->fetch();
         $stmt->close();
 
         // Verify the provided password against the stored hashed password
         if (password_verify($jsonData['password'], $hashedPassword)) {
-            echo "Login successful!";
+            // Return a JSON response with the user's ID
+            echo json_encode(array("status" => "success", "message" => "Login successful", "userId" => $userId));
         } else {
-            echo "Invalid email or password." . $hashedPassword . " " . $jsonData['password'];
+            // Return a JSON response for invalid email or password
+            echo json_encode(array("status" => "error", "message" => "Invalid email or password"));
         }
 
         // Close the connection
         $mysqli->close();
     } else {
-        // Respond with an error message
-        echo "Invalid request. Please provide email and password in the JSON data.";
+        // Return a JSON response for invalid request
+        echo json_encode(array("status" => "error", "message" => "Invalid request. Please provide email and password in the JSON data."));
     }
 } else {
-    echo "No data received.";
+    // Return a JSON response for no data received
+    echo json_encode(array("status" => "error", "message" => "No data received."));
 }
 ?>
