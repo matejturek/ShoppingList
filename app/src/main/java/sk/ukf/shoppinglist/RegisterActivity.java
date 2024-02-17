@@ -3,6 +3,7 @@ package sk.ukf.shoppinglist;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -71,10 +72,17 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onSuccess(String result) {
                 runOnUiThread(() -> {
-                    if (result.equals("ERROR_EMAIL_EXISTS")) {
-                        Toast.makeText(RegisterActivity.this, "Email already exists", Toast.LENGTH_LONG).show();
-                    } else if (result.equals("SUCCESS")) {
-                        finish();
+                    try {
+                        JSONObject jsonResponse = new JSONObject(result);
+                        String status = jsonResponse.getString("status");
+                        String message = jsonResponse.getString("message");
+                        if ("success".equals(status)) {
+                            finish();
+                        } else {
+                            Toast.makeText(RegisterActivity.this, message, Toast.LENGTH_LONG).show();
+                        }
+                    } catch (Exception e) {
+                        Log.e("LOGIN REQUEST", "Error parsing JSON", e);
                     }
                 });
             }

@@ -90,11 +90,58 @@ public class JsonUtils {
         return jsonRequest;
     }
 
-    // Method to create a JSON request for creating a list
-    public static JSONObject createListJson(String userId) {
+    // Method to create a JSON request for getting lists
+    public static JSONObject getListsJson(String userId) {
         JSONObject jsonRequest = new JSONObject();
         try {
             jsonRequest.put("userId", userId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonRequest;
+    }
+
+    // Method to create a JSON request for getting list details
+    public static JSONObject getListDetailsJson(String listId) {
+        JSONObject jsonRequest = new JSONObject();
+        try {
+            jsonRequest.put("listId", listId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonRequest;
+    }
+
+    // Method to create a JSON request for getting list details
+    public static JSONObject editListJson(String listId, String name, String notes) {
+        JSONObject jsonRequest = new JSONObject();
+        try {
+            jsonRequest.put("listId", listId);
+            jsonRequest.put("name", name);
+            jsonRequest.put("notes", notes);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonRequest;
+    }
+
+    public static JSONObject deleteListJson(String listId) {
+        JSONObject jsonRequest = new JSONObject();
+        try {
+            jsonRequest.put("listId", listId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonRequest;
+    }
+
+    // Method to create a JSON request for creating a list
+    public static JSONObject createListJson(String userId, String name, String notes) {
+        JSONObject jsonRequest = new JSONObject();
+        try {
+            jsonRequest.put("userId", userId);
+            jsonRequest.put("name", name);
+            jsonRequest.put("notes", notes);
         } catch (JSONException e) {
             e.printStackTrace();
         }

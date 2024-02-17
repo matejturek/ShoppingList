@@ -60,6 +60,7 @@ public class LoginActivity extends AppCompatActivity {
                             SharedPreferencesManager.saveEmail(LoginActivity.this, email);
                             SharedPreferencesManager.savePassword(LoginActivity.this, password);
                             SharedPreferencesManager.saveUserId(LoginActivity.this, userId);
+                            finishActivityWithResult(RESULT_OK);
                         } else {
                             // Handle other scenarios
                             Log.e("LOGIN REQUEST", "Error: " + message);
@@ -76,5 +77,11 @@ public class LoginActivity extends AppCompatActivity {
                 runOnUiThread(() -> Toast.makeText(LoginActivity.this, "Login error", Toast.LENGTH_LONG).show());
             }
         });
+    }
+
+    private void finishActivityWithResult(int result) {
+        Intent resultIntent = new Intent();
+        setResult(result, resultIntent);
+        finish();
     }
 }

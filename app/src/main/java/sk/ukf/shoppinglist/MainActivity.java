@@ -1,5 +1,8 @@
 package sk.ukf.shoppinglist;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -14,15 +17,26 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import sk.ukf.shoppinglist.Models.ListItem;
 import sk.ukf.shoppinglist.Utils.JsonUtils;
 
 public class MainActivity extends AppCompatActivity {
 
     ListView listview;
     ImageView profileIv;
+
+    FloatingActionButton createListFab;
+
+    private static final int MODE_CREATE = 1;
+    private static final int MODE_EDIT = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,15 +45,27 @@ public class MainActivity extends AppCompatActivity {
 
         listview = findViewById(R.id.listView);
         profileIv = findViewById(R.id.profileIcon);
+        createListFab = findViewById(R.id.fab);
 
         profileIv.setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
             startActivity(intent);
         });
+        createListFab.setOnClickListener(view -> {
+            Intent createIntent = new Intent(MainActivity.this, ListManagementActivity.class);
+            createIntent.putExtra("MODE", MODE_CREATE);
+            createListLauncher.launch(createIntent);
 
+        });
         init();
 
     }
+
+    private final ActivityResultLauncher<Intent> createListLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() == RESULT_OK) {
+            getLists(SharedPreferencesManager.getUserId(MainActivity.this));
+        }
+    });
 
     private void init() {
         String userId = SharedPreferencesManager.getUserId(MainActivity.this);
@@ -47,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
         String password = SharedPreferencesManager.getPassword(MainActivity.this);
 
 
-        getLists(userId);
         if (email.length() > 0 && password.length() > 0 && userId.length() > 0) {
             login(email, password);
         } else {
@@ -73,6 +98,8 @@ public class MainActivity extends AppCompatActivity {
                             SharedPreferencesManager.saveEmail(MainActivity.this, email);
                             SharedPreferencesManager.savePassword(MainActivity.this, password);
                             SharedPreferencesManager.saveUserId(MainActivity.this, userId);
+
+                            getLists(userId);
                         } else {
                             // Handle other scenarios
                             Log.e("LOGIN REQUEST", "Error: " + message);
@@ -96,17 +123,31 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void getLists(String userId){
+    private void getLists(String userId) {
 
-        JSONObject jsonRequest = JsonUtils.createUserIdJson(userId);
+        JSONObject jsonRequest = JsonUtils.getListsJson(userId);
         NetworkManager.performPostRequest("getLists.php", jsonRequest, new NetworkManager.ResultCallback() {
             @Override
             public void onSuccess(String result) {
                 runOnUiThread(() -> {
                     try {
                         JSONArray jsonResponse = new JSONArray(result);
+                        List<ListItem> listItems = new ArrayList<>();
+                        for (int i = 0; i < jsonResponse.length(); i++) {
+                            JSONObject jsonObject = jsonResponse.getJSONObject(i);
+                            int id = jsonObject.getInt("listId");
+                            String name = jsonObject.getString("name");
+                            listItems.add(new ListItem(id, name));
+                        }
 
-                        renderLists();
+                        // Step 3: Convert to array
+                        ListItem[] data = listItems.toArray(new ListItem[0]);
+
+                        CustomAdapter adapter = new CustomAdapter(data);
+
+                        // Set the adapter for the ListView
+                        ListView listView = findViewById(R.id.listView);
+                        listView.setAdapter(adapter);
 
                     } catch (Exception e) {
                         Log.e("LOGIN REQUEST", "Error parsing JSON", e);
@@ -121,22 +162,41 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void renderLists() {
+    private void deleteList(String listId) {
 
-        String[] data = {"Item 1", "Item 2", "Item 3", "Item 4", "Item 5"};
+        JSONObject jsonRequest = JsonUtils.deleteListJson(listId);
+        NetworkManager.performPostRequest("deleteList.php", jsonRequest, new NetworkManager.ResultCallback() {
+            @Override
+            public void onSuccess(String result) {
+                runOnUiThread(() -> {
+                    try {
+                        JSONObject jsonResponse = new JSONObject(result);
+                        String status = jsonResponse.getString("status");
+                        String message = jsonResponse.getString("message");
+                        if ("success".equals(status)) {
+                            getLists(SharedPreferencesManager.getUserId(MainActivity.this));
+                        } else {
+                            Log.e("DELETE REQUEST", "Error: " + message);
+                        }
 
-        CustomAdapter adapter = new CustomAdapter(data);
+                    } catch (Exception e) {
+                        Log.e("LOGIN REQUEST", "Error parsing JSON", e);
+                    }
+                });
+            }
 
-        // Set the adapter for the ListView
-        ListView listView = findViewById(R.id.listView);
-        listView.setAdapter(adapter);
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> Toast.makeText(MainActivity.this, "Login error", Toast.LENGTH_LONG).show());
+            }
+        });
     }
 
     private class CustomAdapter extends BaseAdapter {
 
-        private final String[] data;
+        private final ListItem[] data;
 
-        public CustomAdapter(String[] data) {
+        public CustomAdapter(ListItem[] data) {
             this.data = data;
         }
 
@@ -167,19 +227,16 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             });
             ImageView menuBtn = convertView.findViewById(R.id.listview_menu);
-            // Handle the button click action here
-            // For example, show a Toast message
-            menuBtn.setOnClickListener(MainActivity.this::showRecordMenu);
+            menuBtn.setOnClickListener(view -> showRecordMenu(view, position));
 
-            // Get the TextView and set the text for the current item
             TextView textView = convertView.findViewById(R.id.listview_name);
-            textView.setText(data[position]);
+            textView.setText(data[position].getName());
 
             return convertView;
         }
     }
 
-    private void showRecordMenu(View view) {
+    private void showRecordMenu(View view, int position) {
         // Create a PopupMenu
         PopupMenu popupMenu = new PopupMenu(MainActivity.this, view);
 
@@ -191,15 +248,23 @@ public class MainActivity extends AppCompatActivity {
             // Handle menu item clicks here
             if (item.getItemId() == R.id.menu_edit) {
                 // Handle Edit click
-                Toast.makeText(MainActivity.this, "Edit clicked", Toast.LENGTH_SHORT).show();
+                ListItem listItem = ((ListItem) listview.getItemAtPosition(position));
+                String listId = String.valueOf(listItem.getId());
+
+                Intent editIntent = new Intent(MainActivity.this, ListManagementActivity.class);
+                editIntent.putExtra("MODE", MODE_EDIT);
+                editIntent.putExtra("listId", listId);
+                createListLauncher.launch(editIntent);
+
                 return true;
             } else if (item.getItemId() == R.id.menu_invite) {
                 // Handle Invite click
                 Toast.makeText(MainActivity.this, "Invite clicked", Toast.LENGTH_SHORT).show();
                 return true;
             } else if (item.getItemId() == R.id.menu_delete) {
-                // Handle Delete click
-                Toast.makeText(MainActivity.this, "Delete clicked", Toast.LENGTH_SHORT).show();
+                ListItem listItem = ((ListItem) listview.getItemAtPosition(position));
+                String listId = String.valueOf(listItem.getId());
+                showDeleteConfirmationDialog(listId);
                 return true;
             } else {
                 return false;
@@ -208,5 +273,25 @@ public class MainActivity extends AppCompatActivity {
 
         // Show the PopupMenu
         popupMenu.show();
+    }
+
+    private void showDeleteConfirmationDialog(String listId) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("Confirm Delete");
+        builder.setMessage("Are you sure you want to delete this list?");
+
+        builder.setPositiveButton("Delete", (dialog, which) -> {
+            // Handle the deletion here
+            deleteList(listId);
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> {
+            // Do nothing, simply dismiss the dialog
+            dialog.dismiss();
+        });
+
+        // Create and show the AlertDialog
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 }
