@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $jsonData = json_decode($rawPostData, true);
 
     // Check if required fields are present
-    if (isset($jsonData['userId']) && isset($jsonData['listName'])) {
+    if (isset($jsonData['userId']) && isset($jsonData['name']) && isset($jsonData['notes'])) {
         // Your processing logic here
 
         // Assuming you have a MySQLi connection
@@ -24,25 +24,28 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
 
         // Insert new record into the lists table
-        $query = "INSERT INTO lists (userId, listName) VALUES (?, ?)";
+        $query = "INSERT INTO lists (userId, name, notes) VALUES (?, ?, ?)";
 
         $stmt = $mysqli->prepare($query);
-        $stmt->bind_param("ss", $jsonData['userId'], $jsonData['listName']);
+        $stmt->bind_param("sss", $jsonData['userId'], $jsonData['name'], $jsonData['notes']);
         $stmt->execute();
+
+        // Get the ID of the newly created list
+        $listId = $stmt->insert_id;
 
         $stmt->close();
 
         // Close the connection
         $mysqli->close();
 
-        // Respond with success message
-        echo "List created successfully.";
+        // Respond with success message and the ID of the created list
+        echo json_encode(array("status" => "success", "message" => "List created successfully", "listId" => $listId));
 
     } else {
         // Respond with an error message
-        echo "Invalid request. Please provide userId and listName in the JSON data.";
+        echo json_encode(array("status" => "error", "message" => "Invalid request. Please provide userId, name, and notes in the JSON data."));
     }
 } else {
-    echo "No data received.";
+    echo json_encode(array("status" => "error", "message" => "No data received."));
 }
 ?>

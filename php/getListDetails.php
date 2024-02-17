@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $jsonData = json_decode($rawPostData, true);
 
     // Check if required fields are present
-    if (isset($jsonData['userId'])) {
+    if (isset($jsonData['listId'])) {
         // Your processing logic here
 
         // Assuming you have a MySQLi connection
@@ -23,32 +23,29 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             die("Connection failed: " . $mysqli->connect_error);
         }
 
-        // Retrieve lists associated with the user through the ownerId field
-        $query = "SELECT listId, name FROM lists WHERE userId = ?";
+        // Retrieve the list associated with the specified listId
+        $query = "SELECT * FROM lists WHERE listId = ?";
 
         $stmt = $mysqli->prepare($query);
-        $stmt->bind_param("s", $jsonData['userId']);
+        $stmt->bind_param("s", $jsonData['listId']);
         $stmt->execute();
 
         $result = $stmt->get_result();
 
-        // Fetch the lists
-        $lists = array();
-        while ($row = $result->fetch_assoc()) {
-            $lists[] = $row;
-        }
+        // Fetch the row
+        $row = $result->fetch_assoc();
 
         $stmt->close();
 
         // Close the connection
         $mysqli->close();
 
-        // Respond with the lists in JSON format
-        echo json_encode($lists);
+        // Respond with the row in JSON format
+        echo json_encode($row);
 
     } else {
         // Respond with an error message
-        echo "Invalid request. Please provide userId in the JSON data.";
+        echo "Invalid request. Please provide listId in the JSON data.";
     }
 } else {
     echo "No data received.";

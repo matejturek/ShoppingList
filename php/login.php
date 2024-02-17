@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
 
         // Retrieve id and hashed password from the database based on the provided email
-        $stmt = $mysqli->prepare("SELECT id, password FROM users WHERE email = ?");
+        $stmt = $mysqli->prepare("SELECT userId, password FROM users WHERE email = ?");
         $stmt->bind_param("s", $jsonData['email']);
         $stmt->execute();
         $stmt->bind_result($userId, $hashedPassword);

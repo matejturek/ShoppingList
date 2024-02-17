@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $jsonData = json_decode($rawPostData, true);
 
     // Check if required fields are present
-    if (isset($jsonData['listId']) && isset($jsonData['listName'])) {
+    if (isset($jsonData['listId']) && isset($jsonData['name']) && isset($jsonData['notes'])) {
         // Your processing logic here
 
         // Assuming you have a MySQLi connection
@@ -23,26 +23,33 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             die("Connection failed: " . $mysqli->connect_error);
         }
 
-        // Update list name in the lists table
-        $query = "UPDATE lists SET listName = ? WHERE listId = ?";
+        // Update the existing record in the lists table
+        $query = "UPDATE lists SET name = ?, notes = ? WHERE listId = ?";
 
         $stmt = $mysqli->prepare($query);
-        $stmt->bind_param("ss", $jsonData['listName'], $jsonData['listId']);
+        $stmt->bind_param("sss", $jsonData['name'], $jsonData['notes'], $jsonData['listId']);
         $stmt->execute();
+
+        // Check if the update was successful
+        if ($stmt->affected_rows > 0) {
+            $response = array('status' => 'success', 'message' => 'List updated successfully.');
+        } else {
+            $response = array('status' => 'error', 'message' => 'Failed to update list.');
+        }
 
         $stmt->close();
 
         // Close the connection
         $mysqli->close();
 
-        // Respond with success message
-        echo "List name updated successfully.";
+        // Respond with the JSON response
+        echo json_encode($response);
 
     } else {
         // Respond with an error message
-        echo "Invalid request. Please provide listId and listName in the JSON data.";
+        echo json_encode(array('status' => 'error', 'message' => 'Invalid request. Please provide listId, name, and notes in the JSON data.'));
     }
 } else {
-    echo "No data received.";
+    echo json_encode(array('status' => 'error', 'message' => 'No data received.'));
 }
 ?>
