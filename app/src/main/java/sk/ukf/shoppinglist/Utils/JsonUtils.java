@@ -170,4 +170,25 @@ public class JsonUtils {
         }
         return jsonRequest;
     }
+
+    public static JSONObject createItem(String listId, String item) {
+        JSONObject jsonRequest = new JSONObject();
+        try {
+            jsonRequest.put("listId", listId);
+            jsonRequest.put("name", item);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonRequest;
+    }
+
+    public static JSONObject getItemsJson(String listId) {
+        JSONObject jsonRequest = new JSONObject();
+        try {
+            jsonRequest.put("listId", listId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonRequest;
+    }
 }

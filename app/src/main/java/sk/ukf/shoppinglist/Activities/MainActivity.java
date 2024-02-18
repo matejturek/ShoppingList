@@ -122,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
 
             convertView.setOnClickListener(view -> {
                 Intent intent = new Intent(MainActivity.this, ListActivity.class);
+                intent.putExtra("listId", String.valueOf(data[position].getId()));
                 startActivity(intent);
             });
             ImageView menuBtn = convertView.findViewById(R.id.listview_menu);
