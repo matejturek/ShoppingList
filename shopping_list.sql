@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hostiteľ: 127.0.0.1
--- Čas generovania: So 17.Feb 2024, 19:20
+-- Čas generovania: Sun 18.Feb 2024, 18:00
 -- Verzia serveru: 10.4.27-MariaDB
 -- Verzia PHP: 8.0.25
 
@@ -20,6 +20,55 @@ SET time_zone = "+00:00";
 --
 -- Databáza: `shopping_list`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Štruktúra tabuľky pre tabuľku `categories`
+--
+
+CREATE TABLE `categories` (
+  `categoryId` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `parentCategoryId` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Sťahujem dáta pre tabuľku `categories`
+--
+
+INSERT INTO `categories` (`categoryId`, `name`, `parentCategoryId`) VALUES
+(1, 'category', NULL),
+(3, 'category2', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Štruktúra tabuľky pre tabuľku `items`
+--
+
+CREATE TABLE `items` (
+  `itemId` int(11) NOT NULL,
+  `listId` int(11) NOT NULL,
+  `categoryId` int(11) DEFAULT NULL,
+  `name` varchar(45) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT 0,
+  `link` varchar(255) DEFAULT NULL,
+  `shelf` varchar(45) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Sťahujem dáta pre tabuľku `items`
+--
+
+INSERT INTO `items` (`itemId`, `listId`, `categoryId`, `name`, `quantity`, `status`, `link`, `shelf`) VALUES
+(1, 5, NULL, 'xxx', 1, 0, NULL, NULL),
+(2, 5, NULL, 'bbbb', 1, 0, NULL, NULL),
+(3, 5, 1, 'aaa', 1, 0, NULL, NULL),
+(4, 5, 3, 'dsafdasf', 0, 0, NULL, NULL),
+(5, 5, 1, 'aaa', 1, 0, NULL, NULL),
+(6, 5, 3, 'dsafdasf', 1, 0, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -72,6 +121,21 @@ INSERT INTO `users` (`userId`, `email`, `name`, `password`) VALUES
 --
 
 --
+-- Indexy pre tabuľku `categories`
+--
+ALTER TABLE `categories`
+  ADD PRIMARY KEY (`categoryId`),
+  ADD KEY `parentCategoryId` (`parentCategoryId`);
+
+--
+-- Indexy pre tabuľku `items`
+--
+ALTER TABLE `items`
+  ADD PRIMARY KEY (`itemId`),
+  ADD KEY `fk_Item_List1` (`listId`),
+  ADD KEY `fk_Item_Category1` (`categoryId`);
+
+--
 -- Indexy pre tabuľku `lists`
 --
 ALTER TABLE `lists`
@@ -89,6 +153,18 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT pre tabuľku `categories`
+--
+ALTER TABLE `categories`
+  MODIFY `categoryId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT pre tabuľku `items`
+--
+ALTER TABLE `items`
+  MODIFY `itemId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
 -- AUTO_INCREMENT pre tabuľku `lists`
 --
 ALTER TABLE `lists`
@@ -103,6 +179,19 @@ ALTER TABLE `users`
 --
 -- Obmedzenie pre exportované tabuľky
 --
+
+--
+-- Obmedzenie pre tabuľku `categories`
+--
+ALTER TABLE `categories`
+  ADD CONSTRAINT `categories_ibfk_1` FOREIGN KEY (`parentCategoryId`) REFERENCES `categories` (`categoryId`);
+
+--
+-- Obmedzenie pre tabuľku `items`
+--
+ALTER TABLE `items`
+  ADD CONSTRAINT `fk_Item_Category1` FOREIGN KEY (`categoryId`) REFERENCES `categories` (`categoryId`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_Item_List1` FOREIGN KEY (`listId`) REFERENCES `lists` (`listId`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Obmedzenie pre tabuľku `lists`
