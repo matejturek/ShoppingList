@@ -10,16 +10,14 @@
         android:layout_height="?attr/actionBarSize"
         android:id="@+id/toolbar"/>
 
-    <!-- Content below the header -->
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/toolbar"
         android:divider="@android:color/darker_gray"
         android:dividerHeight="1dp"
         android:clipToPadding="false"
-        android:paddingTop="?attr/actionBarSize"/>
+        android:layout_marginTop="?attr/actionBarSize"/>
 
     <!-- Floating Action Button (FAB) -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton

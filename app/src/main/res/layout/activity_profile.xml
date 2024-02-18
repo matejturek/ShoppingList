@@ -42,10 +42,10 @@
 
             <!-- Centered Text "Welcome A" -->
             <TextView
+                android:id="@+id/welcomeUser_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="Welcome A"
                 android:textColor="@android:color/white"
                 android:textSize="16sp" />
             </LinearLayout>
@@ -53,34 +53,39 @@
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- Content Below AppBar -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:gravity="center">
 
-        <!-- EditText for Username -->
-        <EditText
-            android:id="@+id/editTextUsername"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Username" />
-
-        <!-- EditText for Email -->
-        <EditText
-            android:id="@+id/editTextEmail"
+        <TextView
+            android:id="@+id/email_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Email" />
 
-        <!-- Button for Reset Password -->
-        <Button
-            android:id="@+id/btnResetPassword"
+        <EditText
+            android:id="@+id/email_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Reset Password" />
+            android:hint="Email" />
 
+        <TextView
+            android:id="@+id/name_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Name" />
+
+        <EditText
+            android:id="@+id/name_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/save_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Save" />
     </LinearLayout>
-
 </RelativeLayout>

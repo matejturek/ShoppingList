@@ -149,11 +149,22 @@ public class JsonUtils {
     }
 
     // Method to create a JSON request for editing user details
-    public static JSONObject createEditUserJson(String userId, String name) {
+    public static JSONObject editUserJson(String userId, String name) {
         JSONObject jsonRequest = new JSONObject();
         try {
             jsonRequest.put("userId", userId);
             jsonRequest.put("name", name);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonRequest;
+    }
+
+    // Method to create a JSON request for getting lists
+    public static JSONObject getUserDetailsJson(String userId) {
+        JSONObject jsonRequest = new JSONObject();
+        try {
+            jsonRequest.put("userId", userId);
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -16,6 +16,5 @@
         android:layout_centerVertical="true"
         android:padding="8dp"
         android:clickable="true"
-        android:focusable="true"
-        />
+        android:focusable="true"/>
 </androidx.appcompat.widget.Toolbar>

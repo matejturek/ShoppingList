@@ -1,4 +1,4 @@
-package sk.ukf.shoppinglist;
+package sk.ukf.shoppinglist.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,6 +10,8 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
+import sk.ukf.shoppinglist.Utils.NetworkManager;
+import sk.ukf.shoppinglist.R;
 import sk.ukf.shoppinglist.Utils.JsonUtils;
 
 public class RegisterActivity extends AppCompatActivity {

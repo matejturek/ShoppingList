@@ -1,4 +1,4 @@
-package sk.ukf.shoppinglist;
+package sk.ukf.shoppinglist.Activities;
 
 import android.os.Bundle;
 import android.view.View;
@@ -9,6 +9,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import sk.ukf.shoppinglist.R;
 
 public class ListActivity extends AppCompatActivity {
 

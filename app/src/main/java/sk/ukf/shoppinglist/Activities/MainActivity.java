@@ -1,4 +1,4 @@
-package sk.ukf.shoppinglist;
+package sk.ukf.shoppinglist.Activities;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -26,6 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sk.ukf.shoppinglist.Models.ListItem;
+import sk.ukf.shoppinglist.Utils.NetworkManager;
+import sk.ukf.shoppinglist.R;
+import sk.ukf.shoppinglist.Utils.SharedPreferencesManager;
 import sk.ukf.shoppinglist.Utils.JsonUtils;
 
 public class MainActivity extends AppCompatActivity {
@@ -52,9 +55,9 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
         createListFab.setOnClickListener(view -> {
-            Intent createIntent = new Intent(MainActivity.this, ListManagementActivity.class);
-            createIntent.putExtra("MODE", MODE_CREATE);
-            createListLauncher.launch(createIntent);
+            Intent intent = new Intent(MainActivity.this, ListManagementActivity.class);
+            intent.putExtra("MODE", MODE_CREATE);
+            createListLauncher.launch(intent);
 
         });
         init();
@@ -80,123 +83,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    void login(String email, String password) {
 
-        JSONObject jsonRequest = JsonUtils.createLoginJson(email, password);
-        NetworkManager.performPostRequest("login.php", jsonRequest, new NetworkManager.ResultCallback() {
-            @Override
-            public void onSuccess(String result) {
-                runOnUiThread(() -> {
-                    try {
-                        JSONObject jsonResponse = new JSONObject(result);
-                        String status = jsonResponse.getString("status");
-                        String message = jsonResponse.getString("message");
-                        if ("success".equals(status)) {
-                            // Successful response, handle accordingly
-                            String userId = jsonResponse.getString("userId");
-
-                            SharedPreferencesManager.saveEmail(MainActivity.this, email);
-                            SharedPreferencesManager.savePassword(MainActivity.this, password);
-                            SharedPreferencesManager.saveUserId(MainActivity.this, userId);
-
-                            getLists(userId);
-                        } else {
-                            // Handle other scenarios
-                            Log.e("LOGIN REQUEST", "Error: " + message);
-                            SharedPreferencesManager.clearData(MainActivity.this);
-                        }
-                    } catch (Exception e) {
-                        Log.e("LOGIN REQUEST", "Error parsing JSON", e);
-                    }
-                });
-            }
-
-            @Override
-            public void onError(String error) {
-                runOnUiThread(() -> Toast.makeText(MainActivity.this, "Login error", Toast.LENGTH_LONG).show());
-            }
-        });
-    }
 
     private void navigateToLogin() {
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(intent);
     }
 
-    private void getLists(String userId) {
-
-        JSONObject jsonRequest = JsonUtils.getListsJson(userId);
-        NetworkManager.performPostRequest("getLists.php", jsonRequest, new NetworkManager.ResultCallback() {
-            @Override
-            public void onSuccess(String result) {
-                runOnUiThread(() -> {
-                    try {
-                        JSONArray jsonResponse = new JSONArray(result);
-                        List<ListItem> listItems = new ArrayList<>();
-                        for (int i = 0; i < jsonResponse.length(); i++) {
-                            JSONObject jsonObject = jsonResponse.getJSONObject(i);
-                            int id = jsonObject.getInt("listId");
-                            String name = jsonObject.getString("name");
-                            listItems.add(new ListItem(id, name));
-                        }
-
-                        // Step 3: Convert to array
-                        ListItem[] data = listItems.toArray(new ListItem[0]);
-
-                        CustomAdapter adapter = new CustomAdapter(data);
-
-                        // Set the adapter for the ListView
-                        ListView listView = findViewById(R.id.listView);
-                        listView.setAdapter(adapter);
-
-                    } catch (Exception e) {
-                        Log.e("LOGIN REQUEST", "Error parsing JSON", e);
-                    }
-                });
-            }
-
-            @Override
-            public void onError(String error) {
-                runOnUiThread(() -> Toast.makeText(MainActivity.this, "Login error", Toast.LENGTH_LONG).show());
-            }
-        });
-    }
-
-    private void deleteList(String listId) {
-
-        JSONObject jsonRequest = JsonUtils.deleteListJson(listId);
-        NetworkManager.performPostRequest("deleteList.php", jsonRequest, new NetworkManager.ResultCallback() {
-            @Override
-            public void onSuccess(String result) {
-                runOnUiThread(() -> {
-                    try {
-                        JSONObject jsonResponse = new JSONObject(result);
-                        String status = jsonResponse.getString("status");
-                        String message = jsonResponse.getString("message");
-                        if ("success".equals(status)) {
-                            getLists(SharedPreferencesManager.getUserId(MainActivity.this));
-                        } else {
-                            Log.e("DELETE REQUEST", "Error: " + message);
-                        }
-
-                    } catch (Exception e) {
-                        Log.e("LOGIN REQUEST", "Error parsing JSON", e);
-                    }
-                });
-            }
-
-            @Override
-            public void onError(String error) {
-                runOnUiThread(() -> Toast.makeText(MainActivity.this, "Login error", Toast.LENGTH_LONG).show());
-            }
-        });
-    }
-
-    private class CustomAdapter extends BaseAdapter {
+    private class ListAdapter extends BaseAdapter {
 
         private final ListItem[] data;
 
-        public CustomAdapter(ListItem[] data) {
+        public ListAdapter(ListItem[] data) {
             this.data = data;
         }
 
@@ -293,5 +191,116 @@ public class MainActivity extends AppCompatActivity {
         // Create and show the AlertDialog
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    private void login(String email, String password) {
+
+        JSONObject jsonRequest = JsonUtils.createLoginJson(email, password);
+        NetworkManager.performPostRequest("login.php", jsonRequest, new NetworkManager.ResultCallback() {
+            @Override
+            public void onSuccess(String result) {
+                runOnUiThread(() -> {
+                    try {
+                        JSONObject jsonResponse = new JSONObject(result);
+                        String status = jsonResponse.getString("status");
+                        String message = jsonResponse.getString("message");
+                        if ("success".equals(status)) {
+                            // Successful response, handle accordingly
+                            String userId = jsonResponse.getString("userId");
+
+                            SharedPreferencesManager.saveEmail(MainActivity.this, email);
+                            SharedPreferencesManager.savePassword(MainActivity.this, password);
+                            SharedPreferencesManager.saveUserId(MainActivity.this, userId);
+
+                            getLists(userId);
+                        } else {
+                            // Handle other scenarios
+                            Toast.makeText(MainActivity.this, "Login error", Toast.LENGTH_LONG).show();
+                            Log.e("LOGIN REQUEST", "Error: " + message);
+                            SharedPreferencesManager.clearData(MainActivity.this);
+                        }
+                    } catch (Exception e) {
+                        Toast.makeText(MainActivity.this, "Login error", Toast.LENGTH_LONG).show();
+                        Log.e("LOGIN REQUEST", "Error parsing JSON", e);
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> Toast.makeText(MainActivity.this, "Login error", Toast.LENGTH_LONG).show());
+            }
+        });
+    }
+
+    private void deleteList(String listId) {
+
+        JSONObject jsonRequest = JsonUtils.deleteListJson(listId);
+        NetworkManager.performPostRequest("deleteList.php", jsonRequest, new NetworkManager.ResultCallback() {
+            @Override
+            public void onSuccess(String result) {
+                runOnUiThread(() -> {
+                    try {
+                        JSONObject jsonResponse = new JSONObject(result);
+                        String status = jsonResponse.getString("status");
+                        String message = jsonResponse.getString("message");
+                        if ("success".equals(status)) {
+                            getLists(SharedPreferencesManager.getUserId(MainActivity.this));
+                        } else {
+                            Log.e("DELETE REQUEST", "Error: " + message);
+                        }
+
+                    } catch (Exception e) {
+                        Toast.makeText(MainActivity.this, "Delete list error", Toast.LENGTH_LONG).show();
+                        Log.e("DELETE LIST REQUEST", "Error parsing JSON", e);
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> Toast.makeText(MainActivity.this, "Delete list error", Toast.LENGTH_LONG).show());
+            }
+        });
+    }
+
+    private void getLists(String userId) {
+
+        JSONObject jsonRequest = JsonUtils.getListsJson(userId);
+        NetworkManager.performPostRequest("getLists.php", jsonRequest, new NetworkManager.ResultCallback() {
+            @Override
+            public void onSuccess(String result) {
+                runOnUiThread(() -> {
+                    try {
+                        JSONArray jsonResponse = new JSONArray(result);
+                        List<ListItem> listItems = new ArrayList<>();
+                        for (int i = 0; i < jsonResponse.length(); i++) {
+                            JSONObject jsonObject = jsonResponse.getJSONObject(i);
+                            int id = jsonObject.getInt("listId");
+                            String name = jsonObject.getString("name");
+                            listItems.add(new ListItem(id, name));
+                        }
+
+                        // Step 3: Convert to array
+                        ListItem[] data = listItems.toArray(new ListItem[0]);
+
+                        ListAdapter adapter = new ListAdapter(data);
+
+                        // Set the adapter for the ListView
+                        ListView listView = findViewById(R.id.listView);
+                        listView.setAdapter(adapter);
+
+                    } catch (Exception e) {
+                        Toast.makeText(MainActivity.this, "Get list error", Toast.LENGTH_LONG).show();
+                        Log.e("GET LIST REQUEST", "Error parsing JSON", e);
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> Toast.makeText(MainActivity.this, "Get list error", Toast.LENGTH_LONG).show());
+            }
+        });
     }
 }

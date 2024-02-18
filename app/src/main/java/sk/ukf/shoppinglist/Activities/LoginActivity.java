@@ -1,4 +1,4 @@
-package sk.ukf.shoppinglist;
+package sk.ukf.shoppinglist.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -11,6 +11,9 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
+import sk.ukf.shoppinglist.Utils.NetworkManager;
+import sk.ukf.shoppinglist.R;
+import sk.ukf.shoppinglist.Utils.SharedPreferencesManager;
 import sk.ukf.shoppinglist.Utils.JsonUtils;
 
 public class LoginActivity extends AppCompatActivity {
@@ -67,6 +70,7 @@ public class LoginActivity extends AppCompatActivity {
                             SharedPreferencesManager.clearData(LoginActivity.this);
                         }
                     } catch (Exception e) {
+                        Toast.makeText(LoginActivity.this, "Login error", Toast.LENGTH_LONG).show();
                         Log.e("LOGIN REQUEST", "Error parsing JSON", e);
                     }
                 });

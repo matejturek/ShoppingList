@@ -1,4 +1,4 @@
-package sk.ukf.shoppinglist;
+package sk.ukf.shoppinglist.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,6 +10,9 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
+import sk.ukf.shoppinglist.Utils.NetworkManager;
+import sk.ukf.shoppinglist.R;
+import sk.ukf.shoppinglist.Utils.SharedPreferencesManager;
 import sk.ukf.shoppinglist.Utils.JsonUtils;
 
 public class ListManagementActivity extends AppCompatActivity {
@@ -78,15 +81,15 @@ public class ListManagementActivity extends AppCompatActivity {
                             Toast.makeText(ListManagementActivity.this, message, Toast.LENGTH_LONG).show();
                         }
                     } catch (Exception e) {
+                        Toast.makeText(ListManagementActivity.this, "Create list error", Toast.LENGTH_LONG).show();
                         Log.e("CREATE LIST REQUEST", "Error parsing JSON", e);
                     }
-
                 });
             }
 
             @Override
             public void onError(String error) {
-                runOnUiThread(() -> Toast.makeText(ListManagementActivity.this, "Login error", Toast.LENGTH_LONG).show());
+                runOnUiThread(() -> Toast.makeText(ListManagementActivity.this, "Create list error", Toast.LENGTH_LONG).show());
             }
         });
     }
@@ -103,18 +106,16 @@ public class ListManagementActivity extends AppCompatActivity {
                         String name = jsonResponse.getString("name");
                         String notes = jsonResponse.getString("notes");
                         fillValues(name, notes);
-
                     } catch (Exception e ) {
+                        Toast.makeText(ListManagementActivity.this, "Get list error", Toast.LENGTH_LONG).show();
                         Log.e("GET LIST REQUEST", "Error parsing JSON", e);
-
                     }
-
                 });
             }
 
             @Override
             public void onError(String error) {
-                runOnUiThread(() -> Toast.makeText(ListManagementActivity.this, "Login error", Toast.LENGTH_LONG).show());
+                runOnUiThread(() -> Toast.makeText(ListManagementActivity.this, "Get list error", Toast.LENGTH_LONG).show());
             }
         });
     }
@@ -136,13 +137,14 @@ public class ListManagementActivity extends AppCompatActivity {
                         Toast.makeText(ListManagementActivity.this, message, Toast.LENGTH_LONG).show();
                     }
                 } catch (Exception e) {
+                    Toast.makeText(ListManagementActivity.this, "Edit list error", Toast.LENGTH_LONG).show();
                     Log.e("EDIT LIST REQUEST", "Error parsing JSON", e);
                 }
             }
 
             @Override
             public void onError(String error) {
-                runOnUiThread(() -> Toast.makeText(ListManagementActivity.this, "Login error", Toast.LENGTH_LONG).show());
+                runOnUiThread(() -> Toast.makeText(ListManagementActivity.this, "Edit list error", Toast.LENGTH_LONG).show());
             }
         });
     }

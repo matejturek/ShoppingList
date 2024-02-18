@@ -1,4 +1,4 @@
-package sk.ukf.shoppinglist;
+package sk.ukf.shoppinglist.Utils;
 
 import android.os.Handler;
 import android.os.Looper;
