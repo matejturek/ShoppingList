@@ -42,6 +42,7 @@ public class LoginActivity extends AppCompatActivity {
         registerBtn.setOnClickListener(view -> {
             Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
             startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         });
     }
 
@@ -87,5 +88,11 @@ public class LoginActivity extends AppCompatActivity {
         Intent resultIntent = new Intent();
         setResult(result, resultIntent);
         finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 }

@@ -2,14 +2,16 @@ package sk.ukf.shoppinglist.Models;
 
 public class Item {
 
-    private final int id;
-    private final String name;
-    private final boolean status;
+    private int id;
+    private String name;
+    private boolean status;
+    private int quantity;
 
-    public Item(int id, String name, boolean status) {
+    public Item(int id, String name, boolean status, int quantity) {
         this.id = id;
         this.name = name;
         this.status = status;
+        this.quantity = quantity;
     }
 
     public int getId() {
@@ -19,6 +21,7 @@ public class Item {
     public String getName() {
         return name;
     }
+
     public Boolean getStatus() {
         return status;
     }

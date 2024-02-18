@@ -1,35 +1,35 @@
 package sk.ukf.shoppinglist.Activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import sk.ukf.shoppinglist.Activities.Adapters.CategoriesAdapter;
+import sk.ukf.shoppinglist.Models.Category;
 import sk.ukf.shoppinglist.Models.Item;
-import sk.ukf.shoppinglist.Models.ListItem;
 import sk.ukf.shoppinglist.R;
 import sk.ukf.shoppinglist.Utils.JsonUtils;
 import sk.ukf.shoppinglist.Utils.NetworkManager;
-import sk.ukf.shoppinglist.Utils.SharedPreferencesManager;
 
 public class ListActivity extends AppCompatActivity {
 
@@ -37,6 +37,7 @@ public class ListActivity extends AppCompatActivity {
     EditText newItemEt;
     Button addItemBtn;
     String listId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,17 +45,17 @@ public class ListActivity extends AppCompatActivity {
 
         listId = getIntent().getStringExtra("listId");
 
-         listView = findViewById(R.id.listView);
-         newItemEt = findViewById(R.id.newItem_et);
-         addItemBtn = findViewById(R.id.addItem_btn);
-         addItemBtn.setOnClickListener(view -> {
-             String item = newItemEt.getText().toString().trim();
-             if (isValidInput(item)) {
-                 createItem(item);
-             }
-         });
+        listView = findViewById(R.id.listView);
+        newItemEt = findViewById(R.id.newItem_et);
+        addItemBtn = findViewById(R.id.addItem_btn);
+        addItemBtn.setOnClickListener(view -> {
+            String item = newItemEt.getText().toString().trim();
+            if (isValidInput(item)) {
+                createItem(item);
+            }
+        });
 
-         getItems(listId);
+        getItems(listId);
     }
 
     private boolean isValidInput(String item) {
@@ -67,20 +68,23 @@ public class ListActivity extends AppCompatActivity {
 
     private class ItemsAdapter extends BaseAdapter {
 
-        private final Item[] data;
+        private static final int TYPE_ITEM = 0;
+        private static final int TYPE_HEADER = 1;
 
-        public ItemsAdapter(Item[] data) {
+        private final List<Object> data;
+
+        public ItemsAdapter(List<Object> data) {
             this.data = data;
         }
 
         @Override
         public int getCount() {
-            return data.length;
+            return data.size();
         }
 
         @Override
         public Object getItem(int position) {
-            return data[position];
+            return data.get(position);
         }
 
         @Override
@@ -89,20 +93,53 @@ public class ListActivity extends AppCompatActivity {
         }
 
         @Override
+        public int getItemViewType(int position) {
+            return data.get(position) instanceof String ? TYPE_HEADER : TYPE_ITEM;
+        }
+
+        @Override
+        public int getViewTypeCount() {
+            return 2; // Number of view types (items and headers)
+        }
+
+        @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            // Inflate or reuse a layout for each item
+            int viewType = getItemViewType(position);
+
             if (convertView == null) {
-                convertView = getLayoutInflater().inflate(R.layout.list_item_layout, parent, false);
+                LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+
+                switch (viewType) {
+                    case TYPE_ITEM:
+                        convertView = inflater.inflate(R.layout.list_item_layout, parent, false);
+                        break;
+                    case TYPE_HEADER:
+                        convertView = inflater.inflate(R.layout.list_category_layout, parent, false);
+                        break;
+                }
             }
 
-            EditText itemNameEt = convertView.findViewById(R.id.itemName_et);
-            CheckBox checkBox = convertView.findViewById(R.id.checkBox);
-            itemNameEt.setText(data[position].getName());
-            checkBox.setChecked(data[position].getStatus());
+            switch (viewType) {
+                case TYPE_ITEM:
+                    // Populate item data
+                    EditText itemNameEt = convertView.findViewById(R.id.itemName_et);
+                    CheckBox checkBox = convertView.findViewById(R.id.checkBox);
+                    Item item = (Item) data.get(position);
+                    itemNameEt.setText(item.getName());
+                    checkBox.setChecked(item.getStatus());
+                    break;
+                case TYPE_HEADER:
+                    // Populate header data
+                    TextView headerTextView = convertView.findViewById(R.id.category);
+                    String headerText = (String) data.get(position);
+                    headerTextView.setText(headerText);
+                    break;
+            }
 
             return convertView;
         }
     }
+
 
     private void createItem(String item) {
 
@@ -111,11 +148,12 @@ public class ListActivity extends AppCompatActivity {
             @Override
             public void onSuccess(String result) {
                 runOnUiThread(() -> {
-                    try {JSONObject jsonResponse = new JSONObject(result);
+                    try {
+                        JSONObject jsonResponse = new JSONObject(result);
                         String status = jsonResponse.getString("status");
                         String message = jsonResponse.getString("message");
                         if ("success".equals(status)) {
-                           getItems(listId);
+                            getItems(listId);
                         } else {
                             Toast.makeText(ListActivity.this, message, Toast.LENGTH_LONG).show();
                         }
@@ -132,6 +170,7 @@ public class ListActivity extends AppCompatActivity {
             }
         });
     }
+
     private void getItems(String listId) {
 
         JSONObject jsonRequest = JsonUtils.getItemsJson(listId);
@@ -140,24 +179,54 @@ public class ListActivity extends AppCompatActivity {
             public void onSuccess(String result) {
                 runOnUiThread(() -> {
                     try {
-                        JSONArray jsonResponse = new JSONArray(result);
-                        List<Item> listItems = new ArrayList<>();
-                        for (int i = 0; i < jsonResponse.length(); i++) {
-                            JSONObject jsonObject = jsonResponse.getJSONObject(i);
-                            int id = jsonObject.getInt("itemId");
-                            String name = jsonObject.getString("name");
-                            Boolean status = jsonObject.getString("status").equals("1");
-                            listItems.add(new Item(id, name, status));
+                        JSONObject jsonObject = new JSONObject(result);
+
+                        // Create a Map to store categories and their items
+                        Map<String, List<Item>> categoryMap = new HashMap<>();
+
+                        // Iterate through each category in the JSON response
+                        Iterator<String> keys = jsonObject.keys();
+                        while (keys.hasNext()) {
+                            String categoryName = keys.next();
+
+                            // Get the JSONArray for the current category
+                            JSONArray itemsArray = jsonObject.getJSONArray(categoryName);
+
+                            // Create a list to store items for the current category
+                            List<Item> itemList = new ArrayList<>();
+
+                            // Iterate through items array
+                            for (int j = 0; j < itemsArray.length(); j++) {
+                                JSONObject itemObject = itemsArray.getJSONObject(j);
+
+                                // Extract values from the item JSON object
+                                int itemId = itemObject.getInt("itemId");
+//                                int listId = itemObject.getInt("listId");
+//                                Integer categoryId = itemObject.isNull("categoryId") ? null : itemObject.getInt("categoryId");
+                                String name = itemObject.getString("name");
+//                                int quantity = itemObject.getInt("quantity");
+//                                int status = itemObject.getInt("status");
+//                                String link = itemObject.isNull("link") ? null : itemObject.getString("link");
+//                                String shelf = itemObject.isNull("shelf") ? null : itemObject.getString("shelf");
+
+                                // Create an Item object
+                                Item item = new Item(itemId, name, false, 1);
+
+                                // Add the item to the list
+                                itemList.add(item);
+                            }
+
+                            // Add the category and its associated items to the map
+                            categoryMap.put(categoryName, itemList);
                         }
 
-                        // Step 3: Convert to array
-                        Item[] data = listItems.toArray(new Item[0]);
+                        // Now you have a Map containing categories and their associated items
 
-                        ItemsAdapter adapter = new ItemsAdapter(data);
-
-                        // Set the adapter for the ListView
-                        ListView listView = findViewById(R.id.listView);
-                        listView.setAdapter(adapter);
+                        // Example of using the Map to populate the adapters
+                        CategoriesAdapter categoriesAdapter = new CategoriesAdapter(ListActivity.this, categoryMap);
+                        listView.setAdapter(categoriesAdapter);
+                        // Now, categoryMap contains categories and their associated items
+                        // You can use this map to populate your UI
 
                     } catch (Exception e) {
                         Toast.makeText(ListActivity.this, "Get list error", Toast.LENGTH_LONG).show();
@@ -171,5 +240,11 @@ public class ListActivity extends AppCompatActivity {
                 runOnUiThread(() -> Toast.makeText(ListActivity.this, "Get list error", Toast.LENGTH_LONG).show());
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 }

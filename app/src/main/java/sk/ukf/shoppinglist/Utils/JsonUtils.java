@@ -191,4 +191,37 @@ public class JsonUtils {
         }
         return jsonRequest;
     }
+
+    public static JSONObject createCategoryJson(String name, String parentCategoryId) {
+        JSONObject jsonRequest = new JSONObject();
+        try {
+            jsonRequest.put("name", name);
+            jsonRequest.put(parentCategoryId, parentCategoryId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonRequest;
+    }
+
+    public static JSONObject setCategoryJson(String categoryId, String name, String parentCategoryId) {
+        JSONObject jsonRequest = new JSONObject();
+        try {
+            jsonRequest.put("categoryId", categoryId);
+            jsonRequest.put("name", name);
+            jsonRequest.put("parentCategoryId", parentCategoryId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonRequest;
+    }
+
+    public static JSONObject deleteCategoryJson(String categoryId) {
+        JSONObject jsonRequest = new JSONObject();
+        try {
+            jsonRequest.put("categoryId", categoryId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonRequest;
+    }
 }

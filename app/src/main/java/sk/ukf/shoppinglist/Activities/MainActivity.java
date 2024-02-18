@@ -53,12 +53,13 @@ public class MainActivity extends AppCompatActivity {
         profileIv.setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
             startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         });
         createListFab.setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, ListManagementActivity.class);
             intent.putExtra("MODE", MODE_CREATE);
             createListLauncher.launch(intent);
-
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         });
         init();
 
@@ -83,11 +84,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-
     private void navigateToLogin() {
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(intent);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
     private class ListAdapter extends BaseAdapter {
