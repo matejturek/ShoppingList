@@ -74,6 +74,43 @@ public class NetworkManager {
         });
     }
 
+    public static void performGetRequest(String endpoint, ResultCallback callback) {
+        executor.execute(() -> {
+            try {
+                URL url = new URL(BASE_URL + endpoint);
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+
+                // Set request method to GET
+                urlConnection.setRequestMethod("GET");
+
+                // Get the response from the server
+                int responseCode = urlConnection.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    // Read the response
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+                    reader.close();
+
+                    // Post the result to the main thread
+                    mainHandler.post(() -> callback.onSuccess(response.toString()));
+                } else {
+                    Log.e(TAG, "HTTP error code: " + responseCode);
+                    // Post the error to the main thread
+                    mainHandler.post(() -> callback.onError("HTTP error code: " + responseCode));
+                }
+
+            } catch (IOException e) {
+                Log.e(TAG, "Error during GET request", e);
+                // Post the error to the main thread
+                mainHandler.post(() -> callback.onError("Error during GET request"));
+            }
+        });
+    }
+
     // Callback interface for handling the result on the main thread
     public interface ResultCallback {
         void onSuccess(String result);

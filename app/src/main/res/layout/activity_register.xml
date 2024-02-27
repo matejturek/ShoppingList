@@ -2,41 +2,68 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
     android:orientation="vertical"
     android:padding="16dp"
-    android:gravity="center">
+    android:background="@color/colorAccent">
 
     <EditText
         android:id="@+id/email_et"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="14dp"
+        android:background="@drawable/edittext_background"
+        android:drawableStart="@drawable/ic_email"
+        android:drawablePadding="8dp"
+        android:elevation="6dp"
         android:hint="Email"
-        android:text="mato.turek@gmail.com"
-        android:inputType="text" />
+        android:inputType="textEmailAddress"
+        android:paddingStart="8dp" />
+
 
     <EditText
         android:id="@+id/name_et"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Name"
+        android:layout_margin="14dp"
+        android:background="@drawable/edittext_background"
+        android:drawableStart="@drawable/ic_avatar"
+        android:drawablePadding="8dp"
+        android:elevation="6dp"
+        android:hint="Username"
+        android:inputType="text"
         android:text="mato"
-        android:inputType="text" />
+        android:paddingStart="8dp"/>
 
     <EditText
         android:id="@+id/password_et"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="14dp"
+        android:background="@drawable/edittext_background"
+        android:drawableStart="@drawable/ic_key"
+        android:drawablePadding="8dp"
+        android:elevation="8dp"
         android:hint="Password"
-        android:text="matej"
-        android:inputType="textPassword" />
+        android:inputType="textPassword"
+        android:paddingStart="8dp"
+        android:text="matej" />
+
 
     <EditText
         android:id="@+id/password_repeat_et"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Password"
-        android:text="matej"
-        android:inputType="textPassword" />
+        android:layout_margin="14dp"
+        android:background="@drawable/edittext_background"
+        android:drawableStart="@drawable/ic_key"
+        android:drawablePadding="8dp"
+        android:elevation="8dp"
+        android:hint="Repeat password"
+        android:inputType="textPassword"
+        android:paddingStart="8dp"
+        android:text="matej" />
+
 
     <Button
         android:id="@+id/register_btn"

@@ -1,8 +1,9 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.ShoppingList" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">#F17D7D</item>
+        <item name="colorPrimaryDark">#EC3232</item>
+        <item name="colorAccent">#F3DCDC</item>
     </style>
 
     <style name="Theme.ShoppingList" parent="Base.Theme.ShoppingList" />
