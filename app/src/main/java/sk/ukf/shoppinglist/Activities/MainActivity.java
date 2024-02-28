@@ -23,9 +23,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import sk.ukf.shoppinglist.Models.ListItem;
+import sk.ukf.shoppinglist.Utils.Endpoints;
 import sk.ukf.shoppinglist.Utils.NetworkManager;
 import sk.ukf.shoppinglist.R;
 import sk.ukf.shoppinglist.Utils.SharedPreferencesManager;
@@ -197,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
     private void login(String email, String password) {
 
         JSONObject jsonRequest = JsonUtils.createLoginJson(email, password);
-        NetworkManager.performPostRequest("login.php", jsonRequest, new NetworkManager.ResultCallback() {
+        NetworkManager.performPostRequest(Endpoints.LOGIN.getEndpoint(), jsonRequest, new NetworkManager.ResultCallback() {
             @Override
             public void onSuccess(String result) {
                 runOnUiThread(() -> {
@@ -237,7 +240,7 @@ public class MainActivity extends AppCompatActivity {
     private void deleteList(String listId) {
 
         JSONObject jsonRequest = JsonUtils.deleteListJson(listId);
-        NetworkManager.performPostRequest("deleteList.php", jsonRequest, new NetworkManager.ResultCallback() {
+        NetworkManager.performPostRequest(Endpoints.DELETE_LIST.getEndpoint(), jsonRequest, new NetworkManager.ResultCallback() {
             @Override
             public void onSuccess(String result) {
                 runOnUiThread(() -> {
@@ -267,8 +270,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void getLists(String userId) {
 
-        JSONObject jsonRequest = JsonUtils.getListsJson(userId);
-        NetworkManager.performPostRequest("getLists.php", jsonRequest, new NetworkManager.ResultCallback() {
+        Map<String, String> queryParams = new HashMap<>();
+        queryParams.put("userId", userId);
+        NetworkManager.performGetRequest(Endpoints.GET_LISTS.getEndpoint(), queryParams, new NetworkManager.ResultCallback() {
             @Override
             public void onSuccess(String result) {
                 runOnUiThread(() -> {

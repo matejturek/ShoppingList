@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
+import sk.ukf.shoppinglist.Utils.Endpoints;
 import sk.ukf.shoppinglist.Utils.NetworkManager;
 import sk.ukf.shoppinglist.R;
 import sk.ukf.shoppinglist.Utils.SharedPreferencesManager;
@@ -49,7 +50,7 @@ public class LoginActivity extends AppCompatActivity {
     void login(String email, String password) {
 
         JSONObject jsonRequest = JsonUtils.createLoginJson(email, password);
-        NetworkManager.performPostRequest("login.php", jsonRequest, new NetworkManager.ResultCallback() {
+        NetworkManager.performPostRequest(Endpoints.LOGIN.getEndpoint(), jsonRequest, new NetworkManager.ResultCallback() {
             @Override
             public void onSuccess(String result) {
                 runOnUiThread(() -> {

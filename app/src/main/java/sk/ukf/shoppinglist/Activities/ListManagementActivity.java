@@ -10,6 +10,10 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import sk.ukf.shoppinglist.Utils.Endpoints;
 import sk.ukf.shoppinglist.Utils.NetworkManager;
 import sk.ukf.shoppinglist.R;
 import sk.ukf.shoppinglist.Utils.SharedPreferencesManager;
@@ -96,8 +100,9 @@ public class ListManagementActivity extends AppCompatActivity {
 
     private void getList(String listId) {
 
-        JSONObject jsonRequest = JsonUtils.getListDetailsJson(listId);
-        NetworkManager.performPostRequest("getListDetails.php", jsonRequest, new NetworkManager.ResultCallback() {
+        Map<String, String> queryParams = new HashMap<>();
+        queryParams.put("listId", listId);
+        NetworkManager.performGetRequest(Endpoints.GET_LIST_DETAILS.getEndpoint(), queryParams, new NetworkManager.ResultCallback() {
             @Override
             public void onSuccess(String result) {
                 runOnUiThread(() -> {
@@ -123,7 +128,7 @@ public class ListManagementActivity extends AppCompatActivity {
     private void editList(String listId, String name, String notes) {
 
         JSONObject jsonRequest = JsonUtils.editListJson(listId, name, notes);
-        NetworkManager.performPostRequest("editList.php", jsonRequest, new NetworkManager.ResultCallback() {
+        NetworkManager.performPostRequest(Endpoints.EDIT_LIST.getEndpoint(), jsonRequest, new NetworkManager.ResultCallback() {
             @Override
             public void onSuccess(String result) {
                 try {

@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
+import sk.ukf.shoppinglist.Utils.Endpoints;
 import sk.ukf.shoppinglist.Utils.NetworkManager;
 import sk.ukf.shoppinglist.R;
 import sk.ukf.shoppinglist.Utils.JsonUtils;
@@ -70,7 +71,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     void register(String email, String name, String password) {
         JSONObject jsonRequest = JsonUtils.createRegistrationJson(email, name, password);
-        NetworkManager.performPostRequest("register.php", jsonRequest, new NetworkManager.ResultCallback() {
+        NetworkManager.performPostRequest(Endpoints.REGISTER.getEndpoint(), jsonRequest, new NetworkManager.ResultCallback() {
             @Override
             public void onSuccess(String result) {
                 runOnUiThread(() -> {

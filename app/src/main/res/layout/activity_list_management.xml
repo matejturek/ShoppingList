@@ -1,34 +1,42 @@
 <!-- res/layout/item_list.xml -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
+    android:gravity="center"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@color/colorAccent">
 
-    <TextView
-        android:id="@+id/name_tv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Name"
-        />
+
 
     <EditText
         android:id="@+id/name_et"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-
-    <TextView
-        android:id="@+id/notes_tv"
-        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Notes"
-        />
+        android:layout_margin="14dp"
+        android:background="@drawable/edittext_background"
+        android:drawableStart="@drawable/ic_list_black"
+        android:drawablePadding="8dp"
+        android:elevation="6dp"
+        android:hint="Name"
+        android:inputType="text"
+        android:paddingStart="8dp"/>
+
+
+
 
     <EditText
         android:id="@+id/notes_et"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_margin="14dp"
+        android:background="@drawable/edittext_background"
+        android:drawableStart="@drawable/ic_edit_black"
+        android:drawablePadding="8dp"
+        android:elevation="6dp"
+        android:hint="Notes"
+        android:inputType="text"
+        android:paddingStart="8dp"/>
 
 
     <Button

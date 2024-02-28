@@ -12,6 +12,7 @@ import android.widget.Toast;
 import org.json.JSONObject;
 
 import sk.ukf.shoppinglist.R;
+import sk.ukf.shoppinglist.Utils.Endpoints;
 import sk.ukf.shoppinglist.Utils.JsonUtils;
 import sk.ukf.shoppinglist.Utils.NetworkManager;
 import sk.ukf.shoppinglist.Utils.SharedPreferencesManager;
@@ -52,7 +53,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void editProfile(String name) {
         JSONObject jsonRequest = JsonUtils.editUserJson(SharedPreferencesManager.getUserId(ProfileActivity.this), name);
-        NetworkManager.performPostRequest("editUser.php", jsonRequest, new NetworkManager.ResultCallback() {
+        NetworkManager.performPostRequest(Endpoints.EDIT_ACCOUNT.getEndpoint(), jsonRequest, new NetworkManager.ResultCallback() {
             @Override
             public void onSuccess(String result) {
                 runOnUiThread(() -> {
@@ -84,7 +85,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void getUserDetails() {
         JSONObject jsonRequest = JsonUtils.getUserDetailsJson(SharedPreferencesManager.getUserId(ProfileActivity.this));
-        NetworkManager.performPostRequest("getUserDetails.php", jsonRequest, new NetworkManager.ResultCallback() {
+        NetworkManager.performPostRequest(Endpoints.GET_ACCOUNT_DETAILS.getEndpoint(), jsonRequest, new NetworkManager.ResultCallback() {
             @Override
             public void onSuccess(String result) {
                 runOnUiThread(() -> {

@@ -10,8 +10,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -74,10 +77,12 @@ public class NetworkManager {
         });
     }
 
-    public static void performGetRequest(String endpoint, ResultCallback callback) {
+    public static void performGetRequest(String endpoint, Map<String, String> queryParams, ResultCallback callback) {
         executor.execute(() -> {
             try {
-                URL url = new URL(BASE_URL + endpoint);
+                // Build the URL with parameters
+                String urlString = buildUrl(BASE_URL + endpoint, queryParams);
+                URL url = new URL(urlString);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
                 // Set request method to GET
@@ -109,6 +114,21 @@ public class NetworkManager {
                 mainHandler.post(() -> callback.onError("Error during GET request"));
             }
         });
+    }
+
+    private static String buildUrl(String baseUrl, Map<String, String> queryParams) throws UnsupportedEncodingException {
+        StringBuilder urlString = new StringBuilder(baseUrl);
+        if (queryParams != null && !queryParams.isEmpty()) {
+            urlString.append("?");
+            for (Map.Entry<String, String> entry : queryParams.entrySet()) {
+                urlString.append(URLEncoder.encode(entry.getKey(), "UTF-8"))
+                        .append("=")
+                        .append(URLEncoder.encode(entry.getValue(), "UTF-8"))
+                        .append("&");
+            }
+            urlString.deleteCharAt(urlString.length() - 1); // Remove the trailing "&"
+        }
+        return urlString.toString();
     }
 
     // Callback interface for handling the result on the main thread
