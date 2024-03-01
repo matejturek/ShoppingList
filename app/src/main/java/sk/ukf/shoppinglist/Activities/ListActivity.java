@@ -28,6 +28,7 @@ import sk.ukf.shoppinglist.Activities.Adapters.CategoriesAdapter;
 import sk.ukf.shoppinglist.Models.Category;
 import sk.ukf.shoppinglist.Models.Item;
 import sk.ukf.shoppinglist.R;
+import sk.ukf.shoppinglist.Utils.Endpoints;
 import sk.ukf.shoppinglist.Utils.JsonUtils;
 import sk.ukf.shoppinglist.Utils.NetworkManager;
 
@@ -144,7 +145,7 @@ public class ListActivity extends AppCompatActivity {
     private void createItem(String item) {
 
         JSONObject jsonRequest = JsonUtils.createItem(listId, item);
-        NetworkManager.performPostRequest("createItem.php", jsonRequest, new NetworkManager.ResultCallback() {
+        NetworkManager.performPostRequest(Endpoints.CREATE_ITEM.getEndpoint(), jsonRequest, new NetworkManager.ResultCallback() {
             @Override
             public void onSuccess(String result) {
                 runOnUiThread(() -> {
@@ -173,8 +174,9 @@ public class ListActivity extends AppCompatActivity {
 
     private void getItems(String listId) {
 
-        JSONObject jsonRequest = JsonUtils.getItemsJson(listId);
-        NetworkManager.performPostRequest("getItems.php", jsonRequest, new NetworkManager.ResultCallback() {
+        Map<String, String> queryParams = new HashMap<>();
+        queryParams.put("listId", listId);
+        NetworkManager.performGetRequest(Endpoints.GET_ITEMS.getEndpoint(), queryParams, new NetworkManager.ResultCallback() {
             @Override
             public void onSuccess(String result) {
                 runOnUiThread(() -> {

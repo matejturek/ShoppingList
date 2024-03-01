@@ -19,7 +19,6 @@
         android:clipToPadding="false"
         android:layout_marginTop="?attr/actionBarSize"/>
 
-    <!-- Floating Action Button (FAB) -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
@@ -29,6 +28,6 @@
         android:src="@drawable/ic_add_white"
         android:backgroundTint="@color/colorPrimary"
         android:elevation="6dp"
-        android:tint="@color/colorPrimary"/>
+        android:tint="@android:color/transparent"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

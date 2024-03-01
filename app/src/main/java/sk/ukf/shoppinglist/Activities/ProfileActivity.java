@@ -20,8 +20,10 @@ import sk.ukf.shoppinglist.Utils.SharedPreferencesManager;
 public class ProfileActivity extends AppCompatActivity {
 
     EditText emailEt, nameEt;
-    TextView welcomeUserTv;
-    Button saveBtn;
+    TextView welcomeUserTv, dynamicLetterTv;
+    Button saveBtn, logoutBtn;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,14 +33,20 @@ public class ProfileActivity extends AppCompatActivity {
         emailEt = findViewById(R.id.email_et);
         nameEt = findViewById(R.id.name_et);
         welcomeUserTv = findViewById(R.id.welcomeUser_tv);
+        dynamicLetterTv = findViewById(R.id.dynamicLetter_tv);
 
         saveBtn = findViewById(R.id.save_btn);
+        logoutBtn = findViewById(R.id.logout_btn);
 
         saveBtn.setOnClickListener(view -> {
             String name = nameEt.getText().toString().trim();
             if (isValidInput(name)) {
                 editProfile(name);
             }
+        });
+
+        logoutBtn.setOnClickListener(view -> {
+            logout();
         });
         getUserDetails();
     }
@@ -94,7 +102,6 @@ public class ProfileActivity extends AppCompatActivity {
                         String email = jsonResponse.getString("email");
                         String name = jsonResponse.getString("name");
                         fillValues(email, name);
-
                     } catch (Exception e ) {
                         Toast.makeText(ProfileActivity.this, "Error getting profile", Toast.LENGTH_LONG).show();
                         Log.e("GET USER DETAILS REQUEST", "Error parsing JSON", e);
@@ -110,15 +117,23 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
+    private void logout() {
+        SharedPreferencesManager.clearData(ProfileActivity.this);
+        finish();
+
+    }
 
     private void fillValues(String name) {
         welcomeUserTv.setText("Welcome " + name);
+        dynamicLetterTv.setText(String.valueOf(name.charAt(0)).toUpperCase());
     }
 
     private void fillValues(String email, String name) {
         emailEt.setText(email);
         nameEt.setText(name);
         welcomeUserTv.setText("Welcome " + name);
+        dynamicLetterTv.setText(String.valueOf(name.charAt(0)).toUpperCase());
+
     }
 
     @Override

@@ -70,7 +70,7 @@ public class ListManagementActivity extends AppCompatActivity {
     private void createList(String name, String notes) {
 
         JSONObject jsonRequest = JsonUtils.createListJson(SharedPreferencesManager.getUserId(ListManagementActivity.this), name, notes);
-        NetworkManager.performPostRequest("createList.php", jsonRequest, new NetworkManager.ResultCallback() {
+        NetworkManager.performPostRequest(Endpoints.CREATE_LIST.getEndpoint(), jsonRequest, new NetworkManager.ResultCallback() {
             @Override
             public void onSuccess(String result) {
                 runOnUiThread(() -> {

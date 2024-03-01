@@ -68,6 +68,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        init();
+    }
+
     private final ActivityResultLauncher<Intent> createListLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         if (result.getResultCode() == RESULT_OK) {
             getLists(SharedPreferencesManager.getUserId(MainActivity.this));

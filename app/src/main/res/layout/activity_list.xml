@@ -22,17 +22,28 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-    <EditText
-        android:id="@+id/newItem_et"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="?attr/actionBarSize" />
-    <Button
-        android:id="@+id/addItem_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add"/>
+        android:paddingHorizontal="10dp"
+        android:orientation="horizontal"
+        android:background="@color/colorAccent">
+
+        <EditText
+            android:id="@+id/newItem_et"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="14dp"
+            android:layout_weight="1"
+            android:background="@drawable/edittext_background"
+            android:drawablePadding="8dp"
+            android:elevation="6dp"
+            android:inputType="text" />
+
+        <Button
+            android:id="@+id/addItem_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginVertical="10dp"
+            android:text="Add" />
     </LinearLayout>
 
 </LinearLayout>
