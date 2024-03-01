@@ -1,6 +1,6 @@
 <?php
 // Include the configuration file
-require_once 'config.php';
+require_once '../config.php';
 
 // Check if data is sent via POST
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
