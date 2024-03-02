@@ -224,4 +224,16 @@ public class JsonUtils {
         }
         return jsonRequest;
     }
+
+
+    public static JSONObject setItemStatusJson(String itemId, Boolean status) {
+        JSONObject jsonRequest = new JSONObject();
+        try {
+            jsonRequest.put("itemId", itemId);
+            jsonRequest.put("status", status ? "1" : "0");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonRequest;
+    }
 }

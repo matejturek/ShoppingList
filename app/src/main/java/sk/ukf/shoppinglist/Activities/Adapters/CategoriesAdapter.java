@@ -11,6 +11,7 @@ import android.widget.TextView;
 import java.util.List;
 import java.util.Map;
 
+import sk.ukf.shoppinglist.Activities.ListActivity;
 import sk.ukf.shoppinglist.Models.Item;
 import sk.ukf.shoppinglist.R;
 

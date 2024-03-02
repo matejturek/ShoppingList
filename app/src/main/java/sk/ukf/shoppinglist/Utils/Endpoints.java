@@ -12,7 +12,7 @@ public enum Endpoints {
     /* LIST */
     CREATE_LIST("list/createList.php"),
     DELETE_LIST("list/deleteList.php"),
-    EDIT_LIST("list/editList.php"),
+    SET_LIST("list/setList.php"),
     GET_LIST_DETAILS("list/getListDetails.php"),
     GET_LISTS("list/getLists.php"),
 
@@ -28,7 +28,8 @@ public enum Endpoints {
     /* ITEM */
     CREATE_ITEM("item/createItem.php"),
     DELETE_ITEM("item/deleteItem.php"),
-    EDIT_ITEM("item/editItem.php"),
+    SET_ITEM("item/setItem.php"),
+    SET_ITEM_STATUS("item/setItemStatus.php"),
     GET_ITEMS("item/getItems.php");
 
 

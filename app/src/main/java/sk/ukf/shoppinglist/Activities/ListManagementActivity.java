@@ -128,7 +128,7 @@ public class ListManagementActivity extends AppCompatActivity {
     private void editList(String listId, String name, String notes) {
 
         JSONObject jsonRequest = JsonUtils.editListJson(listId, name, notes);
-        NetworkManager.performPostRequest(Endpoints.EDIT_LIST.getEndpoint(), jsonRequest, new NetworkManager.ResultCallback() {
+        NetworkManager.performPostRequest(Endpoints.SET_LIST.getEndpoint(), jsonRequest, new NetworkManager.ResultCallback() {
             @Override
             public void onSuccess(String result) {
                 try {
