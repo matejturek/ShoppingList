@@ -2,9 +2,13 @@ package sk.ukf.shoppinglist.Activities;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -72,6 +76,41 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         init();
+    }
+
+    @Override
+    public void onBackPressed() {
+        showConfirmationDialog();
+    }
+
+    private void showConfirmationDialog() {
+        ConfirmationDialogFragment dialogFragment = new ConfirmationDialogFragment();
+        dialogFragment.show(getSupportFragmentManager(), "ConfirmationDialog");
+    }
+
+    public static class ConfirmationDialogFragment extends DialogFragment {
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle("Exit App?");
+            builder.setMessage("Are you sure you want to exit?");
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // Handle exit or any other action here
+                    getActivity().finish(); // This will close the activity
+                }
+            });
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // Dismiss the dialog
+                    dialog.dismiss();
+                }
+            });
+            return builder.create();
+        }
     }
 
     private final ActivityResultLauncher<Intent> createListLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
