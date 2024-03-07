@@ -24,6 +24,8 @@ public enum Endpoints {
     CREATE_CATEGORY("category/createCategory.php"),
     DELETE_CATEGORY("category/deleteCategory.php"),
     SET_CATEGORY("category/setCategory.php"),
+    GET_CATEGORIES("category/getCategories.php"),
+    GET_CATEGORY("category/getCategory.php"),
 
     /* ITEM */
     CREATE_ITEM("item/createItem.php"),

@@ -182,6 +182,19 @@ public class JsonUtils {
         return jsonRequest;
     }
 
+
+    public static JSONObject createCategory(String listId, String category) {
+        JSONObject jsonRequest = new JSONObject();
+        try {
+            jsonRequest.put("listId", listId);
+            jsonRequest.put("name", category);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonRequest;
+    }
+
+
     public static JSONObject getItemsJson(String listId) {
         JSONObject jsonRequest = new JSONObject();
         try {
