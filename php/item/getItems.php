@@ -2,71 +2,49 @@
 // Include the configuration file
 require_once '../config.php';
 
-// Check if listId parameter is provided in the URL
-if (isset($_GET['listId'])) {
-    $listId = $_GET['listId'];
+// Check if data is sent via GET
+if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
-    // Assuming you have a MySQLi connection
-    $mysqli = new mysqli($servername, $username, $password, $dbname);
+    // Check if required query parameter is present
+    if (isset($_GET['listId'])) {
+        // Your processing logic here
 
-    // Check for connection errors
-    if ($mysqli->connect_error) {
-        die("Connection failed: " . $mysqli->connect_error);
-    }
+        // Assuming you have a MySQLi connection
+        $mysqli = new mysqli($servername, $username, $password, $dbname);
 
-    $query = "SELECT c.categoryId, COALESCE(c.name, '') AS categoryName, i.itemId, i.name AS itemName, i.quantity, i.status, i.link, i.shelf 
-    FROM categories c
-    RIGHT JOIN items i ON c.categoryId = i.categoryId
-    WHERE i.listId = ? OR i.categoryId IS NULL
-    ORDER BY c.categoryId IS NULL, c.categoryId, i.itemId";
-
-
-    $stmt = $mysqli->prepare($query);
-    $stmt->bind_param("s", $listId);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result) {
-        $groupedItems = [];
-
-        while ($row = $result->fetch_assoc()) {
-            $categoryId = $row['categoryId'];
-            $categoryName = $row['categoryName'];
-            $itemName = $row['itemName'];
-            $quantity = $row['quantity'];
-            $status = $row['status'];
-            $link = $row['link'];
-            $shelf = $row['shelf'];
-
-            if (!isset($groupedItems[$categoryId])) {
-                $groupedItems[$categoryId] = ['categoryName' => $categoryName, 'items' => []];
-            }
-
-            $groupedItems[$categoryId]['items'][] = [
-                'itemId' => $row['itemId'],
-                'name' => $itemName,
-                'quantity' => $quantity,
-                'status' => $status,
-                'link' => $link,
-                'shelf' => $shelf,
-            ];
+        // Check for connection errors
+        if ($mysqli->connect_error) {
+            die("Connection failed: " . $mysqli->connect_error);
         }
 
-        // Close the connection
+        // Retrieve lists associated with the user through the ownerId field
+        $query = "SELECT itemId, categoryId, name, quantity, status, link, shelf FROM items WHERE listId = ?";
+
+        $stmt = $mysqli->prepare($query);
+        $stmt->bind_param("s", $_GET['listId']);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+
+        // Fetch the lists
+        $lists = array();
+        while ($row = $result->fetch_assoc()) {
+            $lists[] = $row;
+        }
+
         $stmt->close();
+
+        // Close the connection
         $mysqli->close();
 
-        // Convert associative array to indexed array
-        $groupedItems = array_values($groupedItems);
+        // Respond with the lists in JSON format
+        echo json_encode($lists);
 
-        // Respond with the grouped items
-        echo json_encode($groupedItems);
     } else {
-        // Handle query error
-        echo json_encode(['status' => 'error', 'message' => 'Failed to fetch grouped items.']);
+        // Respond with an error message
+        echo "Invalid request. Please provide userId as a query parameter.";
     }
 } else {
-    // Handle missing listId parameter
-    echo json_encode(['status' => 'error', 'message' => 'Missing listId parameter.']);
+    echo "No data received.";
 }
 ?>
