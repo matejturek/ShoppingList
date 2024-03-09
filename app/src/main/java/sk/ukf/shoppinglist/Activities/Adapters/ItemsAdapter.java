@@ -72,30 +72,29 @@ public class ItemsAdapter extends BaseAdapter {
         checkBox.setChecked(currentItem.getStatus());
         quantityTv.setText(String.valueOf(currentItem.getQuantity()));
         nameTv.setText(currentItem.getName());
-        if (currentItem.getShelf() != null && currentItem.getShelf().length() > 0 ){
+        if (currentItem.getShelf() != null && currentItem.getShelf().length() > 0) {
             shelfTv.setText(currentItem.getShelf());
         }
 
-        if (currentItem.getLink() != null && currentItem.getLink().length() > 0 ){
+        if (currentItem.getLink() != null && currentItem.getLink().length() > 0) {
             linkIv.setOnClickListener(view -> {
-                try {
-                    Uri uri = Uri.parse(currentItem.getLink());
-                    if (uri != null) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                        context.startActivity(intent);
-                    } else {
-                        Toast.makeText(context, "Invalid URL", Toast.LENGTH_SHORT).show();
-                    }
-                } catch (IllegalArgumentException e) {
-                    // Handle the case where the URL is not valid (e.g., malformed URL)
-                    Toast.makeText(context, "Invalid URL", Toast.LENGTH_SHORT).show();
+                Uri uri = Uri.parse(currentItem.getLink());
+
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, uri);
+
+                if (browserIntent.resolveActivity(context.getPackageManager()) != null) {
+                    //TODO check if works on real phone
+                    context.startActivity(browserIntent);
+                } else {
                 }
             });
         } else {
-//            ViewGroup parentEl = (ViewGroup) linkIv.getParent();
-//            if (parentEl != null) {
-//                parentEl.removeView(linkIv);
-//            }
+            if (linkIv != null) {
+                ViewGroup parentEl = (ViewGroup) linkIv.getParent();
+                if (parentEl != null) {
+                    parentEl.removeView(linkIv);
+                }
+            }
         }
         editIv.setOnClickListener(view -> {
             ItemDialog.showCreateDialog(context, new ItemDialog.OnCreateClickListener() {
@@ -140,6 +139,7 @@ public class ItemsAdapter extends BaseAdapter {
             }
         });
     }
+
     public void setItem(int itemId, int quantity, String name, String shelf, String link) {
         JSONObject jsonRequest = JsonUtils.setItem(itemId, quantity, name, shelf, link);
         NetworkManager.performPostRequest(Endpoints.SET_ITEM.getEndpoint(), jsonRequest, new NetworkManager.ResultCallback() {

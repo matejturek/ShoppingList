@@ -1,5 +1,6 @@
 package sk.ukf.shoppinglist.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -58,9 +59,10 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         listId = getIntent().getStringExtra("listId");
 
         listView  = findViewById(R.id.listView);
-
         newItemEt = findViewById(R.id.newItem_et);
         addItemBtn = findViewById(R.id.addItem_btn);
+        menuIv = findViewById(R.id.menu);
+        profileIv = findViewById(R.id.profileIcon);
         addItemBtn.setOnClickListener(view -> {
             String item = newItemEt.getText().toString().trim();
             int categoryId = -1;
@@ -72,14 +74,16 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
             }
         });
         categoriesNames = new ArrayList<>();
-
         categorySpinner = findViewById(R.id.type_sp);
-
-        menuIv = findViewById(R.id.menu);
 
         menuIv.setOnClickListener(view -> showPopupMenu(view));
         menuIv.setVisibility(View.INVISIBLE);
 
+        profileIv.setOnClickListener(view -> {
+            Intent intent = new Intent(ListActivity.this, ProfileActivity.class);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        });
         init();
     }
 
