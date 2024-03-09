@@ -1,5 +1,4 @@
-<androidx.appcompat.widget.Toolbar
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
     android:background="?attr/colorPrimary"
@@ -10,26 +9,28 @@
         android:layout_height="match_parent">
 
         <ImageView
+            android:contentDescription="@string/profile_icon"
             android:id="@+id/profileIcon"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/ic_avatar_white"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:padding="8dp"
             android:clickable="true"
-            android:focusable="true"/>
+            android:focusable="true"
+            android:padding="8dp"
+            android:src="@drawable/ic_avatar_white" />
 
         <ImageView
+            android:contentDescription="@string/options"
             android:id="@+id/menu"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/ic_dots_white"
-            android:padding="8dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:clickable="true"
-            android:focusable="true"/>
+            android:focusable="true"
+            android:padding="8dp"
+            android:src="@drawable/ic_dots_white" />
     </RelativeLayout>
 
 </androidx.appcompat.widget.Toolbar>

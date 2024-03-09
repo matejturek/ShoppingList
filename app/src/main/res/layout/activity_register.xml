@@ -2,10 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorAccent"
     android:gravity="center"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:background="@color/colorAccent">
+    android:padding="16dp">
 
     <EditText
         android:id="@+id/email_et"
@@ -16,9 +16,10 @@
         android:drawableStart="@drawable/ic_email_black"
         android:drawablePadding="8dp"
         android:elevation="6dp"
-        android:hint="Email"
+        android:hint="@string/email"
         android:inputType="textEmailAddress"
-        android:paddingStart="8dp" />
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp" />
 
 
     <EditText
@@ -30,10 +31,11 @@
         android:drawableStart="@drawable/ic_avatar_black"
         android:drawablePadding="8dp"
         android:elevation="6dp"
-        android:hint="Username"
+        android:hint="@string/username"
         android:inputType="text"
-        android:text="mato"
-        android:paddingStart="8dp"/>
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:text="mato" />
 
     <EditText
         android:id="@+id/password_et"
@@ -44,9 +46,10 @@
         android:drawableStart="@drawable/ic_key"
         android:drawablePadding="8dp"
         android:elevation="8dp"
-        android:hint="Password"
+        android:hint="@string/password"
         android:inputType="textPassword"
         android:paddingStart="8dp"
+        android:paddingEnd="8dp"
         android:text="matej" />
 
 
@@ -59,16 +62,16 @@
         android:drawableStart="@drawable/ic_key"
         android:drawablePadding="8dp"
         android:elevation="8dp"
-        android:hint="Repeat password"
+        android:hint="@string/repeat_password"
         android:inputType="textPassword"
         android:paddingStart="8dp"
+        android:paddingEnd="8dp"
         android:text="matej" />
-
 
     <Button
         android:id="@+id/register_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Register" />
+        android:text="@string/register" />
 
 </LinearLayout>

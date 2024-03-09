@@ -1,9 +1,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:padding="16dp"
-    android:gravity="center_vertical">
+    android:padding="16dp">
 
     <CheckBox
         android:id="@+id/checkBox"
@@ -15,8 +15,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"> <!-- Add this line for vertical centering -->
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/quantity_tv"
@@ -27,30 +27,32 @@
         <TextView
             android:id="@+id/name_tv"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:textSize="16sp" />
 
         <TextView
             android:id="@+id/shelf_tv"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:textSize="16sp" />
 
         <ImageView
-            android:padding="5dp"
+            android:contentDescription="@string/edit_item"
             android:id="@+id/edit_iv"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/ic_edit_black"/>
+            android:padding="5dp"
+            android:src="@drawable/ic_edit_black" />
 
         <ImageView
-            android:padding="5dp"
+            android:contentDescription="@string/link"
             android:id="@+id/link_iv"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/ic_link_black"/>
+            android:padding="5dp"
+            android:src="@drawable/ic_link_black" />
 
     </LinearLayout>
 

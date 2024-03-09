@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -95,20 +94,8 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle("Exit App?");
             builder.setMessage("Are you sure you want to exit?");
-            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    // Handle exit or any other action here
-                    getActivity().finish(); // This will close the activity
-                }
-            });
-            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    // Dismiss the dialog
-                    dialog.dismiss();
-                }
-            });
+            builder.setPositiveButton("Yes", (dialog, which) -> getActivity().finish());
+            builder.setNegativeButton("No", (dialog, which) -> dialog.dismiss());
             return builder.create();
         }
     }
@@ -184,17 +171,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showRecordMenu(View view, int position) {
-        // Create a PopupMenu
         PopupMenu popupMenu = new PopupMenu(MainActivity.this, view);
 
-        // Inflate the menu resource
         popupMenu.getMenuInflater().inflate(R.menu.list_menu, popupMenu.getMenu());
 
-        // Set an item click listener for the menu items
         popupMenu.setOnMenuItemClickListener(item -> {
-            // Handle menu item clicks here
             if (item.getItemId() == R.id.menu_edit) {
-                // Handle Edit click
                 ListItem listItem = ((ListItem) listview.getItemAtPosition(position));
                 String listId = String.valueOf(listItem.getId());
 
@@ -205,7 +187,6 @@ public class MainActivity extends AppCompatActivity {
 
                 return true;
             } else if (item.getItemId() == R.id.menu_invite) {
-                // Handle Invite click
                 Toast.makeText(MainActivity.this, "Invite clicked", Toast.LENGTH_SHORT).show();
                 return true;
             } else if (item.getItemId() == R.id.menu_delete) {
@@ -218,7 +199,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Show the PopupMenu
         popupMenu.show();
     }
 
@@ -227,17 +207,10 @@ public class MainActivity extends AppCompatActivity {
         builder.setTitle("Confirm Delete");
         builder.setMessage("Are you sure you want to delete this list?");
 
-        builder.setPositiveButton("Delete", (dialog, which) -> {
-            // Handle the deletion here
-            deleteList(listId);
-        });
+        builder.setPositiveButton("Delete", (dialog, which) -> deleteList(listId));
 
-        builder.setNegativeButton("Cancel", (dialog, which) -> {
-            // Do nothing, simply dismiss the dialog
-            dialog.dismiss();
-        });
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
 
-        // Create and show the AlertDialog
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
@@ -254,7 +227,6 @@ public class MainActivity extends AppCompatActivity {
                         String status = jsonResponse.getString("status");
                         String message = jsonResponse.getString("message");
                         if ("success".equals(status)) {
-                            // Successful response, handle accordingly
                             String userId = jsonResponse.getString("userId");
 
                             SharedPreferencesManager.saveEmail(MainActivity.this, email);
@@ -263,7 +235,6 @@ public class MainActivity extends AppCompatActivity {
 
                             getLists(userId);
                         } else {
-                            // Handle other scenarios
                             Toast.makeText(MainActivity.this, "Login error", Toast.LENGTH_LONG).show();
                             Log.e("LOGIN REQUEST", "Error: " + message);
                             SharedPreferencesManager.clearData(MainActivity.this);
@@ -331,12 +302,10 @@ public class MainActivity extends AppCompatActivity {
                             listItems.add(new ListItem(id, name));
                         }
 
-                        // Step 3: Convert to array
                         ListItem[] data = listItems.toArray(new ListItem[0]);
 
                         ListAdapter adapter = new ListAdapter(data);
 
-                        // Set the adapter for the ListView
                         ListView listView = findViewById(R.id.listView);
                         listView.setAdapter(adapter);
 

@@ -24,25 +24,22 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <!-- Centered Text "My Account" -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="My Account"
+                    android:text="@string/my_account"
                     android:textColor="@android:color/white"
                     android:textSize="18sp" />
 
-                <!-- Your layout file -->
-                <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                    xmlns:app="http://schemas.android.com/apk/res-auto"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp">
 
-                    <!-- White circle -->
                     <ImageView
+                        android:contentDescription="@string/profile_image"
                         android:id="@+id/avatar_circle"
                         android:layout_width="64dp"
                         android:layout_height="64dp"
@@ -52,7 +49,6 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:srcCompat="@drawable/ic_circle_white" />
 
-                    <!-- Dynamic letter -->
                     <TextView
                         android:id="@+id/dynamicLetter_tv"
                         android:layout_width="wrap_content"
@@ -65,7 +61,6 @@
                         app:layout_constraintTop_toTopOf="@id/avatar_circle" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <!-- Centered Text "Welcome A" -->
                 <TextView
                     android:id="@+id/welcomeUser_tv"
                     android:layout_width="wrap_content"
@@ -93,9 +88,10 @@
             android:drawableStart="@drawable/ic_email_black"
             android:drawablePadding="8dp"
             android:elevation="6dp"
-            android:hint="Email"
+            android:hint="@string/email"
             android:inputType="textEmailAddress"
-            android:paddingStart="8dp" />
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp" />
 
         <EditText
             android:id="@+id/name_et"
@@ -106,21 +102,22 @@
             android:drawableStart="@drawable/ic_avatar_black"
             android:drawablePadding="8dp"
             android:elevation="6dp"
-            android:hint="Email"
+            android:hint="@string/email"
             android:inputType="textEmailAddress"
-            android:paddingStart="8dp" />
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp" />
 
 
         <Button
             android:id="@+id/save_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Save" />
+            android:text="@string/save" />
 
         <Button
             android:id="@+id/logout_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="logout" />
+            android:text="@string/logout" />
     </LinearLayout>
 </RelativeLayout>

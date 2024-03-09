@@ -51,7 +51,8 @@
                 android:background="@drawable/edittext_background"
                 android:drawablePadding="8dp"
                 android:elevation="6dp"
-                android:inputType="text" />
+                android:inputType="text"
+                android:importantForAutofill="no" />
 
             <Button
                 android:id="@+id/addItem_btn"
@@ -59,7 +60,7 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
                 android:layout_marginVertical="10dp"
-                android:text="Add" />
+                android:text="@string/add" />
         </LinearLayout>
     </LinearLayout>
 

@@ -1,3 +1,25 @@
 <resources>
     <string name="app_name">Shopping list</string>
+    <string name="add_list">Add list</string>
+    <string name="add">Add</string>
+    <string name="name">Name</string>
+    <string name="notes">Notes</string>
+    <string name="submit">Submit</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="my_account">My Account</string>
+    <string name="save">Save</string>
+    <string name="logout">Logout</string>
+    <string name="username">Username</string>
+    <string name="repeat_password">Repeat password</string>
+    <string name="parent_category">Parent category</string>
+    <string name="link">Link</string>
+    <string name="shelf">Shelf</string>
+    <string name="quantity">Quantity</string>
+    <string name="options">Options</string>
+    <string name="profile_icon">Profile icon</string>
+    <string name="edit_item">Edit item</string>
+    <string name="profile_image">Profile image</string>
 </resources>

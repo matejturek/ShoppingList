@@ -3,14 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="8dp">
+    android:padding="8dp"
+    android:baselineAligned="false">
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:padding="5dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="5dp">
 
         <TextView
             android:id="@+id/listview_name"
@@ -18,8 +19,6 @@
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:textStyle="bold" />
-
-
     </LinearLayout>
 
     <LinearLayout
@@ -28,12 +27,11 @@
         android:orientation="vertical">
 
         <ImageView
+            android:contentDescription="@string/options"
             android:id="@+id/listview_menu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="8dp"
             android:src="@drawable/ic_dots" />
-
-        <!-- Percentages Status (Bottom Right) -->
     </LinearLayout>
 </LinearLayout>

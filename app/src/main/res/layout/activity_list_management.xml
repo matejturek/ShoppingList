@@ -2,12 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorAccent"
     android:gravity="center"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:background="@color/colorAccent">
-
-
+    android:padding="16dp">
 
     <EditText
         android:id="@+id/name_et"
@@ -18,11 +16,10 @@
         android:drawableStart="@drawable/ic_list_black"
         android:drawablePadding="8dp"
         android:elevation="6dp"
-        android:hint="Name"
+        android:hint="@string/name"
         android:inputType="text"
-        android:paddingStart="8dp"/>
-
-
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp" />
 
 
     <EditText
@@ -34,14 +31,14 @@
         android:drawableStart="@drawable/ic_edit_black"
         android:drawablePadding="8dp"
         android:elevation="6dp"
-        android:hint="Notes"
+        android:hint="@string/notes"
         android:inputType="text"
-        android:paddingStart="8dp"/>
-
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp" />
 
     <Button
         android:id="@+id/submit_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Submit"/>
+        android:text="@string/submit" />
 </LinearLayout>
