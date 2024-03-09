@@ -1,53 +1,63 @@
 <?php
-// Include the configuration file
 require_once '../config.php';
 
-// Check if data is sent via POST
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-    // Read raw POST data
     $rawPostData = file_get_contents("php://input");
-
-    // Decode JSON data
     $jsonData = json_decode($rawPostData, true);
-
-    // Check if required fields are present
-    if (isset($jsonData['itemId']) && isset($jsonData['name']) && isset($jsonData['status']) && isset($jsonData['quantity']) && isset($jsonData['link']) && isset($jsonData['shelf'])) {
-        // Your processing logic here
-
-        // Assuming you have a MySQLi connection
+    if (isset($jsonData['itemId']) && isset($jsonData['name']) && isset($jsonData['quantity'])) {
         $mysqli = new mysqli($servername, $username, $password, $dbname);
 
-        // Check for connection errors
         if ($mysqli->connect_error) {
             die("Connection failed: " . $mysqli->connect_error);
         }
 
-        // Update values for the specified item in the items table
-        $query = "UPDATE items SET name = ?, status = ?, quantity = ?, link = ?, shelf = ? WHERE itemId = ?";
+        $query = "UPDATE items SET name = ?, quantity = ?";
 
+        if (isset($jsonData['shelf'])) {
+            $query .= ", shelf = ?";
+        }
+
+        if (isset($jsonData['link'])) {
+            $query .= ", link = ?";
+        }
+        $query .= " WHERE itemId = ?";
         $stmt = $mysqli->prepare($query);
-        $stmt->bind_param("ssssss", $jsonData['name'], $jsonData['status'], $jsonData['quantity'], $jsonData['link'], $jsonData['shelf'], $jsonData['itemId']);
+
+        $itemId = $jsonData['itemId'];
+        $name = $jsonData['name'];
+        $quantity = $jsonData['quantity'];
+
+        if (isset($jsonData['shelf']) && isset($jsonData['link'])) {
+            $shelf = $jsonData['shelf'];
+            $link = $jsonData['link'];
+            $stmt->bind_param("sssii", $name, $quantity, $shelf, $link, $itemId);
+        } elseif (isset($jsonData['shelf'])) {
+            $shelf = $jsonData['shelf'];
+            $stmt->bind_param("sssi", $name, $quantity, $shelf, $itemId);
+        } elseif (isset($jsonData['link'])) {
+            $link = $jsonData['link'];
+            $stmt->bind_param("sssi", $name, $quantity, $link, $itemId);
+        } else {
+            $stmt->bind_param("ssi", $name, $quantity, $itemId);
+        }
+
         $stmt->execute();
+        if ($stmt->error) {
+            echo "SQL Error: " . $stmt->error . "<br>";
+        }
 
-        $stmt->close();
-
-        // Close the connection
-        $mysqli->close();
-
-        // Check if the update was successful
-        if ($mysqli->affected_rows > 0) {
+        if ($stmt->affected_rows > 0) {
             $response = array('status' => 'success', 'message' => 'Item values updated successfully.');
         } else {
             $response = array('status' => 'error', 'message' => 'Failed to update item values.');
         }
 
-        // Respond with the JSON response
         echo json_encode($response);
-
+        $stmt->close();
+        $mysqli->close();
     } else {
-        // Respond with an error message
-        echo json_encode(array('status' => 'error', 'message' => 'Invalid request. Please provide itemId, name, status, quantity, link, and shelf in the JSON data.'));
+        echo json_encode(array('status' => 'error', 'message' => 'Invalid request. Please provide itemId, name, and quantity in the JSON data.'));
     }
 } else {
     echo json_encode(array('status' => 'error', 'message' => 'No data received.'));

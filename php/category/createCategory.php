@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $jsonData = json_decode($rawPostData, true);
 
     // Check if required fields are present
-    if (isset($jsonData['name'])) {
+    if (isset($jsonData['name']) && isset($jsonData['listId'])) { // Fixed parentheses here
         // Your processing logic here
 
         // Assuming you have a MySQLi connection
@@ -23,27 +23,31 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             die("Connection failed: " . $mysqli->connect_error);
         }
 
-        // Insert new category into the categories table
-        $query = "INSERT INTO categories (name) VALUES (?)";
+        if (isset($jsonData['parentCategoryId'])) {
+            $query = "INSERT INTO categories (name, listId, parentCategoryId) VALUES (?, ?, ?)"; // Fixed placeholders here
 
-        $stmt = $mysqli->prepare($query);
-        $stmt->bind_param("s", $jsonData['name']);
+            $stmt = $mysqli->prepare($query);
+            $stmt->bind_param("sss", $jsonData['name'], $jsonData['listId'], $jsonData['parentCategoryId']);
+
+        } else {
+            $query = "INSERT INTO categories (name, listId) VALUES (?, ?)"; // Fixed placeholders here
+
+            $stmt = $mysqli->prepare($query);
+            $stmt->bind_param("ss", $jsonData['name'], $jsonData['listId']);
+        }
         $stmt->execute();
-
-        // Get the ID of the newly created category
         $categoryId = $stmt->insert_id;
-
         $stmt->close();
 
         // Close the connection
         $mysqli->close();
 
         // Respond with success message and the ID of the created category
-        echo json_encode(array("status" => "success", "message" => "Category created successfully", "categoryId" => $categoryId));
+        echo json_encode(array("status" => "success", "message" => "Category created successfully", "categoryId" => $categoryId)); // Fixed response data
 
     } else {
         // Respond with an error message
-        echo json_encode(array("status" => "error", "message" => "Invalid request. Please provide name in the JSON data."));
+        echo json_encode(array("status" => "error", "message" => "Invalid request. Please provide name and listId in the JSON data.")); // Fixed response data
     }
 } else {
     echo json_encode(array("status" => "error", "message" => "No data received."));
