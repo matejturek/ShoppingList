@@ -2,15 +2,19 @@ package sk.ukf.shoppinglist.Activities;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -21,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import sk.ukf.shoppinglist.Activities.Adapters.CategoriesAdapter;
+import sk.ukf.shoppinglist.Activities.Dialogs.CategoryDialog;
 import sk.ukf.shoppinglist.Models.Category;
 import sk.ukf.shoppinglist.Models.Item;
 import sk.ukf.shoppinglist.R;
@@ -28,7 +33,7 @@ import sk.ukf.shoppinglist.Utils.Endpoints;
 import sk.ukf.shoppinglist.Utils.JsonUtils;
 import sk.ukf.shoppinglist.Utils.NetworkManager;
 
-public class ListActivity extends AppCompatActivity {
+public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
 
     ListView listView;
     EditText newItemEt;
@@ -39,6 +44,8 @@ public class ListActivity extends AppCompatActivity {
     List<Item> items = new ArrayList<>();
     private boolean categoriesCompleted = false;
     private boolean itemsCompleted = false;
+    ImageView profileIv, menuIv;
+    ArrayList<String> categoriesNames;
 
 
     @Override
@@ -66,17 +73,36 @@ public class ListActivity extends AppCompatActivity {
                 }
             }
         });
+        categoriesNames = new ArrayList<>();
 
         typeSpinner = findViewById(R.id.type_sp);
 
+        menuIv = findViewById(R.id.menu);
 
+        menuIv.setOnClickListener(view -> showPopupMenu(view));
+        menuIv.setVisibility(View.INVISIBLE);
 
         init();
+    }
+
+
+    private void showPopupMenu(View view) {
+        PopupMenu popupMenu = new PopupMenu(this, view);
+        popupMenu.inflate(R.menu.list_items_menu);
+        popupMenu.setOnMenuItemClickListener(this);
+        popupMenu.show();
     }
 
     private void init() {
         getCategories(listId);
         getItems(listId);
+    }
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        if (item.getItemId() == R.id.create_category) {
+            CategoryDialog.showCreateDialog(this, (name, category) -> Toast.makeText(ListActivity.this, name + " " + category, Toast.LENGTH_LONG).show(), categoriesNames);
+        }
+        return false;
     }
 
     private void onBothAsyncMethodsCompleted() {
@@ -85,7 +111,6 @@ public class ListActivity extends AppCompatActivity {
         }
         Map<String, List<Item>> categoryMap = new HashMap<>();
 
-        ArrayList<String> categoriesNames = new ArrayList<>();
         if (categories.size() > 0) {
             for (Category category : categories) {
                 int categoryId = category.getId();
@@ -132,6 +157,7 @@ public class ListActivity extends AppCompatActivity {
 
         CategoriesAdapter categoriesAdapter = new CategoriesAdapter(ListActivity.this, categoryMap);
         listView.setAdapter(categoriesAdapter);
+        menuIv.setVisibility(View.VISIBLE);
     }
 
     private boolean isValidInput(String item) {
