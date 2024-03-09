@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@color/colorAccent">
+
+
+    <EditText
+        android:id="@+id/quantity_et"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="14dp"
+        android:background="@drawable/edittext_background"
+        android:elevation="6dp"
+        android:inputType="numberDecimal"
+        android:hint="Quantity"
+        android:paddingStart="8dp" />
+
+
+    <EditText
+        android:id="@+id/name_et"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="14dp"
+        android:background="@drawable/edittext_background"
+        android:elevation="6dp"
+        android:hint="Name"
+        android:paddingStart="8dp" />
+
+
+    <EditText
+        android:id="@+id/shelf_et"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="14dp"
+        android:background="@drawable/edittext_background"
+        android:elevation="6dp"
+        android:hint="Shelf"
+        android:paddingStart="8dp" />
+
+
+    <EditText
+        android:id="@+id/link_et"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="14dp"
+        android:background="@drawable/edittext_background"
+        android:elevation="6dp"
+        android:hint="Link"
+        android:paddingStart="8dp" />
+
+</LinearLayout>

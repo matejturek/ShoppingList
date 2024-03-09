@@ -35,12 +35,5 @@
             android:src="@drawable/ic_dots" />
 
         <!-- Percentages Status (Bottom Right) -->
-        <TextView
-            android:id="@+id/listview_percentage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:padding="8dp"
-            android:text="75%" />
     </LinearLayout>
 </LinearLayout>

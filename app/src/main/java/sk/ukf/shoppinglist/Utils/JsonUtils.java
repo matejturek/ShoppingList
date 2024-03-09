@@ -171,11 +171,14 @@ public class JsonUtils {
         return jsonRequest;
     }
 
-    public static JSONObject createItem(String listId, String item) {
+    public static JSONObject createItem(String listId, String item, int categoryId) {
         JSONObject jsonRequest = new JSONObject();
         try {
             jsonRequest.put("listId", listId);
             jsonRequest.put("name", item);
+            if (categoryId >= 0) {
+                jsonRequest.put("categoryId", categoryId);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -183,11 +186,14 @@ public class JsonUtils {
     }
 
 
-    public static JSONObject createCategory(String listId, String category) {
+    public static JSONObject createCategory(String listId, String category, int parentCategoryId) {
         JSONObject jsonRequest = new JSONObject();
         try {
             jsonRequest.put("listId", listId);
             jsonRequest.put("name", category);
+            if (parentCategoryId >= 0) {
+                jsonRequest.put("parentCategoryId", parentCategoryId);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -244,6 +250,20 @@ public class JsonUtils {
         try {
             jsonRequest.put("itemId", itemId);
             jsonRequest.put("status", status ? "1" : "0");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonRequest;
+    }
+
+    public static JSONObject setItem(int itemId, int quantity, String name, String shelf, String link) {
+        JSONObject jsonRequest = new JSONObject();
+        try {
+            jsonRequest.put("itemId", itemId);
+            jsonRequest.put("quantity", quantity);
+            jsonRequest.put("name", name);
+            jsonRequest.put("shelf", shelf);
+            jsonRequest.put("link", link);
         } catch (JSONException e) {
             e.printStackTrace();
         }

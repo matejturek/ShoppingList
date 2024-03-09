@@ -9,6 +9,7 @@ public class Category {
     private final int parentId;
     private final String name;
     private final List<Item> items;
+    private List<Category> subcategories;
 
     public Category(int id, String name, int parentId) {
         this.id = id;
@@ -33,5 +34,17 @@ public class Category {
 
     public void addItem(Item item) {
         items.add(item);
+    }
+
+    public List<Category> getSubcategories(List<Category> allCategories) {
+        if (subcategories == null) {
+            subcategories = new ArrayList<>();
+            for (Category category : allCategories) {
+                if (category.getParentId() == id) {
+                    subcategories.add(category);
+                }
+            }
+        }
+        return subcategories;
     }
 }

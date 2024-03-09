@@ -15,6 +15,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -38,7 +40,7 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
     ListView listView;
     EditText newItemEt;
     Button addItemBtn;
-    Spinner typeSpinner;
+    Spinner categorySpinner;
     String listId;
     List<Category> categories = new ArrayList<>();
     List<Item> items = new ArrayList<>();
@@ -55,27 +57,23 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
 
         listId = getIntent().getStringExtra("listId");
 
-        listView = findViewById(R.id.listView);
+        listView  = findViewById(R.id.listView);
+
         newItemEt = findViewById(R.id.newItem_et);
         addItemBtn = findViewById(R.id.addItem_btn);
         addItemBtn.setOnClickListener(view -> {
-            if (typeSpinner.getSelectedItemPosition() == 0) {
-                //Category
-                String category = newItemEt.getText().toString().trim();
-                if (isValidInput(category)) {
-                    createCategory(category);
-                }
-            } else {
-                //Item {
-                String item = newItemEt.getText().toString().trim();
-                if (isValidInput(item)) {
-                    createItem(item);
-                }
+            String item = newItemEt.getText().toString().trim();
+            int categoryId = -1;
+            if (categories.size() > 0) {
+                categoryId = categories.get(categorySpinner.getSelectedItemPosition()).getId();
+            }
+            if (isValidInput(item)) {
+                createItem(item, categoryId);
             }
         });
         categoriesNames = new ArrayList<>();
 
-        typeSpinner = findViewById(R.id.type_sp);
+        categorySpinner = findViewById(R.id.type_sp);
 
         menuIv = findViewById(R.id.menu);
 
@@ -97,10 +95,20 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         getCategories(listId);
         getItems(listId);
     }
+
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         if (item.getItemId() == R.id.create_category) {
-            CategoryDialog.showCreateDialog(this, (name, category) -> Toast.makeText(ListActivity.this, name + " " + category, Toast.LENGTH_LONG).show(), categoriesNames);
+            CategoryDialog.showCreateDialog(this, new CategoryDialog.OnCreateClickListener() {
+                @Override
+                public void onCreateClick(String name, String categoryName) {
+                    Category foundCategory = categories.stream()
+                            .filter(category -> categoryName.equals(category.getName()))
+                            .findFirst()
+                            .orElse(null);
+                    createCategory(name, (foundCategory != null ? foundCategory.getId() : -1));
+                }
+            }, categoriesNames);
         }
         return false;
     }
@@ -109,7 +117,7 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         if (!categoriesCompleted || !itemsCompleted) {
             return;
         }
-        Map<String, List<Item>> categoryMap = new HashMap<>();
+        Map<Category, List<Item>> categoryMap = new HashMap<>();
 
         if (categories.size() > 0) {
             for (Category category : categories) {
@@ -125,9 +133,9 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
 
                 // Check if the category name is not null and the item list is not empty
                 if (!category.getName().isEmpty() && !itemList.isEmpty()) {
-                    categoryMap.put(category.getName(), itemList);
+                    categoryMap.put(category, itemList);
                 }
-                categoryMap.put(category.getName(), itemList);
+                categoryMap.put(category, itemList);
                 categoriesNames.add(category.getName());
             }
         }
@@ -135,11 +143,11 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
             categoriesNames.add("");
             ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categoriesNames);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            typeSpinner.setAdapter(adapter);
+            categorySpinner.setAdapter(adapter);
         } else {
-            ViewGroup parent = (ViewGroup) typeSpinner.getParent();
+            ViewGroup parent = (ViewGroup) categorySpinner.getParent();
             if (parent != null) {
-                parent.removeView(typeSpinner);
+                parent.removeView(categorySpinner);
             }
         }
 
@@ -151,11 +159,10 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
                     uncategorizedItemList.add(item);
                 }
             }
-            categoryMap.put("", uncategorizedItemList);
+            categoryMap.put(null, uncategorizedItemList);
         }
 
-
-        CategoriesAdapter categoriesAdapter = new CategoriesAdapter(ListActivity.this, categoryMap);
+        CategoriesAdapter categoriesAdapter = new CategoriesAdapter(ListActivity.this, categories);
         listView.setAdapter(categoriesAdapter);
         menuIv.setVisibility(View.VISIBLE);
     }
@@ -168,9 +175,9 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         return true;
     }
 
-    private void createItem(String item) {
+    private void createItem(String item, int categoryId) {
 
-        JSONObject jsonRequest = JsonUtils.createItem(listId, item);
+        JSONObject jsonRequest = JsonUtils.createItem(listId, item, categoryId);
         NetworkManager.performPostRequest(Endpoints.CREATE_ITEM.getEndpoint(), jsonRequest, new NetworkManager.ResultCallback() {
             @Override
             public void onSuccess(String result) {
@@ -181,6 +188,7 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
                         String message = jsonResponse.getString("message");
                         if ("success".equals(status)) {
                             getItems(listId);
+                            init();
                         } else {
                             Toast.makeText(ListActivity.this, message, Toast.LENGTH_LONG).show();
                         }
@@ -199,9 +207,9 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
     }
 
 
-    private void createCategory(String category) {
+    private void createCategory(String category, int parentCategory) {
 
-        JSONObject jsonRequest = JsonUtils.createCategory(listId, category);
+        JSONObject jsonRequest = JsonUtils.createCategory(listId, category, parentCategory);
         NetworkManager.performPostRequest(Endpoints.CREATE_CATEGORY.getEndpoint(), jsonRequest, new NetworkManager.ResultCallback() {
             @Override
             public void onSuccess(String result) {
@@ -239,8 +247,8 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
             public void onSuccess(String result) {
                 runOnUiThread(() -> {
                     try {
-                       JSONArray jsonResponse = new JSONArray(result);
-                       categories = new ArrayList<>();
+                        JSONArray jsonResponse = new JSONArray(result);
+                        categories = new ArrayList<>();
                         for (int i = 0; i < jsonResponse.length(); i++) {
                             JSONObject jsonObject = jsonResponse.getJSONObject(i);
                             int id = jsonObject.getInt("categoryId");
@@ -252,8 +260,7 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
                     } catch (Exception e) {
                         Toast.makeText(ListActivity.this, "Get list error", Toast.LENGTH_LONG).show();
                         Log.e("GET LIST REQUEST", "Error parsing JSON", e);
-                    }
-                    finally {
+                    } finally {
                         categoriesCompleted = true;
                         onBothAsyncMethodsCompleted();
                     }
@@ -292,7 +299,13 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
                             int quantity = jsonObject.getInt("quantity");
                             boolean status = jsonObject.getInt("status") == 1;
                             String link = jsonObject.getString("link");
+                            if (link.equals("null")) {
+                                link = null;
+                            }
                             String shelf = jsonObject.getString("shelf");
+                            if (shelf.equals("null")) {
+                                shelf = null;
+                            }
                             items.add(new Item(id, categoryId, name, quantity, status, link, shelf));
                         }
 
@@ -300,8 +313,7 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
                     } catch (Exception e) {
                         Toast.makeText(ListActivity.this, "Get list error", Toast.LENGTH_LONG).show();
                         Log.e("GET LIST REQUEST", "Error parsing JSON", e);
-                    }
-                    finally {
+                    } finally {
                         itemsCompleted = true;
                         onBothAsyncMethodsCompleted();
                     }
@@ -322,7 +334,6 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         super.onBackPressed();
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
-
 
 
 }

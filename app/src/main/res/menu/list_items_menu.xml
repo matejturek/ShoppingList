@@ -2,6 +2,6 @@
 
     <item
         android:id="@+id/create_category"
-        android:title="Edit"/>
+        android:title="Create new category"/>
 
 </menu>

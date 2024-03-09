@@ -12,7 +12,6 @@ import android.widget.Spinner;
 
 import java.util.ArrayList;
 
-import sk.ukf.shoppinglist.Models.Category;
 import sk.ukf.shoppinglist.R;
 
 public class CategoryDialog {

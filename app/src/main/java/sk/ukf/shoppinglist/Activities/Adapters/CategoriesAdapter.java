@@ -8,33 +8,33 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import sk.ukf.shoppinglist.Activities.ListActivity;
+import sk.ukf.shoppinglist.Models.Category;
 import sk.ukf.shoppinglist.Models.Item;
 import sk.ukf.shoppinglist.R;
 
 public class CategoriesAdapter extends BaseAdapter {
 
     private final Context context;
-    private final Map<String, List<Item>> categories;
+    private final List<Category> categoryList;
 
-    public CategoriesAdapter(Context context, Map<String, List<Item>> categories) {
+    public CategoriesAdapter(Context context, List<Category> categoryList) {
         this.context = context;
-        this.categories = categories;
+        this.categoryList = categoryList;
     }
 
     @Override
     public int getCount() {
-        return categories.size();
+        return categoryList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        // Convert the map values to a list and get the item at the specified position
-        List<List<Item>> categoryLists = (List<List<Item>>) categories.values();
-        return categoryLists.get(position);
+        return categoryList.get(position);
     }
 
     @Override
@@ -44,20 +44,32 @@ public class CategoriesAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        // Inflate or reuse a layout for each item
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(R.layout.list_category_layout, parent, false);
         }
 
-        // Get the category name and associated items
-        String categoryName = (String) categories.keySet().toArray()[position];
-        List<Item> items = categories.get(categoryName);
+        Category category = categoryList.get(position);
+        String categoryName = (category == null) ? "" : category.getName();
 
-        // Set the category name to a TextView
         TextView categoryNameTextView = convertView.findViewById(R.id.category);
         categoryNameTextView.setText(categoryName);
 
-        // Use another adapter (e.g., ItemsAdapter) to display the items within the category
+        List<Item> items = new ArrayList<>();
+        if (category != null) {
+            items = category.getItems();
+            if (items == null) {
+                items = new ArrayList<>();
+            }
+
+            List<Category> subcategories = category.getSubcategories(categoryList);
+            if (subcategories != null && !subcategories.isEmpty()) {
+                // If there are subcategories, inflate a nested ListView
+                CategoriesAdapter subcategoriesAdapter = new CategoriesAdapter(context, subcategories);
+                ListView subcategoriesListView = convertView.findViewById(R.id.categoryListView);
+                subcategoriesListView.setAdapter(subcategoriesAdapter);
+            }
+        }
+
         ItemsAdapter itemsAdapter = new ItemsAdapter(context, items);
         ListView itemsListView = convertView.findViewById(R.id.categoryListView);
         itemsListView.setAdapter(itemsAdapter);
