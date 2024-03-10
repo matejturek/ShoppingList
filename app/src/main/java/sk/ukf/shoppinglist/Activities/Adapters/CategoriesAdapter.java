@@ -54,25 +54,25 @@ public class CategoriesAdapter extends BaseAdapter {
         TextView categoryNameTextView = convertView.findViewById(R.id.category);
         categoryNameTextView.setText(categoryName);
 
-        List<Item> items = new ArrayList<>();
-        if (category != null) {
-            items = category.getItems();
-            if (items == null) {
-                items = new ArrayList<>();
-            }
-
-            List<Category> subcategories = category.getSubcategories(categoryList);
-            if (subcategories != null && !subcategories.isEmpty()) {
-                // If there are subcategories, inflate a nested ListView
-                CategoriesAdapter subcategoriesAdapter = new CategoriesAdapter(context, subcategories);
-                ListView subcategoriesListView = convertView.findViewById(R.id.categoryListView);
-                subcategoriesListView.setAdapter(subcategoriesAdapter);
-            }
-        }
-
-        ItemsAdapter itemsAdapter = new ItemsAdapter(context, items);
-        ListView itemsListView = convertView.findViewById(R.id.categoryListView);
-        itemsListView.setAdapter(itemsAdapter);
+//        List<Item> items = new ArrayList<>();
+//        if (category != null) {
+//            items = category.getItems();
+//            if (items == null) {
+//                items = new ArrayList<>();
+//            }
+//
+//            List<Category> subcategories = category.getSubcategories(categoryList);
+//            if (subcategories != null && !subcategories.isEmpty()) {
+//                // If there are subcategories, inflate a nested ListView
+//                CategoriesAdapter subcategoriesAdapter = new CategoriesAdapter(context, subcategories);
+//                ListView subcategoriesListView = convertView.findViewById(R.id.categoryListView);
+//                subcategoriesListView.setAdapter(subcategoriesAdapter);
+//            }
+//        }
+//
+//        ItemsAdapter itemsAdapter = new ItemsAdapter(context, items);
+//        ListView itemsListView = convertView.findViewById(R.id.categoryListView);
+//        itemsListView.setAdapter(itemsAdapter);
 
         return convertView;
     }

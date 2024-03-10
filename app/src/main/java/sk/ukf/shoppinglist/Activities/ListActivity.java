@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import sk.ukf.shoppinglist.Activities.Adapters.CategoriesAdapter;
+import sk.ukf.shoppinglist.Activities.Adapters.NewAdapter;
 import sk.ukf.shoppinglist.Activities.Dialogs.CategoryDialog;
 import sk.ukf.shoppinglist.Models.Category;
 import sk.ukf.shoppinglist.Models.Item;
@@ -43,8 +44,9 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
     Button addItemBtn;
     Spinner categorySpinner;
     String listId;
-    List<Category> categories = new ArrayList<>();
-    List<Item> items = new ArrayList<>();
+    ArrayList<Category> allCategories = new ArrayList<>();
+    ArrayList<Category> sortedCategories = new ArrayList<>();
+    ArrayList<Item> items = new ArrayList<>();
     private boolean categoriesCompleted = false;
     private boolean itemsCompleted = false;
     ImageView profileIv, menuIv;
@@ -66,8 +68,8 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         addItemBtn.setOnClickListener(view -> {
             String item = newItemEt.getText().toString().trim();
             int categoryId = -1;
-            if (categories.size() > 0) {
-                categoryId = categories.get(categorySpinner.getSelectedItemPosition()).getId();
+            if (allCategories.size() > 0) {
+                categoryId = allCategories.get(categorySpinner.getSelectedItemPosition()).getId();
             }
             if (isValidInput(item)) {
                 createItem(item, categoryId);
@@ -106,7 +108,7 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
             CategoryDialog.showCreateDialog(this, new CategoryDialog.OnCreateClickListener() {
                 @Override
                 public void onCreateClick(String name, String categoryName) {
-                    Category foundCategory = categories.stream()
+                    Category foundCategory = allCategories.stream()
                             .filter(category -> categoryName.equals(category.getName()))
                             .findFirst()
                             .orElse(null);
@@ -121,28 +123,13 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         if (!categoriesCompleted || !itemsCompleted) {
             return;
         }
-        Map<Category, List<Item>> categoryMap = new HashMap<>();
 
-        if (categories.size() > 0) {
-            for (Category category : categories) {
-                int categoryId = category.getId();
-                List<Item> itemList = new ArrayList<>();
+        sortedCategories = getCategoryData();
 
-                for (Item item : items) {
-                    if (item.getCategoryId() == categoryId) {
-                        category.addItem(item);
-                        itemList.add(item);
-                    }
-                }
-
-                // Check if the category name is not null and the item list is not empty
-                if (!category.getName().isEmpty() && !itemList.isEmpty()) {
-                    categoryMap.put(category, itemList);
-                }
-                categoryMap.put(category, itemList);
-                categoriesNames.add(category.getName());
-            }
+        for (Category category: allCategories) {
+            categoriesNames.add(category.getName());
         }
+
         if (categoriesNames.size() > 0) {
             categoriesNames.add("");
             ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categoriesNames);
@@ -155,20 +142,37 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
             }
         }
 
+        NewAdapter adapter = new NewAdapter(ListActivity.this, sortedCategories, items);
+        listView.setAdapter(adapter);
+        menuIv.setVisibility(View.VISIBLE);
+    }
 
-        if (items.size() > 0) {
-            List<Item> uncategorizedItemList = new ArrayList<>();
-            for (Item item : items) {
-                if (item.getCategoryId() == -1) {
-                    uncategorizedItemList.add(item);
+    private ArrayList<Category> getCategoryData() {
+        ArrayList<Category> rootCategories = new ArrayList<>();
+        Map<Integer, Category> categoryMap = new HashMap<>();
+
+        for (Category category : allCategories) {
+            int parentId = category.getParentId();
+            if (parentId == -1) {
+                rootCategories.add(category);
+            } else {
+                Category parentCategory = categoryMap.get(parentId);
+                if (parentCategory != null) {
+                    if (parentCategory.getSubcategories() == null) {
+                        parentCategory.setSubcategories(new ArrayList<>());
+                    }
+                    parentCategory.getSubcategories().add(category);
                 }
             }
-            categoryMap.put(null, uncategorizedItemList);
+            for (Item item : items) {
+                if (item.getCategoryId() == category.getId()) {
+                    category.addItem(item);
+                }
+            }
+            categoryMap.put(category.getId(), category);
         }
 
-        CategoriesAdapter categoriesAdapter = new CategoriesAdapter(ListActivity.this, categories);
-        listView.setAdapter(categoriesAdapter);
-        menuIv.setVisibility(View.VISIBLE);
+        return rootCategories;
     }
 
     private boolean isValidInput(String item) {
@@ -252,13 +256,13 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
                 runOnUiThread(() -> {
                     try {
                         JSONArray jsonResponse = new JSONArray(result);
-                        categories = new ArrayList<>();
+                        allCategories = new ArrayList<>();
                         for (int i = 0; i < jsonResponse.length(); i++) {
                             JSONObject jsonObject = jsonResponse.getJSONObject(i);
                             int id = jsonObject.getInt("categoryId");
                             String name = jsonObject.getString("name");
                             int parentId = jsonObject.optInt("parentCategoryId", -1);
-                            categories.add(new Category(id, name, parentId));
+                            allCategories.add(new Category(id, name, parentId));
                         }
 
                     } catch (Exception e) {
