@@ -8,13 +8,14 @@
         android:id="@+id/category"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:padding="8dp"
         android:textSize="18sp"
         android:textStyle="bold" />
 
     <LinearLayout
-        android:orientation="vertical"
         android:id="@+id/containerLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
 </LinearLayout>

@@ -16,18 +16,14 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import sk.ukf.shoppinglist.Activities.Adapters.CategoriesAdapter;
 import sk.ukf.shoppinglist.Activities.Adapters.NewAdapter;
 import sk.ukf.shoppinglist.Activities.Dialogs.CategoryDialog;
 import sk.ukf.shoppinglist.Models.Category;
@@ -89,7 +85,6 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         init();
     }
 
-
     private void showPopupMenu(View view) {
         PopupMenu popupMenu = new PopupMenu(this, view);
         popupMenu.inflate(R.menu.list_items_menu);
@@ -108,13 +103,13 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
             CategoryDialog.showCreateDialog(this, new CategoryDialog.OnCreateClickListener() {
                 @Override
                 public void onCreateClick(String name, String categoryName) {
-                    Category foundCategory = allCategories.stream()
+                    Category foundCategory = sortedCategories.stream()
                             .filter(category -> categoryName.equals(category.getName()))
                             .findFirst()
                             .orElse(null);
                     createCategory(name, (foundCategory != null ? foundCategory.getId() : -1));
                 }
-            }, categoriesNames);
+            }, null, categoriesNames);
         }
         return false;
     }
@@ -131,7 +126,7 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         }
 
         if (categoriesNames.size() > 0) {
-            categoriesNames.add("");
+            categoriesNames.add("Uncategorized");
             ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categoriesNames);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             categorySpinner.setAdapter(adapter);
@@ -142,7 +137,7 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
             }
         }
 
-        NewAdapter adapter = new NewAdapter(ListActivity.this, sortedCategories, items);
+        NewAdapter adapter = new NewAdapter(ListActivity.this, sortedCategories, categoriesNames, items);
         listView.setAdapter(adapter);
         menuIv.setVisibility(View.VISIBLE);
     }
@@ -227,6 +222,9 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
                         String status = jsonResponse.getString("status");
                         String message = jsonResponse.getString("message");
                         if ("success".equals(status)) {
+                            categoriesCompleted = false;
+                            itemsCompleted = false;
+                            getCategories(listId);
                             getItems(listId);
                         } else {
                             Toast.makeText(ListActivity.this, message, Toast.LENGTH_LONG).show();

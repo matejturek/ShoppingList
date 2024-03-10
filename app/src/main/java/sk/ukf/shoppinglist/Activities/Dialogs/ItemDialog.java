@@ -4,12 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.Spinner;
-
-import java.util.ArrayList;
 
 import sk.ukf.shoppinglist.Models.Item;
 import sk.ukf.shoppinglist.R;
@@ -17,11 +12,14 @@ import sk.ukf.shoppinglist.R;
 public class ItemDialog {
 
     public interface OnCreateClickListener {
-
         void onCreateClick(int quantity, String name, String shelf, String link);
     }
 
-    public static void showCreateDialog(Context context, final OnCreateClickListener listener, Item item) {
+    public interface OnDeleteClickListener {
+        void onDeleteClick();
+    }
+
+    public static void showCreateDialog(Context context, final OnCreateClickListener createListener, final OnDeleteClickListener deleteListener, Item item) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View dialogView = inflater.inflate(R.layout.item_dialog, null);
 
@@ -39,7 +37,6 @@ public class ItemDialog {
             linkEt.setText(String.valueOf(item.getLink()));
         }
 
-
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setView(dialogView)
                 .setTitle("Create category")
@@ -48,9 +45,17 @@ public class ItemDialog {
                     String name = nameEt.getText().toString();
                     String shelf = shelfEt.getText().toString();
                     String link = linkEt.getText().toString();
-                    listener.onCreateClick(quantity, name, shelf, link);
+                    createListener.onCreateClick(quantity, name, shelf, link);
                 })
                 .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
+
+        if (deleteListener != null) {
+            builder.setNeutralButton("Delete", (dialog, which) -> {
+                deleteListener.onDeleteClick();
+                // Dismiss the dialog after performing the delete action
+                dialog.dismiss();
+            });
+        }
 
         AlertDialog dialog = builder.create();
         dialog.show();

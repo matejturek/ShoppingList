@@ -20,7 +20,11 @@ public class CategoryDialog {
         void onCreateClick(String name, String category);
     }
 
-    public static void showCreateDialog(Context context, final OnCreateClickListener listener, ArrayList<String> categories) {
+    public interface OnDeleteClickListener {
+        void onDeleteClick();
+    }
+
+    public static void showCreateDialog(Context context, final OnCreateClickListener listener, final OnDeleteClickListener deleteListener, ArrayList<String> categories) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View dialogView = inflater.inflate(R.layout.category_dialog, null);
 
@@ -48,6 +52,14 @@ public class CategoryDialog {
                 })
                 .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
 
+
+        if (deleteListener != null) {
+            builder.setNeutralButton("Delete", (dialog, which) -> {
+                deleteListener.onDeleteClick();
+                // Dismiss the dialog after performing the delete action
+                dialog.dismiss();
+            });
+        }
         AlertDialog dialog = builder.create();
         dialog.show();
     }

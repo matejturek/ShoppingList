@@ -22,4 +22,5 @@
     <string name="profile_icon">Profile icon</string>
     <string name="edit_item">Edit item</string>
     <string name="profile_image">Profile image</string>
+    <string name="edit_category">Edit category</string>
 </resources>
