@@ -41,4 +41,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/submit" />
+
+    <ListView
+        android:id="@+id/invites_lv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
 </LinearLayout>

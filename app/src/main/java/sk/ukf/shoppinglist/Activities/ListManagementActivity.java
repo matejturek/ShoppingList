@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import org.json.JSONObject;
@@ -23,6 +24,7 @@ public class ListManagementActivity extends AppCompatActivity {
 
     EditText nameEt, notesEt;
     Button submitBtn;
+    ListView invitesLv;
 
     private int mode;
     private String listId;
@@ -38,11 +40,13 @@ public class ListManagementActivity extends AppCompatActivity {
         nameEt = findViewById(R.id.name_et);
         notesEt = findViewById(R.id.notes_et);
         submitBtn = findViewById(R.id.submit_btn);
+        invitesLv = findViewById(R.id.invites_lv);
 
         mode = getIntent().getIntExtra("MODE", MODE_CREATE);
         if (mode == MODE_EDIT) {
             listId = getIntent().getStringExtra("listId");
             getList(listId);
+            getInvites(listId);
         }
 
         submitBtn.setOnClickListener(view -> {
@@ -56,6 +60,14 @@ public class ListManagementActivity extends AppCompatActivity {
                 }
             }
         });
+
+    }
+
+    private void getInvites(String listId) {
+
+    };
+    private void initInvites() {
+
     }
 
     private boolean isValidInput(String name, String notes) {
@@ -111,7 +123,7 @@ public class ListManagementActivity extends AppCompatActivity {
                         String name = jsonResponse.getString("name");
                         String notes = jsonResponse.getString("notes");
                         fillValues(name, notes);
-                    } catch (Exception e ) {
+                    } catch (Exception e) {
                         Toast.makeText(ListManagementActivity.this, "Get list error", Toast.LENGTH_LONG).show();
                         Log.e("GET LIST REQUEST", "Error parsing JSON", e);
                     }

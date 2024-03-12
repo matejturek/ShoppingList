@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import sk.ukf.shoppinglist.Activities.Dialogs.InviteDialog;
 import sk.ukf.shoppinglist.Models.ListItem;
 import sk.ukf.shoppinglist.Utils.Endpoints;
 import sk.ukf.shoppinglist.Utils.NetworkManager;
@@ -187,7 +188,12 @@ public class MainActivity extends AppCompatActivity {
 
                 return true;
             } else if (item.getItemId() == R.id.menu_invite) {
-                Toast.makeText(MainActivity.this, "Invite clicked", Toast.LENGTH_SHORT).show();
+                InviteDialog.showCreateDialog(MainActivity.this, new InviteDialog.OnCreateClickListener() {
+                    @Override
+                    public void onCreateClick(String email) {
+                        invitePerson(email);
+                    }
+                });
                 return true;
             } else if (item.getItemId() == R.id.menu_delete) {
                 ListItem listItem = ((ListItem) listview.getItemAtPosition(position));
@@ -322,4 +328,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void invitePerson(String email) {
+        //TODO
+    }
+
 }
