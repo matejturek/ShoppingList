@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -128,12 +130,14 @@ public class NewAdapter extends BaseAdapter {
                     convertView.setOnLongClickListener(view -> {
                         CategoryDialog.showCreateDialog(context, new CategoryDialog.OnCreateClickListener() {
                             @Override
-                            public void onCreateClick(String name, String categoryName) {
+                            public void onCreateClick(String name, String parentCategory) {
 //                                Category foundCategory = categories.stream()
 //                                        .filter(category -> categoryName.equals(category.getName()))
 //                                        .findFirst()
 //                                        .orElse(null);
-//                                editCategory(name, (foundCategory != null ? foundCategory.getId() : -1));
+
+                                Category category = (Category) getItem(position);
+                                editCategory(category.getId(), name, parentCategory);
                             }
                         }, () -> deleteCategory(categories.get(position).getId()), categoriesNames);
                         return false;
@@ -159,12 +163,6 @@ public class NewAdapter extends BaseAdapter {
                         return false;
                     });
 
-//                    if (position % 2 == 1) {
-//                        convertView.setBackgroundColor(ContextCompat.getColor(context, R.color.colorAccent));
-//                    } else {
-//                        // Reset background color for even categories
-//                        convertView.setBackgroundColor(Color.TRANSPARENT);
-//                    }
                     break;
                 default:
                     break;
@@ -372,6 +370,11 @@ public class NewAdapter extends BaseAdapter {
     }
 
 
+    private void runOnUiThread(Runnable runnable) {
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(runnable);
+    }
+
     public void setItemChecked(String itemId, Boolean checked) {
         JSONObject jsonRequest = JsonUtils.setItemStatusJson(itemId, checked);
         NetworkManager.performPostRequest(Endpoints.SET_ITEM_STATUS.getEndpoint(), jsonRequest, new NetworkManager.ResultCallback() {
@@ -427,39 +430,87 @@ public class NewAdapter extends BaseAdapter {
     }
 
     private void deleteItem(int itemId) {
+            JSONObject jsonRequest = JsonUtils.deleteItemJson(itemId);
+            NetworkManager.performPostRequest(Endpoints.DELETE_ITEM.getEndpoint(), jsonRequest, new NetworkManager.ResultCallback() {
+                @Override
+                public void onSuccess(String result) {
+                    try {
+                        JSONObject jsonResponse = new JSONObject(result);
+                        String status = jsonResponse.getString("status");
+                        String message = jsonResponse.getString("message");
+                        if ("success".equals(status)) {
+                            //TODO refresh
+                        } else {
+                            Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+                        }
+                    } catch (Exception e) {
+                        Toast.makeText(context, "Item delete error", Toast.LENGTH_LONG).show();
+                        Log.e("ITEM DELETE ERROR", "Error parsing JSON", e);
+                    }
+                }
 
+                @Override
+                public void onError(String error) {
+                    Log.e("ITEM DELETE ERROR", "Error parsing JSON");
+                }
+            });
     }
 
     private void deleteCategory(int categoryId) {
-
-    }
-
-    private void editCategory(String listId, String category, int parentCategory) {
-
-        JSONObject jsonRequest = JsonUtils.createCategory(listId, category, parentCategory);
-        NetworkManager.performPostRequest(Endpoints.SET_CATEGORY.getEndpoint(), jsonRequest, new NetworkManager.ResultCallback() {
+        JSONObject jsonRequest = JsonUtils.deleteCategoryJson(categoryId);
+        NetworkManager.performPostRequest(Endpoints.DELETE_CATEGORY.getEndpoint(), jsonRequest, new NetworkManager.ResultCallback() {
             @Override
             public void onSuccess(String result) {
-//                runOnUiThread(() -> {
-//                    try {
-//                        JSONObject jsonResponse = new JSONObject(result);
-//                        String status = jsonResponse.getString("status");
-//                        String message = jsonResponse.getString("message");
-//                        if ("success".equals(status)) {
-//                            getItems(listId);
-//                        } else {
-//                            Toast.makeText(ListActivity.this, message, Toast.LENGTH_LONG).show();
-//                        }
-//                    } catch (Exception e) {
-//                        Toast.makeText(ListActivity.this, "Create category error", Toast.LENGTH_LONG).show();
-//                        Log.e("CREATE CATEGORY REQUEST", "Error parsing JSON", e);
-//                    }
-//                });
+                runOnUiThread(() -> {
+                    try {
+                        JSONObject jsonResponse = new JSONObject(result);
+                        String status = jsonResponse.getString("status");
+                        String message = jsonResponse.getString("message");
+                        if ("success".equals(status)) {
+                            //TODO: relad UI
+                        } else {
+                            Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+                        }
+                    } catch (Exception e) {
+                        Toast.makeText(context, "Delete category error", Toast.LENGTH_LONG).show();
+                        Log.e("DELETE CATEGORY REQUEST", "Error parsing JSON", e);
+                    }
+                });
             }
 
             @Override
             public void onError(String error) {
-//                runOnUiThread(() -> Toast.makeText(ListActivity.this, "Create category error", Toast.LENGTH_LONG).show());
+                runOnUiThread(() -> Toast.makeText(context, "Delete category error", Toast.LENGTH_LONG).show());
+            }
+        });
+    }
+
+    private void editCategory(int categoryId, String category, String parentCategory) {
+
+        JSONObject jsonRequest = JsonUtils.editCategoryJson(categoryId, category, Integer.parseInt(parentCategory));
+        NetworkManager.performPostRequest(Endpoints.SET_CATEGORY.getEndpoint(), jsonRequest, new NetworkManager.ResultCallback() {
+            @Override
+            public void onSuccess(String result) {
+                runOnUiThread(() -> {
+                    try {
+                        JSONObject jsonResponse = new JSONObject(result);
+                        String status = jsonResponse.getString("status");
+                        String message = jsonResponse.getString("message");
+                        if ("success".equals(status)) {
+                            //TODO: relad UI
+                        } else {
+                            Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+                        }
+                    } catch (Exception e) {
+                        Toast.makeText(context, "Edit category error", Toast.LENGTH_LONG).show();
+                        Log.e("EDIT CATEGORY REQUEST", "Error parsing JSON", e);
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> Toast.makeText(context, "Edit category error", Toast.LENGTH_LONG).show());
             }
         });
     }

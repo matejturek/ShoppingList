@@ -234,7 +234,7 @@ public class JsonUtils {
         return jsonRequest;
     }
 
-    public static JSONObject deleteCategoryJson(String categoryId) {
+    public static JSONObject deleteCategoryJson(int categoryId) {
         JSONObject jsonRequest = new JSONObject();
         try {
             jsonRequest.put("categoryId", categoryId);
@@ -244,6 +244,30 @@ public class JsonUtils {
         return jsonRequest;
     }
 
+    public static JSONObject editCategoryJson(int categoryId, String name, int parentId ) {
+        JSONObject jsonRequest = new JSONObject();
+        try {
+            jsonRequest.put("categoryId", categoryId);
+            jsonRequest.put("name", name);
+            if (parentId >= 0) {
+                jsonRequest.put("parentCategoryId", parentId);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonRequest;
+    }
+
+
+    public static JSONObject deleteItemJson(int itemId) {
+        JSONObject jsonRequest = new JSONObject();
+        try {
+            jsonRequest.put("itemId", itemId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonRequest;
+    }
 
     public static JSONObject setItemStatusJson(String itemId, Boolean status) {
         JSONObject jsonRequest = new JSONObject();
