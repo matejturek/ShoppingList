@@ -38,21 +38,17 @@ public class NetworkManager {
                 URL url = new URL(BASE_URL + endpoint);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
-                // Set request method to POST
                 urlConnection.setRequestMethod("POST");
                 urlConnection.setRequestProperty("Content-Type", "application/json");
                 urlConnection.setDoOutput(true);
 
-                // Write JSON data to the output stream
                 OutputStream outputStream = urlConnection.getOutputStream();
                 outputStream.write(requestData.toString().getBytes());
                 outputStream.flush();
                 outputStream.close();
 
-                // Get the response from the server
                 int responseCode = urlConnection.getResponseCode();
                 if (responseCode == HttpURLConnection.HTTP_OK) {
-                    // Read the response
                     BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
                     StringBuilder response = new StringBuilder();
                     String line;
@@ -61,17 +57,14 @@ public class NetworkManager {
                     }
                     reader.close();
 
-                    // Post the result to the main thread
                     mainHandler.post(() -> callback.onSuccess(response.toString()));
                 } else {
                     Log.e(TAG, "HTTP error code: " + responseCode);
-                    // Post the error to the main thread
                     mainHandler.post(() -> callback.onError("HTTP error code: " + responseCode));
                 }
 
             } catch (IOException e) {
                 Log.e(TAG, "Error during POST request", e);
-                // Post the error to the main thread
                 mainHandler.post(() -> callback.onError("Error during POST request"));
             }
         });
@@ -80,18 +73,14 @@ public class NetworkManager {
     public static void performGetRequest(String endpoint, Map<String, String> queryParams, ResultCallback callback) {
         executor.execute(() -> {
             try {
-                // Build the URL with parameters
                 String urlString = buildUrl(BASE_URL + endpoint, queryParams);
                 URL url = new URL(urlString);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
-                // Set request method to GET
                 urlConnection.setRequestMethod("GET");
 
-                // Get the response from the server
                 int responseCode = urlConnection.getResponseCode();
                 if (responseCode == HttpURLConnection.HTTP_OK) {
-                    // Read the response
                     BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
                     StringBuilder response = new StringBuilder();
                     String line;
@@ -100,17 +89,14 @@ public class NetworkManager {
                     }
                     reader.close();
 
-                    // Post the result to the main thread
                     mainHandler.post(() -> callback.onSuccess(response.toString()));
                 } else {
                     Log.e(TAG, "HTTP error code: " + responseCode);
-                    // Post the error to the main thread
                     mainHandler.post(() -> callback.onError("HTTP error code: " + responseCode));
                 }
 
             } catch (IOException e) {
                 Log.e(TAG, "Error during GET request", e);
-                // Post the error to the main thread
                 mainHandler.post(() -> callback.onError("Error during GET request"));
             }
         });

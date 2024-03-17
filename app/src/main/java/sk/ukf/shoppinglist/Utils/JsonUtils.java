@@ -66,11 +66,11 @@ public class JsonUtils {
     }
 
     // Method to create a JSON request for creating an invite
-    public static JSONObject createInviteJson(String listId, String userId) {
+    public static JSONObject createInviteJson(String listId, String email) {
         JSONObject jsonRequest = new JSONObject();
         try {
             jsonRequest.put("listId", listId);
-            jsonRequest.put("userId", userId);
+            jsonRequest.put("email", email);
         } catch (JSONException e) {
             e.printStackTrace();
         }

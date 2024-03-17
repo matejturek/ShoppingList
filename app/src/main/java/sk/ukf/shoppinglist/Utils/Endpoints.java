@@ -18,6 +18,7 @@ public enum Endpoints {
 
     /* INVITE */
     CREATE_INVITATION("invite/createInvitation.php"),
+    GET_INVITATIONS("invite/getInvitations.php"),
     SET_INVITATION("invite/setInvitation.php"),
 
     /* CATEGORY */

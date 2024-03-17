@@ -2,13 +2,13 @@
 
     <item
         android:id="@+id/menu_edit"
-        android:title="Edit"/>
+        android:title="@string/edit"/>
 
     <item
         android:id="@+id/menu_invite"
-        android:title="Invite"/>
+        android:title="@string/invite"/>
 
     <item
         android:id="@+id/menu_delete"
-        android:title="Delete"/>
+        android:title="@string/delete"/>
 </menu>

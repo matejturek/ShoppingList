@@ -9,11 +9,17 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import sk.ukf.shoppinglist.Activities.Adapters.InvitationAdapter;
+import sk.ukf.shoppinglist.Models.Invitation;
+import sk.ukf.shoppinglist.Models.ListItem;
 import sk.ukf.shoppinglist.Utils.Endpoints;
 import sk.ukf.shoppinglist.Utils.NetworkManager;
 import sk.ukf.shoppinglist.R;
@@ -65,11 +71,41 @@ public class ListManagementActivity extends AppCompatActivity {
 
     private void getInvites(String listId) {
 
-    };
-    private void initInvites() {
+        Map<String, String> queryParams = new HashMap<>();
+        queryParams.put("listId", listId);
+        NetworkManager.performGetRequest(Endpoints.GET_INVITATIONS.getEndpoint(), queryParams, new NetworkManager.ResultCallback() {
+            @Override
+            public void onSuccess(String result) {
+                runOnUiThread(() -> {
+                    try {
+                        JSONArray jsonResponse = new JSONArray(result);
+                        ArrayList<Invitation> invitations = new ArrayList<>();
+                        for (int i = 0; i < jsonResponse.length(); i++) {
+                            JSONObject jsonObject = jsonResponse.getJSONObject(i);
+                            int id = jsonObject.getInt("id");
+                            int listId = jsonObject.getInt("listId");
+                            int userId = jsonObject.getInt("userId");
+                            String email = jsonObject.getString("email");
+                            invitations.add(new Invitation(id, listId, userId, email));
+                        }
+
+                        InvitationAdapter adapter = new InvitationAdapter(ListManagementActivity.this, invitations);
+                        invitesLv.setAdapter(adapter);
+
+                    } catch (Exception e) {
+                        Toast.makeText(ListManagementActivity.this, "Get invites error", Toast.LENGTH_LONG).show();
+                        Log.e("GET INVITES REQUEST", "Error parsing JSON", e);
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> Toast.makeText(ListManagementActivity.this, "Get invites error", Toast.LENGTH_LONG).show());
+            }
+        });
 
     }
-
     private boolean isValidInput(String name, String notes) {
         if (name.isEmpty()) {
             nameEt.setError("Enter list name");

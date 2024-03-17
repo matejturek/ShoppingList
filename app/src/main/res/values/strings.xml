@@ -24,4 +24,8 @@
     <string name="profile_image">Profile image</string>
     <string name="edit_category">Edit category</string>
     <string name="people">People</string>
+    <string name="delete">Delete</string>
+    <string name="create_new_category">Create new category</string>
+    <string name="edit">Edit</string>
+    <string name="invite">Invite</string>
 </resources>

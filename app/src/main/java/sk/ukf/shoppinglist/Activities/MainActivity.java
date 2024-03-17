@@ -30,7 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import sk.ukf.shoppinglist.Activities.Dialogs.InviteDialog;
+import sk.ukf.shoppinglist.Activities.Dialogs.InvitationDialog;
 import sk.ukf.shoppinglist.Models.ListItem;
 import sk.ukf.shoppinglist.Utils.Endpoints;
 import sk.ukf.shoppinglist.Utils.NetworkManager;
@@ -188,10 +188,12 @@ public class MainActivity extends AppCompatActivity {
 
                 return true;
             } else if (item.getItemId() == R.id.menu_invite) {
-                InviteDialog.showCreateDialog(MainActivity.this, new InviteDialog.OnCreateClickListener() {
+                ListItem listItem = ((ListItem) listview.getItemAtPosition(position));
+                String listId = String.valueOf(listItem.getId());
+                InvitationDialog.showCreateDialog(MainActivity.this, new InvitationDialog.OnCreateClickListener() {
                     @Override
                     public void onCreateClick(String email) {
-                        invitePerson(email);
+                        invitePerson(listId, email);
                     }
                 });
                 return true;
@@ -329,8 +331,35 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void invitePerson(String email) {
-        //TODO
+    private void invitePerson(String listId, String email) {
+        JSONObject jsonRequest = JsonUtils.createInviteJson(listId, email);
+        NetworkManager.performPostRequest(Endpoints.CREATE_INVITATION.getEndpoint(), jsonRequest, new NetworkManager.ResultCallback() {
+            @Override
+            public void onSuccess(String result) {
+                runOnUiThread(() -> {
+                    try {
+                        JSONObject jsonResponse = new JSONObject(result);
+                        String status = jsonResponse.getString("status");
+                        String message = jsonResponse.getString("message");
+                        if ("success".equals(status)) {
+                            Toast.makeText(MainActivity.this, "Person invited", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(MainActivity.this, "Invitation error", Toast.LENGTH_LONG).show();
+                            Log.e("INVITE REQUEST", "Error: " + message);
+                            SharedPreferencesManager.clearData(MainActivity.this);
+                        }
+                    } catch (Exception e) {
+                        Toast.makeText(MainActivity.this, "Invitation error", Toast.LENGTH_LONG).show();
+                        Log.e("INVITE REQUEST", "Error parsing JSON", e);
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> Toast.makeText(MainActivity.this, "Invitation error", Toast.LENGTH_LONG).show());
+            }
+        });
     }
 
 }
