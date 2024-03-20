@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hostiteľ: 127.0.0.1
--- Čas generovania: Sun 18.Feb 2024, 18:00
+-- Čas generovania: St 20.Mar 2024, 19:50
 -- Verzia serveru: 10.4.27-MariaDB
 -- Verzia PHP: 8.0.25
 
@@ -30,16 +30,41 @@ SET time_zone = "+00:00";
 CREATE TABLE `categories` (
   `categoryId` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
-  `parentCategoryId` int(11) DEFAULT NULL
+  `parentCategoryId` int(11) DEFAULT NULL,
+  `listId` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Sťahujem dáta pre tabuľku `categories`
 --
 
-INSERT INTO `categories` (`categoryId`, `name`, `parentCategoryId`) VALUES
-(1, 'category', NULL),
-(3, 'category2', NULL);
+INSERT INTO `categories` (`categoryId`, `name`, `parentCategoryId`, `listId`) VALUES
+(1, 'category', NULL, 5),
+(3, 'category2', NULL, 5),
+(6, 'aaaa', NULL, 5),
+(7, 'x', 1, 5),
+(8, 'b', 1, 5),
+(9, 'bbb', 1, 5);
+
+-- --------------------------------------------------------
+
+--
+-- Štruktúra tabuľky pre tabuľku `invitations`
+--
+
+CREATE TABLE `invitations` (
+  `invitationId` int(11) NOT NULL,
+  `userId` int(11) DEFAULT NULL,
+  `listId` int(11) DEFAULT NULL,
+  `status` int(11) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Sťahujem dáta pre tabuľku `invitations`
+--
+
+INSERT INTO `invitations` (`invitationId`, `userId`, `listId`, `status`) VALUES
+(2, 3, 5, 0);
 
 -- --------------------------------------------------------
 
@@ -64,11 +89,14 @@ CREATE TABLE `items` (
 
 INSERT INTO `items` (`itemId`, `listId`, `categoryId`, `name`, `quantity`, `status`, `link`, `shelf`) VALUES
 (1, 5, NULL, 'xxx', 1, 0, NULL, NULL),
-(2, 5, NULL, 'bbbb', 1, 0, NULL, NULL),
-(3, 5, 1, 'aaa', 1, 0, NULL, NULL),
-(4, 5, 3, 'dsafdasf', 0, 0, NULL, NULL),
+(2, 5, NULL, 'bbbb', 1, 1, NULL, NULL),
+(3, 5, 1, 'aaabxx', 1, 1, 'www.google.com', ''),
+(4, 5, 3, 'dsafdasf2', 0, 1, NULL, NULL),
 (5, 5, 1, 'aaa', 1, 0, NULL, NULL),
-(6, 5, 3, 'dsafdasf', 1, 0, NULL, NULL);
+(6, 5, 3, 'dsafdasf', 1, 0, NULL, NULL),
+(7, 5, NULL, 'bbbc', 1, 0, '0', ''),
+(8, 5, NULL, 'bbb', 1, 0, NULL, NULL),
+(9, 5, NULL, 'bbb', 1, 0, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -110,7 +138,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`userId`, `email`, `name`, `password`) VALUES
-(3, 'mato.turek@gmail.com', 'mato', '$2y$10$RlLgoUji/5xCpfKZ.dkWg.65gLVQ500w7yYIXXJRqhjWyBy81WQjC'),
+(3, 'mato.turek@gmail.com', 'matej', '$2y$10$RlLgoUji/5xCpfKZ.dkWg.65gLVQ500w7yYIXXJRqhjWyBy81WQjC'),
 (5, 'mato.turek2@gmail.com', 'mato', '$2y$10$TgkCwI5LkB0f3JtxPy5K0uQBsR3qBzMwD.l2LAM4e4OHk7HKBu9RS'),
 (6, 'mato.turek3@gmail.com', 'mato', '$2y$10$orNFK2aqcx5OgDglfc4/i.64tMrQ65wSxsI7MKg1mwBHBbmMxWfmy'),
 (7, 'mato.turek43@gmail.com', 'mato', '$2y$10$.S8NMB8qw78mXm9kRPnjKefbn9atEditcKXYnqcLzQRc8bewIrXpm'),
@@ -125,7 +153,16 @@ INSERT INTO `users` (`userId`, `email`, `name`, `password`) VALUES
 --
 ALTER TABLE `categories`
   ADD PRIMARY KEY (`categoryId`),
-  ADD KEY `parentCategoryId` (`parentCategoryId`);
+  ADD KEY `parentCategoryId` (`parentCategoryId`),
+  ADD KEY `fk_categories_lists` (`listId`);
+
+--
+-- Indexy pre tabuľku `invitations`
+--
+ALTER TABLE `invitations`
+  ADD PRIMARY KEY (`invitationId`),
+  ADD KEY `userId` (`userId`),
+  ADD KEY `listId` (`listId`);
 
 --
 -- Indexy pre tabuľku `items`
@@ -156,13 +193,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT pre tabuľku `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `categoryId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `categoryId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
+-- AUTO_INCREMENT pre tabuľku `invitations`
+--
+ALTER TABLE `invitations`
+  MODIFY `invitationId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT pre tabuľku `items`
 --
 ALTER TABLE `items`
-  MODIFY `itemId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `itemId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT pre tabuľku `lists`
@@ -184,7 +227,15 @@ ALTER TABLE `users`
 -- Obmedzenie pre tabuľku `categories`
 --
 ALTER TABLE `categories`
-  ADD CONSTRAINT `categories_ibfk_1` FOREIGN KEY (`parentCategoryId`) REFERENCES `categories` (`categoryId`);
+  ADD CONSTRAINT `categories_ibfk_1` FOREIGN KEY (`parentCategoryId`) REFERENCES `categories` (`categoryId`),
+  ADD CONSTRAINT `fk_categories_lists` FOREIGN KEY (`listId`) REFERENCES `lists` (`listId`);
+
+--
+-- Obmedzenie pre tabuľku `invitations`
+--
+ALTER TABLE `invitations`
+  ADD CONSTRAINT `invitations_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`),
+  ADD CONSTRAINT `invitations_ibfk_2` FOREIGN KEY (`listId`) REFERENCES `lists` (`listId`);
 
 --
 -- Obmedzenie pre tabuľku `items`
