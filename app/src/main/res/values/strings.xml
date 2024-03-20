@@ -28,4 +28,5 @@
     <string name="create_new_category">Create new category</string>
     <string name="edit">Edit</string>
     <string name="invite">Invite</string>
+    <string name="status_icon">Status icon</string>
 </resources>

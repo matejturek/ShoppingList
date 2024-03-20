@@ -52,7 +52,7 @@ public class ListManagementActivity extends AppCompatActivity {
         if (mode == MODE_EDIT) {
             listId = getIntent().getStringExtra("listId");
             getList(listId);
-            getInvites(listId);
+            getInvitations(listId);
         }
 
         submitBtn.setOnClickListener(view -> {
@@ -69,7 +69,7 @@ public class ListManagementActivity extends AppCompatActivity {
 
     }
 
-    private void getInvites(String listId) {
+    private void getInvitations(String listId) {
 
         Map<String, String> queryParams = new HashMap<>();
         queryParams.put("listId", listId);
@@ -82,11 +82,11 @@ public class ListManagementActivity extends AppCompatActivity {
                         ArrayList<Invitation> invitations = new ArrayList<>();
                         for (int i = 0; i < jsonResponse.length(); i++) {
                             JSONObject jsonObject = jsonResponse.getJSONObject(i);
-                            int id = jsonObject.getInt("id");
-                            int listId = jsonObject.getInt("listId");
+                            int id = jsonObject.getInt("invitationId");
                             int userId = jsonObject.getInt("userId");
                             String email = jsonObject.getString("email");
-                            invitations.add(new Invitation(id, listId, userId, email));
+                            int status = jsonObject.getInt("status");
+                            invitations.add(new Invitation(id, Integer.parseInt(listId), userId, email, status));
                         }
 
                         InvitationAdapter adapter = new InvitationAdapter(ListManagementActivity.this, invitations);

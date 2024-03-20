@@ -331,6 +331,39 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void getPendingInvitations(String userId) {
+        Map<String, String> queryParams = new HashMap<>();
+        queryParams.put("userId", userId);
+        NetworkManager.performGetRequest(Endpoints.GET_PENDING_INVITATIONS.getEndpoint(), queryParams, new NetworkManager.ResultCallback() {
+            @Override
+            public void onSuccess(String result) {
+                runOnUiThread(() -> {
+                    try {
+                        JSONArray jsonResponse = new JSONArray(result);
+                        List<Map<Integer, String>> invitations = new ArrayList<>();
+                        for (int i = 0; i < jsonResponse.length(); i++) {
+                            JSONObject jsonObject = jsonResponse.getJSONObject(i);
+                            int id = jsonObject.getInt("listId");
+                            String name = jsonObject.getString("listName");
+                            Map<Integer, String> invitationMap = new HashMap<>();
+                            invitationMap.put(id, name);
+                            invitations.add(invitationMap);
+                        }
+
+                    } catch (Exception e) {
+                        Toast.makeText(MainActivity.this, "Get list error", Toast.LENGTH_LONG).show();
+                        Log.e("GET LIST REQUEST", "Error parsing JSON", e);
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> Toast.makeText(MainActivity.this, "Get list error", Toast.LENGTH_LONG).show());
+            }
+        });
+    }
+
     private void invitePerson(String listId, String email) {
         JSONObject jsonRequest = JsonUtils.createInviteJson(listId, email);
         NetworkManager.performPostRequest(Endpoints.CREATE_INVITATION.getEndpoint(), jsonRequest, new NetworkManager.ResultCallback() {
@@ -346,7 +379,6 @@ public class MainActivity extends AppCompatActivity {
                         } else {
                             Toast.makeText(MainActivity.this, "Invitation error", Toast.LENGTH_LONG).show();
                             Log.e("INVITE REQUEST", "Error: " + message);
-                            SharedPreferencesManager.clearData(MainActivity.this);
                         }
                     } catch (Exception e) {
                         Toast.makeText(MainActivity.this, "Invitation error", Toast.LENGTH_LONG).show();
@@ -357,7 +389,13 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onError(String error) {
-                runOnUiThread(() -> Toast.makeText(MainActivity.this, "Invitation error", Toast.LENGTH_LONG).show());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(MainActivity.this, error, Toast.LENGTH_LONG).show();
+                    }
+                });
+//                runOnUiThread(() -> Toast.makeText(MainActivity.this, "Invitation error", Toast.LENGTH_LONG).show());
             }
         });
     }

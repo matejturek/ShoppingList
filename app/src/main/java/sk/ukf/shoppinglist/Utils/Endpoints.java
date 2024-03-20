@@ -17,9 +17,11 @@ public enum Endpoints {
     GET_LISTS("list/getLists.php"),
 
     /* INVITE */
-    CREATE_INVITATION("invite/createInvitation.php"),
-    GET_INVITATIONS("invite/getInvitations.php"),
-    SET_INVITATION("invite/setInvitation.php"),
+    CREATE_INVITATION("invitation/createInvitation.php"),
+    GET_INVITATIONS("invitation/getInvitations.php"),
+    GET_PENDING_INVITATIONS("invitation/getPendingInvitations.php"),
+    SET_INVITATION("invitation/setInvitation.php"),
+    DELETE_INVITATION("invitation/deleteInvitation.php"),
 
     /* CATEGORY */
     CREATE_CATEGORY("category/createCategory.php"),

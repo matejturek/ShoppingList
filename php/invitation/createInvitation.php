@@ -1,53 +1,49 @@
 <?php
-// Include the configuration file
 require_once '../config.php';
 
-// Check if data is sent via POST
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-    // Read raw POST data
     $rawPostData = file_get_contents("php://input");
 
-    // Decode JSON data
     $jsonData = json_decode($rawPostData, true);
 
-    // Check if required fields are present
-    if (isset($jsonData['listId']) && isset($jsonData['userId'])) {
-        // Your processing logic here
-
-        // Assuming you have a MySQLi connection
+    if (isset($jsonData['listId']) && isset($jsonData['email'])) {
         $mysqli = new mysqli($servername, $username, $password, $dbname);
 
-        // Check for connection errors
         if ($mysqli->connect_error) {
             die("Connection failed: " . $mysqli->connect_error);
         }
 
-        // Insert record into the invites table
-        $query = "INSERT INTO invites (listId, userId, status) VALUES (?, ?, 0)";
-
+        $email = $jsonData['email'];
+        $query = "SELECT userId FROM users WHERE email = ?";
         $stmt = $mysqli->prepare($query);
-        $stmt->bind_param("ss", $jsonData['listId'], $jsonData['userId']);
+        $stmt->bind_param("s", $email);
         $stmt->execute();
+        $result = $stmt->get_result();
 
-        // Check if the insert was successful
-        if ($stmt->affected_rows > 0) {
-            $response = array('status' => 'success', 'message' => 'Invite created successfully.');
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $userId = $row['userId'];
+
+            $query = "INSERT INTO invitations (listId, userId, status) VALUES (?, ?, 0)";
+            $stmt = $mysqli->prepare($query);
+            $stmt->bind_param("ss", $jsonData['listId'], $userId);
+            $stmt->execute();
+
+            if ($stmt->affected_rows > 0) {
+                $response = array('status' => 'success', 'message' => 'Invite created successfully.');
+            } else {
+                $response = array('status' => 'error', 'message' => 'Failed to create invite.');
+            }
         } else {
-            $response = array('status' => 'error', 'message' => 'Failed to create invite.');
+            $response = array('status' => 'error', 'message' => 'User with the provided email does not exist.');
         }
 
         $stmt->close();
-
-        // Close the connection
         $mysqli->close();
-
-        // Respond with the JSON response
         echo json_encode($response);
-
     } else {
-        // Respond with an error message
-        $response = array('status' => 'error', 'message' => 'Invalid request. Please provide listId and userId in the JSON data.');
+        $response = array('status' => 'error', 'message' => 'Invalid request. Please provide listId and email in the JSON data.');
         echo json_encode($response);
     }
 } else {

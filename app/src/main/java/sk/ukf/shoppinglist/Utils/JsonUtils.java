@@ -77,6 +77,16 @@ public class JsonUtils {
         return jsonRequest;
     }
 
+    public static JSONObject deleteInvitation(int invitationId) {
+        JSONObject jsonRequest = new JSONObject();
+        try {
+            jsonRequest.put("invitationId", invitationId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonRequest;
+    }
+
     // Method to create a JSON request for changing invite status
     public static JSONObject createChangeInviteStatusJson(String listId, String userId, int status) {
         JSONObject jsonRequest = new JSONObject();

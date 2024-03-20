@@ -5,12 +5,14 @@ public class Invitation {
     private int listId;
     private int userId;
     private String userEmail;
+    private int status;
 
-    public Invitation(int id, int listId, int userId, String userEmail) {
+    public Invitation(int id, int listId, int userId, String userEmail, int status) {
         this.id = id;
         this.listId = listId;
         this.userId = userId;
         this.userEmail = userEmail;
+        this.status = status;
     }
 
     public int getId() {
@@ -37,12 +39,19 @@ public class Invitation {
         this.userId = userId;
     }
 
-    // Getter and setter for userEmail
     public String getUserEmail() {
         return userEmail;
     }
 
     public void setUserEmail(String userEmail) {
         this.userEmail = userEmail;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 }

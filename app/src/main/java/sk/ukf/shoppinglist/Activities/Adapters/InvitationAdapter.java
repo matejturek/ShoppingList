@@ -3,18 +3,28 @@ package sk.ukf.shoppinglist.Activities.Adapters;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 import sk.ukf.shoppinglist.Models.Invitation;
 import sk.ukf.shoppinglist.R;
+import sk.ukf.shoppinglist.Utils.Endpoints;
+import sk.ukf.shoppinglist.Utils.JsonUtils;
+import sk.ukf.shoppinglist.Utils.NetworkManager;
 
 public class InvitationAdapter extends ArrayAdapter<Invitation> {
 
@@ -33,12 +43,21 @@ public class InvitationAdapter extends ArrayAdapter<Invitation> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.invite_layout, parent, false);
         }
 
+
         Invitation invitation = getItem(position);
 
         TextView emailTextView = convertView.findViewById(R.id.email_tv);
+        ImageView statusIcon = convertView.findViewById(R.id.status_icon);
 
         if (invitation != null) {
             emailTextView.setText(invitation.getUserEmail());
+
+            // Set icon based on invitation status
+            if (invitation.getStatus() == 0) {
+                statusIcon.setImageResource(R.drawable.ic_pending_black);
+            } else {
+                statusIcon.setImageResource(R.drawable.ic_accepted_black);
+            }
         }
 
         convertView.setOnLongClickListener(v -> {
@@ -50,7 +69,7 @@ public class InvitationAdapter extends ArrayAdapter<Invitation> {
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     builder.setMessage("Do you want to remove this invitation?")
                             .setPositiveButton("Yes", (dialog, id) -> {
-                                deleteInvitation();
+                                deleteInvitation(invitation.getId());
                             })
                             .setNegativeButton("No", (dialog, id) -> dialog.dismiss());
 
@@ -68,7 +87,37 @@ public class InvitationAdapter extends ArrayAdapter<Invitation> {
         return convertView;
     }
 
-    private void deleteInvitation() {
-        //TODO
+    private void runOnUiThread(Runnable runnable) {
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(runnable);
+    }
+
+    private void deleteInvitation(int invitationId) {
+        JSONObject jsonRequest = JsonUtils.deleteInvitation(invitationId);
+        NetworkManager.performPostRequest(Endpoints.DELETE_INVITATION.getEndpoint(), jsonRequest, new NetworkManager.ResultCallback() {
+            @Override
+            public void onSuccess(String result) {
+                runOnUiThread(() -> {
+                    try {
+                        JSONObject jsonResponse = new JSONObject(result);
+                        String status = jsonResponse.getString("status");
+                        String message = jsonResponse.getString("message");
+                        if ("success".equals(status)) {
+                            //TODO: relad UI
+                        } else {
+                            Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+                        }
+                    } catch (Exception e) {
+                        Toast.makeText(context, "Delete invitation error", Toast.LENGTH_LONG).show();
+                        Log.e("DELETE INVITATION REQUEST", "Error parsing JSON", e);
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> Toast.makeText(context, "Delete invitation error", Toast.LENGTH_LONG).show());
+            }
+        });
     }
 }
