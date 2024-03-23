@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import sk.ukf.shoppinglist.Activities.Adapters.InvitationAdapter;
+import sk.ukf.shoppinglist.Activities.Adapters.ListAdapter;
 import sk.ukf.shoppinglist.Models.Invitation;
 import sk.ukf.shoppinglist.Models.ListItem;
 import sk.ukf.shoppinglist.Utils.Endpoints;
@@ -26,7 +27,7 @@ import sk.ukf.shoppinglist.R;
 import sk.ukf.shoppinglist.Utils.SharedPreferencesManager;
 import sk.ukf.shoppinglist.Utils.JsonUtils;
 
-public class ListManagementActivity extends AppCompatActivity {
+public class ListManagementActivity extends AppCompatActivity implements InvitationAdapter.CallbackListener {
 
     EditText nameEt, notesEt;
     Button submitBtn;
@@ -69,6 +70,13 @@ public class ListManagementActivity extends AppCompatActivity {
 
     }
 
+
+    @Override
+    public void onInvitationAction() {
+        getInvitations(listId);
+    }
+
+
     private void getInvitations(String listId) {
 
         Map<String, String> queryParams = new HashMap<>();
@@ -83,13 +91,14 @@ public class ListManagementActivity extends AppCompatActivity {
                         for (int i = 0; i < jsonResponse.length(); i++) {
                             JSONObject jsonObject = jsonResponse.getJSONObject(i);
                             int id = jsonObject.getInt("invitationId");
+                            String listName = jsonObject.getString("listName");
                             int userId = jsonObject.getInt("userId");
                             String email = jsonObject.getString("email");
                             int status = jsonObject.getInt("status");
-                            invitations.add(new Invitation(id, Integer.parseInt(listId), userId, email, status));
+                            invitations.add(new Invitation(id, Integer.parseInt(listId), listName, userId, email, status));
                         }
+                        InvitationAdapter adapter = new InvitationAdapter(ListManagementActivity.this, invitations, ListManagementActivity.this);
 
-                        InvitationAdapter adapter = new InvitationAdapter(ListManagementActivity.this, invitations);
                         invitesLv.setAdapter(adapter);
 
                     } catch (Exception e) {

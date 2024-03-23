@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import sk.ukf.shoppinglist.Activities.Adapters.NewAdapter;
+import sk.ukf.shoppinglist.Activities.Adapters.ListAdapter;
 import sk.ukf.shoppinglist.Activities.Dialogs.CategoryDialog;
 import sk.ukf.shoppinglist.Models.Category;
 import sk.ukf.shoppinglist.Models.Item;
@@ -33,7 +33,7 @@ import sk.ukf.shoppinglist.Utils.Endpoints;
 import sk.ukf.shoppinglist.Utils.JsonUtils;
 import sk.ukf.shoppinglist.Utils.NetworkManager;
 
-public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
+public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener, ListAdapter.CallbackListener {
 
     ListView listView;
     EditText newItemEt;
@@ -82,6 +82,11 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
             startActivity(intent);
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         });
+        init();
+    }
+
+    @Override
+    public void onListAction() {
         init();
     }
 
@@ -137,7 +142,7 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
             }
         }
 
-        NewAdapter adapter = new NewAdapter(ListActivity.this, sortedCategories, categoriesNames, items);
+        ListAdapter adapter = new ListAdapter(ListActivity.this, sortedCategories, categoriesNames, items, ListActivity.this);
         listView.setAdapter(adapter);
         menuIv.setVisibility(View.VISIBLE);
     }

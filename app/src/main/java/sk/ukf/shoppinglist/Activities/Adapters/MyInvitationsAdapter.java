@@ -2,12 +2,10 @@ package sk.ukf.shoppinglist.Activities.Adapters;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -26,44 +24,46 @@ import sk.ukf.shoppinglist.Utils.Endpoints;
 import sk.ukf.shoppinglist.Utils.JsonUtils;
 import sk.ukf.shoppinglist.Utils.NetworkManager;
 
-public class InvitationAdapter extends ArrayAdapter<Invitation> {
+public class MyInvitationsAdapter extends ArrayAdapter<Invitation> {
 
     private ArrayList<Invitation> invitations;
     private Context context;
     private CallbackListener listener;
 
-    public InvitationAdapter(Context context, ArrayList<Invitation> invitations, CallbackListener listener) {
+    public MyInvitationsAdapter(Context context, ArrayList<Invitation> invitations, CallbackListener listener) {
         super(context, 0, invitations);
         this.context = context;
         this.invitations = invitations;
         this.listener = listener;
     }
-
     public interface CallbackListener {
         void onInvitationAction();
     }
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.invite_layout, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.my_invitations_layout, parent, false);
         }
 
 
         Invitation invitation = getItem(position);
 
         TextView emailTextView = convertView.findViewById(R.id.email_tv);
-        ImageView statusIcon = convertView.findViewById(R.id.status_icon);
+        ImageView acceptIcon = convertView.findViewById(R.id.accept_icon);
+        ImageView removeIcon = convertView.findViewById(R.id.remove_icon);
 
         if (invitation != null) {
-            emailTextView.setText(invitation.getUserEmail());
+            emailTextView.setText(invitation.getListName());
 
-            // Set icon based on invitation status
-            if (invitation.getStatus() == 0) {
-                statusIcon.setImageResource(R.drawable.ic_pending_black);
+            if (invitation.getStatus() != 0) {
+                ViewGroup parentEl = (ViewGroup) acceptIcon.getParent();
+                if (parentEl != null) {
+                    parentEl.removeView(acceptIcon);
+                }
             } else {
-                statusIcon.setImageResource(R.drawable.ic_accepted_black);
+                acceptIcon.setOnClickListener(view -> acceptInvitation(invitation.getId()));
             }
+            removeIcon.setOnClickListener(view -> deleteInvitation(invitation.getId()));
         }
 
         convertView.setOnLongClickListener(v -> {
@@ -126,4 +126,34 @@ public class InvitationAdapter extends ArrayAdapter<Invitation> {
             }
         });
     }
+
+    private void acceptInvitation(int invitationId) {
+        JSONObject jsonRequest = JsonUtils.deleteInvitation(invitationId);
+        NetworkManager.performPostRequest(Endpoints.ACCEPT_INVITATION.getEndpoint(), jsonRequest, new NetworkManager.ResultCallback() {
+            @Override
+            public void onSuccess(String result) {
+                runOnUiThread(() -> {
+                    try {
+                        JSONObject jsonResponse = new JSONObject(result);
+                        String status = jsonResponse.getString("status");
+                        String message = jsonResponse.getString("message");
+                        if ("success".equals(status)) {
+                            listener.onInvitationAction();
+                        } else {
+                            Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+                        }
+                    } catch (Exception e) {
+                        Toast.makeText(context, "Accept invitation error", Toast.LENGTH_LONG).show();
+                        Log.e("ACCEPT INVITATION REQUEST", "Error parsing JSON", e);
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> Toast.makeText(context, "Accept invitation error", Toast.LENGTH_LONG).show());
+            }
+        });
+    }
+
 }

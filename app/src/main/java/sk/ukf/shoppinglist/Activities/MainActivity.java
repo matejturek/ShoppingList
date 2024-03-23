@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupMenu;
@@ -48,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int MODE_CREATE = 1;
     private static final int MODE_EDIT = 2;
 
+    Button myInvitationsBtn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
         listview = findViewById(R.id.listView);
         profileIv = findViewById(R.id.profileIcon);
         createListFab = findViewById(R.id.fab);
+        myInvitationsBtn = findViewById(R.id.myInvitations_btn);
 
         profileIv.setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
@@ -67,6 +71,14 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("MODE", MODE_CREATE);
             createListLauncher.launch(intent);
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        });
+        myInvitationsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, MyInvitationsActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            }
         });
         init();
 

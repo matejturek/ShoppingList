@@ -14,7 +14,6 @@ import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,13 +22,11 @@ import androidx.core.content.ContextCompat;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import sk.ukf.shoppinglist.Activities.Dialogs.CategoryDialog;
 import sk.ukf.shoppinglist.Activities.Dialogs.ItemDialog;
-import sk.ukf.shoppinglist.Activities.ListActivity;
 import sk.ukf.shoppinglist.Models.Category;
 import sk.ukf.shoppinglist.Models.Item;
 import sk.ukf.shoppinglist.R;
@@ -37,7 +34,7 @@ import sk.ukf.shoppinglist.Utils.Endpoints;
 import sk.ukf.shoppinglist.Utils.JsonUtils;
 import sk.ukf.shoppinglist.Utils.NetworkManager;
 
-public class NewAdapter extends BaseAdapter {
+public class ListAdapter extends BaseAdapter {
 
     private static final int VIEW_TYPE_CATEGORY = 0;
     private static final int VIEW_TYPE_ITEM = 1;
@@ -47,13 +44,19 @@ public class NewAdapter extends BaseAdapter {
     final private ArrayList<String> categoriesNames;
     final private ArrayList<Item> items;
     final private ArrayList<Object> mergedData;
+    private CallbackListener listener;
 
-    public NewAdapter(Context context, ArrayList<Category> categories, ArrayList<String> categoriesNames, ArrayList<Item> items) {
+    public ListAdapter(Context context, ArrayList<Category> categories, ArrayList<String> categoriesNames, ArrayList<Item> items, CallbackListener listener) {
         this.context = context;
         this.categories = sortCategories(categories);
         this.categoriesNames = categoriesNames;
         this.items = sortItems(items);
         this.mergedData = generateMergedData();
+        this.listener = listener;
+    }
+
+    public interface CallbackListener {
+        void onListAction();
     }
 
     private ArrayList<Category> sortCategories(ArrayList<Category> unsortedCategories) {
@@ -412,7 +415,7 @@ public class NewAdapter extends BaseAdapter {
                     String status = jsonResponse.getString("status");
                     String message = jsonResponse.getString("message");
                     if ("success".equals(status)) {
-                        //TODO refresh
+                        listener.onListAction();
                     } else {
                         Toast.makeText(context, message, Toast.LENGTH_LONG).show();
                     }
@@ -439,7 +442,7 @@ public class NewAdapter extends BaseAdapter {
                         String status = jsonResponse.getString("status");
                         String message = jsonResponse.getString("message");
                         if ("success".equals(status)) {
-                            //TODO refresh
+                            listener.onListAction();
                         } else {
                             Toast.makeText(context, message, Toast.LENGTH_LONG).show();
                         }
@@ -467,7 +470,7 @@ public class NewAdapter extends BaseAdapter {
                         String status = jsonResponse.getString("status");
                         String message = jsonResponse.getString("message");
                         if ("success".equals(status)) {
-                            //TODO: relad UI
+                            listener.onListAction();
                         } else {
                             Toast.makeText(context, message, Toast.LENGTH_LONG).show();
                         }
@@ -497,7 +500,7 @@ public class NewAdapter extends BaseAdapter {
                         String status = jsonResponse.getString("status");
                         String message = jsonResponse.getString("message");
                         if ("success".equals(status)) {
-                            //TODO: relad UI
+                            listener.onListAction();
                         } else {
                             Toast.makeText(context, message, Toast.LENGTH_LONG).show();
                         }
