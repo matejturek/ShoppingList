@@ -7,11 +7,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $jsonData = json_decode($rawPostData, true);
 
-    if (isset($jsonData['listId']) && isset($jsonData['email'])) {
+    if (isset ($jsonData['listId']) && isset ($jsonData['email'])) {
         $mysqli = new mysqli($servername, $username, $password, $dbname);
 
         if ($mysqli->connect_error) {
-            die("Connection failed: " . $mysqli->connect_error);
+            die ("Connection failed: " . $mysqli->connect_error);
         }
 
         $email = $jsonData['email'];
@@ -25,15 +25,42 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $row = $result->fetch_assoc();
             $userId = $row['userId'];
 
-            $query = "INSERT INTO invitations (listId, userId, status) VALUES (?, ?, 0)";
+            $query = "SELECT * FROM invitations WHERE userId = ? AND listId = ?";
             $stmt = $mysqli->prepare($query);
-            $stmt->bind_param("ss", $jsonData['listId'], $userId);
+            $stmt->bind_param("ii", $userId, $jsonData['listId']);
             $stmt->execute();
+            $result = $stmt->get_result();
 
-            if ($stmt->affected_rows > 0) {
-                $response = array('status' => 'success', 'message' => 'Invite created successfully.');
+            if ($result->num_rows > 0) {
+                $response = array('status' => 'error', 'message' => 'Invite already exists for this user and list.');
             } else {
-                $response = array('status' => 'error', 'message' => 'Failed to create invite.');
+                $query = "SELECT userId FROM lists WHERE listId = ?";
+                $stmt = $mysqli->prepare($query);
+                $stmt->bind_param("i", $jsonData['listId']);
+                $stmt->execute();
+                $result = $stmt->get_result();
+
+                if ($result->num_rows > 0) {
+                    $row = $result->fetch_assoc();
+                    $listOwnerId = $row['userId'];
+
+                    if ($listOwnerId == $userId) {
+                        $response = array('status' => 'error', 'message' => 'User cannot invite themselves to their own list.');
+                    } else {
+                        $query = "INSERT INTO invitations (listId, userId, status) VALUES (?, ?, 0)";
+                        $stmt = $mysqli->prepare($query);
+                        $stmt->bind_param("ii", $jsonData['listId'], $userId);
+                        $stmt->execute();
+
+                        if ($stmt->affected_rows > 0) {
+                            $response = array('status' => 'success', 'message' => 'Invite created successfully.');
+                        } else {
+                            $response = array('status' => 'error', 'message' => 'Failed to create invite.');
+                        }
+                    }
+                } else {
+                    $response = array('status' => 'error', 'message' => 'List with the provided listId does not exist.');
+                }
             }
         } else {
             $response = array('status' => 'error', 'message' => 'User with the provided email does not exist.');
