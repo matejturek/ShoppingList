@@ -61,34 +61,30 @@ public class MyInvitationsAdapter extends ArrayAdapter<Invitation> {
                     parentEl.removeView(acceptIcon);
                 }
             } else {
-                acceptIcon.setOnClickListener(view -> acceptInvitation(invitation.getId()));
-            }
-            removeIcon.setOnClickListener(view -> deleteInvitation(invitation.getId()));
-        }
-
-        convertView.setOnLongClickListener(v -> {
-            PopupMenu popupMenu = new PopupMenu(context, v);
-            popupMenu.getMenuInflater().inflate(R.menu.invitation_menu, popupMenu.getMenu());
-
-            popupMenu.setOnMenuItemClickListener(item -> {
-                if (item.getItemId() == R.id.menu_delete) {
+                acceptIcon.setOnClickListener(view -> {
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    builder.setMessage("Do you want to remove this invitation?")
+                    builder.setMessage("Do you want to accept this invitation?")
                             .setPositiveButton("Yes", (dialog, id) -> {
-                                deleteInvitation(invitation.getId());
+                                acceptInvitation(invitation.getId());
                             })
                             .setNegativeButton("No", (dialog, id) -> dialog.dismiss());
-
-                    // Create and show the dialog
                     AlertDialog dialog = builder.create();
                     dialog.show();
-                }
-                return true;
-            });
+                });
+            }
+            removeIcon.setOnClickListener(view -> {
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setMessage("Do you want to remove this invitation?")
+                        .setPositiveButton("Yes", (dialog, id) -> {
+                            deleteInvitation(invitation.getId());
+                        })
+                        .setNegativeButton("No", (dialog, id) -> dialog.dismiss());
 
-            popupMenu.show();
-            return true;
-        });
+                // Create and show the dialog
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            });
+        }
 
         return convertView;
     }

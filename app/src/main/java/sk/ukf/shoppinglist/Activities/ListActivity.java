@@ -345,6 +345,4 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         super.onBackPressed();
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
-
-
 }

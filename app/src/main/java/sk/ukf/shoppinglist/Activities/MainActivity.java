@@ -72,16 +72,12 @@ public class MainActivity extends AppCompatActivity {
             createListLauncher.launch(intent);
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         });
-        myInvitationsBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, MyInvitationsActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-            }
+        myInvitationsBtn.setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, MyInvitationsActivity.class);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         });
         init();
-
     }
 
     @Override
@@ -172,6 +168,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, ListActivity.class);
                 intent.putExtra("listId", String.valueOf(data[position].getId()));
                 startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             });
             ImageView menuBtn = convertView.findViewById(R.id.listview_menu);
             menuBtn.setOnClickListener(view -> showRecordMenu(view, position));

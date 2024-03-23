@@ -85,7 +85,7 @@ public class RegisterActivity extends AppCompatActivity {
                             Toast.makeText(RegisterActivity.this, message, Toast.LENGTH_LONG).show();
                         }
                     } catch (Exception e) {
-                        Log.e("LOGIN REQUEST", "Error parsing JSON", e);
+                        Log.e("REGISTER REQUEST", "Error parsing JSON", e);
                     }
                 });
             }
