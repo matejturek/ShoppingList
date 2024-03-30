@@ -26,16 +26,23 @@ import sk.ukf.shoppinglist.Utils.NetworkManager;
 
 public class MyInvitationsAdapter extends ArrayAdapter<Invitation> {
 
-    private ArrayList<Invitation> invitations;
-    private Context context;
-    private CallbackListener listener;
+    private final ArrayList<Invitation> invitations;
+    private final Context context;
+    private final CallbackListener listener;
+    private final ErrorActivityCallback errorListener;
 
-    public MyInvitationsAdapter(Context context, ArrayList<Invitation> invitations, CallbackListener listener) {
+    public MyInvitationsAdapter(Context context, ArrayList<Invitation> invitations, CallbackListener listener, ErrorActivityCallback errorListener) {
         super(context, 0, invitations);
         this.context = context;
         this.invitations = invitations;
         this.listener = listener;
+        this.errorListener = errorListener;
     }
+
+    public interface ErrorActivityCallback {
+        void onErrorActivityStarted();
+    }
+
     public interface CallbackListener {
         void onInvitationAction();
     }
@@ -118,7 +125,11 @@ public class MyInvitationsAdapter extends ArrayAdapter<Invitation> {
 
             @Override
             public void onError(String error) {
-                runOnUiThread(() -> Toast.makeText(context, "Delete invitation error", Toast.LENGTH_LONG).show());
+                runOnUiThread(() -> {
+                    Toast.makeText(context, "Delete invitation error", Toast.LENGTH_LONG).show();
+                    Log.e("DELETE INVITATION REQUEST", error);
+                    errorListener.onErrorActivityStarted();
+                });
             }
         });
     }
@@ -147,7 +158,11 @@ public class MyInvitationsAdapter extends ArrayAdapter<Invitation> {
 
             @Override
             public void onError(String error) {
-                runOnUiThread(() -> Toast.makeText(context, "Accept invitation error", Toast.LENGTH_LONG).show());
+                runOnUiThread(() -> {
+                    Toast.makeText(context, "Accept invitation error", Toast.LENGTH_LONG).show();
+                    Log.e("ACCEPT INVITATION REQUEST", error);
+                    errorListener.onErrorActivityStarted();
+                });
             }
         });
     }

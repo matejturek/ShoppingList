@@ -38,10 +38,6 @@ public enum Endpoints {
     SET_ITEM_STATUS("item/setItemStatus.php"),
     GET_ITEMS("item/getItems.php");
 
-
-
-
-
     private final String endpoint;
 
     Endpoints(String endpoint) {

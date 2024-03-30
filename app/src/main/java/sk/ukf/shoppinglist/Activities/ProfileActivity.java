@@ -88,7 +88,14 @@ public class ProfileActivity extends AppCompatActivity {
 
             @Override
             public void onError(String error) {
-                runOnUiThread(() -> Toast.makeText(ProfileActivity.this, "Error editing profile", Toast.LENGTH_LONG).show());
+                runOnUiThread(() -> {
+                    Toast.makeText(ProfileActivity.this, "Error editing profile", Toast.LENGTH_LONG).show();
+                    Log.e("EDIT PROFILE REQUEST", error);
+                    Intent errorIntent = new Intent(ProfileActivity.this, ErrorActivity.class);
+                    errorIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(errorIntent);
+                    finish();
+                });
             }
         });
     }
@@ -114,7 +121,14 @@ public class ProfileActivity extends AppCompatActivity {
 
             @Override
             public void onError(String error) {
-                runOnUiThread(() -> Toast.makeText(ProfileActivity.this, "Error getting profile", Toast.LENGTH_LONG).show());
+                runOnUiThread(() -> {
+                    Toast.makeText(ProfileActivity.this, "Error getting profile", Toast.LENGTH_LONG).show();
+                    Log.e("GET USER DETAILS REQUEST", error);
+                    Intent errorIntent = new Intent(ProfileActivity.this, ErrorActivity.class);
+                    errorIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(errorIntent);
+                    finish();
+                });
             }
         });
     }

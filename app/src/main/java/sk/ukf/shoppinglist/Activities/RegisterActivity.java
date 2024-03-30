@@ -2,6 +2,7 @@ package sk.ukf.shoppinglist.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -85,6 +86,7 @@ public class RegisterActivity extends AppCompatActivity {
                             Toast.makeText(RegisterActivity.this, message, Toast.LENGTH_LONG).show();
                         }
                     } catch (Exception e) {
+                        Toast.makeText(RegisterActivity.this, "Error registering", Toast.LENGTH_LONG).show();
                         Log.e("REGISTER REQUEST", "Error parsing JSON", e);
                     }
                 });
@@ -92,7 +94,14 @@ public class RegisterActivity extends AppCompatActivity {
 
             @Override
             public void onError(String error) {
-                runOnUiThread(() -> Toast.makeText(RegisterActivity.this, "Registration error", Toast.LENGTH_LONG).show());
+                runOnUiThread(() -> {
+                    Toast.makeText(RegisterActivity.this, "Registration error", Toast.LENGTH_LONG).show();
+                    Log.e("REGISTER REQUEST", error);
+                    Intent errorIntent = new Intent(RegisterActivity.this, ErrorActivity.class);
+                    errorIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(errorIntent);
+                    finish();
+                });
             }
         });
     }

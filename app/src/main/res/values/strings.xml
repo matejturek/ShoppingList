@@ -32,4 +32,6 @@
     <string name="accept_invitation">Accept invitation</string>
     <string name="remove_invitaion">Remove invitaion</string>
     <string name="list_sharing">List sharing</string>
+    <string name="error_occurred">Error occurred</string>
+    <string name="retry">Retry</string>
 </resources>

@@ -3,6 +3,7 @@ package sk.ukf.shoppinglist.Activities.Adapters;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -28,15 +29,21 @@ import sk.ukf.shoppinglist.Utils.NetworkManager;
 
 public class InvitationAdapter extends ArrayAdapter<Invitation> {
 
-    private ArrayList<Invitation> invitations;
-    private Context context;
-    private CallbackListener listener;
+    private final ArrayList<Invitation> invitations;
+    private final Context context;
+    private final CallbackListener listener;
+    private final ErrorActivityCallback errorListener;
 
-    public InvitationAdapter(Context context, ArrayList<Invitation> invitations, CallbackListener listener) {
+    public InvitationAdapter(Context context, ArrayList<Invitation> invitations, CallbackListener listener, ErrorActivityCallback errorListener) {
         super(context, 0, invitations);
         this.context = context;
         this.invitations = invitations;
         this.listener = listener;
+        this.errorListener = errorListener;
+    }
+
+    public interface ErrorActivityCallback {
+        void onErrorActivityStarted();
     }
 
     public interface CallbackListener {
@@ -122,7 +129,11 @@ public class InvitationAdapter extends ArrayAdapter<Invitation> {
 
             @Override
             public void onError(String error) {
-                runOnUiThread(() -> Toast.makeText(context, "Delete invitation error", Toast.LENGTH_LONG).show());
+                runOnUiThread(() -> {
+                    Toast.makeText(context, "Delete invitation error", Toast.LENGTH_LONG).show();
+                    Log.e("DELETE INVITATION REQUEST", error);
+                    errorListener.onErrorActivityStarted();
+                });
             }
         });
     }

@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import sk.ukf.shoppinglist.Activities.Adapters.InvitationAdapter;
 import sk.ukf.shoppinglist.Activities.Adapters.ListAdapter;
 import sk.ukf.shoppinglist.Activities.Dialogs.CategoryDialog;
 import sk.ukf.shoppinglist.Models.Category;
@@ -33,7 +34,7 @@ import sk.ukf.shoppinglist.Utils.Endpoints;
 import sk.ukf.shoppinglist.Utils.JsonUtils;
 import sk.ukf.shoppinglist.Utils.NetworkManager;
 
-public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener, ListAdapter.CallbackListener {
+public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener, ListAdapter.CallbackListener, ListAdapter.ErrorActivityCallback {
 
     ListView listView;
     EditText newItemEt;
@@ -90,6 +91,14 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         init();
     }
 
+    public void onErrorActivityStarted() {
+        Intent errorIntent = new Intent(ListActivity.this, ErrorActivity.class);
+        errorIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(errorIntent);
+        finish();
+    }
+
+
     private void showPopupMenu(View view) {
         PopupMenu popupMenu = new PopupMenu(this, view);
         popupMenu.inflate(R.menu.list_items_menu);
@@ -142,7 +151,7 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
             }
         }
 
-        ListAdapter adapter = new ListAdapter(ListActivity.this, sortedCategories, categoriesNames, items, ListActivity.this);
+        ListAdapter adapter = new ListAdapter(ListActivity.this, sortedCategories, categoriesNames, items, ListActivity.this, ListActivity.this);
         listView.setAdapter(adapter);
         menuIv.setVisibility(View.VISIBLE);
     }
@@ -209,7 +218,14 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
 
             @Override
             public void onError(String error) {
-                runOnUiThread(() -> Toast.makeText(ListActivity.this, "Create item error", Toast.LENGTH_LONG).show());
+                runOnUiThread(() -> {
+                    Toast.makeText(ListActivity.this, "Create item error", Toast.LENGTH_LONG).show();
+                    Log.e("CREATE ITEM REQUEST", error);
+                    Intent errorIntent = new Intent(ListActivity.this, ErrorActivity.class);
+                    errorIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(errorIntent);
+                    finish();
+                });
             }
         });
     }
@@ -243,7 +259,14 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
 
             @Override
             public void onError(String error) {
-                runOnUiThread(() -> Toast.makeText(ListActivity.this, "Create category error", Toast.LENGTH_LONG).show());
+                runOnUiThread(() -> {
+                    Toast.makeText(ListActivity.this, "Create category error", Toast.LENGTH_LONG).show();
+                    Log.e("CREATE CATEGORY REQUEST", error);
+                    Intent errorIntent = new Intent(ListActivity.this, ErrorActivity.class);
+                    errorIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(errorIntent);
+                    finish();
+                });
             }
         });
     }
@@ -269,8 +292,8 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
                         }
 
                     } catch (Exception e) {
-                        Toast.makeText(ListActivity.this, "Get list error", Toast.LENGTH_LONG).show();
-                        Log.e("GET LIST REQUEST", "Error parsing JSON", e);
+                        Toast.makeText(ListActivity.this, "Get categories error", Toast.LENGTH_LONG).show();
+                        Log.e("GET CATEGORIES REQUEST", "Error parsing JSON", e);
                     } finally {
                         categoriesCompleted = true;
                         onBothAsyncMethodsCompleted();
@@ -282,10 +305,14 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
             @Override
             public void onError(String error) {
                 runOnUiThread(() -> {
-                    Toast.makeText(ListActivity.this, "Get list error", Toast.LENGTH_LONG).show();
-
+                    Toast.makeText(ListActivity.this, "Get categories error", Toast.LENGTH_LONG).show();
                     categoriesCompleted = true;
+                    Log.e("GET CATEGORIES REQUEST", error);
                     onBothAsyncMethodsCompleted();
+                    Intent errorIntent = new Intent(ListActivity.this, ErrorActivity.class);
+                    errorIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(errorIntent);
+                    finish();
                 });
             }
         });
@@ -322,8 +349,8 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
 
 
                     } catch (Exception e) {
-                        Toast.makeText(ListActivity.this, "Get list error", Toast.LENGTH_LONG).show();
-                        Log.e("GET LIST REQUEST", "Error parsing JSON", e);
+                        Toast.makeText(ListActivity.this, "Get items error", Toast.LENGTH_LONG).show();
+                        Log.e("GET ITEMS REQUEST", "Error parsing JSON", e);
                     } finally {
                         itemsCompleted = true;
                         onBothAsyncMethodsCompleted();
@@ -333,9 +360,14 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
 
             @Override
             public void onError(String error) {
-                runOnUiThread(() -> Toast.makeText(ListActivity.this, "Get list error", Toast.LENGTH_LONG).show());
+                runOnUiThread(() -> Toast.makeText(ListActivity.this, "Get items error", Toast.LENGTH_LONG).show());
                 itemsCompleted = true;
+                Log.e("GET ITEMS REQUEST", error);
                 onBothAsyncMethodsCompleted();
+                Intent errorIntent = new Intent(ListActivity.this, ErrorActivity.class);
+                errorIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(errorIntent);
+                finish();
             }
         });
     }

@@ -2,6 +2,7 @@ package sk.ukf.shoppinglist.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ListView;
@@ -21,7 +22,7 @@ import sk.ukf.shoppinglist.Utils.Endpoints;
 import sk.ukf.shoppinglist.Utils.NetworkManager;
 import sk.ukf.shoppinglist.Utils.SharedPreferencesManager;
 
-public class MyInvitationsActivity extends AppCompatActivity implements MyInvitationsAdapter.CallbackListener {
+public class MyInvitationsActivity extends AppCompatActivity implements MyInvitationsAdapter.CallbackListener, MyInvitationsAdapter.ErrorActivityCallback {
 
     ListView invitationsLv;
 
@@ -38,6 +39,13 @@ public class MyInvitationsActivity extends AppCompatActivity implements MyInvita
     @Override
     public void onInvitationAction() {
         getMyInvitations();
+    }
+
+    public void onErrorActivityStarted() {
+        Intent errorIntent = new Intent(MyInvitationsActivity.this, ErrorActivity.class);
+        errorIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(errorIntent);
+        finish();
     }
 
     private void getMyInvitations() {
@@ -61,7 +69,7 @@ public class MyInvitationsActivity extends AppCompatActivity implements MyInvita
                             invitations.add(new Invitation(id, listId, listName, Integer.parseInt(userId), email, status));
                         }
 
-                        MyInvitationsAdapter adapter = new MyInvitationsAdapter(MyInvitationsActivity.this, invitations, MyInvitationsActivity.this);
+                        MyInvitationsAdapter adapter = new MyInvitationsAdapter(MyInvitationsActivity.this, invitations, MyInvitationsActivity.this, MyInvitationsActivity.this);
                         invitationsLv.setAdapter(adapter);
 
                     } catch (Exception e) {
@@ -73,7 +81,14 @@ public class MyInvitationsActivity extends AppCompatActivity implements MyInvita
 
             @Override
             public void onError(String error) {
-                runOnUiThread(() -> Toast.makeText(MyInvitationsActivity.this, "Get invitations error", Toast.LENGTH_LONG).show());
+                runOnUiThread(() -> {
+                    Toast.makeText(MyInvitationsActivity.this, "Get invitations error", Toast.LENGTH_LONG).show();
+                    Log.e("GET MY INVITATIONS REQUEST", error);
+                    Intent errorIntent = new Intent(MyInvitationsActivity.this, ErrorActivity.class);
+                    errorIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(errorIntent);
+                    finish();
+                });
             }
         });
 

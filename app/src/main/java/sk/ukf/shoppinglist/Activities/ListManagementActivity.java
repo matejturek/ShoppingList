@@ -2,6 +2,7 @@ package sk.ukf.shoppinglist.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -27,7 +28,7 @@ import sk.ukf.shoppinglist.R;
 import sk.ukf.shoppinglist.Utils.SharedPreferencesManager;
 import sk.ukf.shoppinglist.Utils.JsonUtils;
 
-public class ListManagementActivity extends AppCompatActivity implements InvitationAdapter.CallbackListener {
+public class ListManagementActivity extends AppCompatActivity implements InvitationAdapter.CallbackListener, InvitationAdapter.ErrorActivityCallback {
 
     EditText nameEt, notesEt;
     Button submitBtn;
@@ -67,15 +68,19 @@ public class ListManagementActivity extends AppCompatActivity implements Invitat
                 }
             }
         });
-
     }
-
 
     @Override
     public void onInvitationAction() {
         getInvitations(listId);
     }
 
+
+    public void onErrorActivityStarted() {
+        Intent errorIntent = new Intent(ListManagementActivity.this, ErrorActivity.class);
+        startActivity(errorIntent);
+        finish();
+    }
 
     private void getInvitations(String listId) {
 
@@ -97,20 +102,28 @@ public class ListManagementActivity extends AppCompatActivity implements Invitat
                             int status = jsonObject.getInt("status");
                             invitations.add(new Invitation(id, Integer.parseInt(listId), listName, userId, email, status));
                         }
-                        InvitationAdapter adapter = new InvitationAdapter(ListManagementActivity.this, invitations, ListManagementActivity.this);
+                        InvitationAdapter adapter = new InvitationAdapter(ListManagementActivity.this, invitations, ListManagementActivity.this, ListManagementActivity.this);
 
                         invitesLv.setAdapter(adapter);
 
                     } catch (Exception e) {
                         Toast.makeText(ListManagementActivity.this, "Get invites error", Toast.LENGTH_LONG).show();
                         Log.e("GET INVITES REQUEST", "Error parsing JSON", e);
+
                     }
                 });
             }
 
             @Override
             public void onError(String error) {
-                runOnUiThread(() -> Toast.makeText(ListManagementActivity.this, "Get invites error", Toast.LENGTH_LONG).show());
+                runOnUiThread(() -> {
+                    Toast.makeText(ListManagementActivity.this, "Get invites error", Toast.LENGTH_LONG).show();
+                    Log.e("GET INVITES REQUEST", error);
+                    Intent errorIntent = new Intent(ListManagementActivity.this, ErrorActivity.class);
+                    errorIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(errorIntent);
+                    finish();
+                });
             }
         });
 
@@ -150,7 +163,14 @@ public class ListManagementActivity extends AppCompatActivity implements Invitat
 
             @Override
             public void onError(String error) {
-                runOnUiThread(() -> Toast.makeText(ListManagementActivity.this, "Create list error", Toast.LENGTH_LONG).show());
+                runOnUiThread(() -> {
+                    Toast.makeText(ListManagementActivity.this, "Create list error", Toast.LENGTH_LONG).show();
+                    Log.e("CREATE LIST REQUEST", error);
+                    Intent errorIntent = new Intent(ListManagementActivity.this, ErrorActivity.class);
+                    errorIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(errorIntent);
+                    finish();
+                });
             }
         });
     }
@@ -177,7 +197,14 @@ public class ListManagementActivity extends AppCompatActivity implements Invitat
 
             @Override
             public void onError(String error) {
-                runOnUiThread(() -> Toast.makeText(ListManagementActivity.this, "Get list error", Toast.LENGTH_LONG).show());
+                runOnUiThread(() -> {
+                    Toast.makeText(ListManagementActivity.this, "Get list error", Toast.LENGTH_LONG).show();
+                    Log.e("GET LIST REQUEST", error);
+                    Intent errorIntent = new Intent(ListManagementActivity.this, ErrorActivity.class);
+                    errorIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(errorIntent);
+                    finish();
+                });
             }
         });
     }
@@ -206,7 +233,14 @@ public class ListManagementActivity extends AppCompatActivity implements Invitat
 
             @Override
             public void onError(String error) {
-                runOnUiThread(() -> Toast.makeText(ListManagementActivity.this, "Edit list error", Toast.LENGTH_LONG).show());
+                runOnUiThread(() -> {
+                    Toast.makeText(ListManagementActivity.this, "Edit list error", Toast.LENGTH_LONG).show();
+                    Log.e("EDIT LIST REQUEST", error);
+                    Intent errorIntent = new Intent(ListManagementActivity.this, ErrorActivity.class);
+                    errorIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(errorIntent);
+                    finish();
+                });
             }
         });
     }

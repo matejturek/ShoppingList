@@ -16,6 +16,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".Activities.ErrorActivity"
+            android:exported="false" />
+        <activity
             android:name=".Activities.MyInvitationsActivity"
             android:exported="false" />
         <activity

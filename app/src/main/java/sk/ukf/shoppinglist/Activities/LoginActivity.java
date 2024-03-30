@@ -80,7 +80,15 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onError(String error) {
-                runOnUiThread(() -> Toast.makeText(LoginActivity.this, "Login error", Toast.LENGTH_LONG).show());
+                runOnUiThread(() -> {
+                    Toast.makeText(LoginActivity.this, "Login error", Toast.LENGTH_LONG).show();
+                    Log.e("LOGIN REQUEST", error);
+                    Intent errorIntent = new Intent(LoginActivity.this, ErrorActivity.class);
+                    errorIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(errorIntent);
+                    finish();
+                }
+                );
             }
         });
     }

@@ -44,15 +44,21 @@ public class ListAdapter extends BaseAdapter {
     final private ArrayList<String> categoriesNames;
     final private ArrayList<Item> items;
     final private ArrayList<Object> mergedData;
-    private CallbackListener listener;
+    private final CallbackListener listener;
+    private final ErrorActivityCallback errorListener;
 
-    public ListAdapter(Context context, ArrayList<Category> categories, ArrayList<String> categoriesNames, ArrayList<Item> items, CallbackListener listener) {
+    public ListAdapter(Context context, ArrayList<Category> categories, ArrayList<String> categoriesNames, ArrayList<Item> items, CallbackListener listener, ErrorActivityCallback errorListener) {
         this.context = context;
         this.categories = sortCategories(categories);
         this.categoriesNames = categoriesNames;
         this.items = sortItems(items);
         this.mergedData = generateMergedData();
         this.listener = listener;
+        this.errorListener = errorListener;
+    }
+
+    public interface ErrorActivityCallback {
+        void onErrorActivityStarted();
     }
 
     public interface CallbackListener {
@@ -383,24 +389,30 @@ public class ListAdapter extends BaseAdapter {
         NetworkManager.performPostRequest(Endpoints.SET_ITEM_STATUS.getEndpoint(), jsonRequest, new NetworkManager.ResultCallback() {
             @Override
             public void onSuccess(String result) {
-                try {
-                    JSONObject jsonResponse = new JSONObject(result);
-                    String status = jsonResponse.getString("status");
-                    String message = jsonResponse.getString("message");
-                    if ("success".equals(status)) {
-                        //DO nothing
-                    } else {
-                        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+
+                runOnUiThread(() -> {
+                    try {
+                        JSONObject jsonResponse = new JSONObject(result);
+                        String status = jsonResponse.getString("status");
+                        String message = jsonResponse.getString("message");
+                        if ("success".equals(status)) {
+                            //DO nothing
+                        } else {
+                            Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+                        }
+                    } catch (Exception e) {
+                        Toast.makeText(context, "Item set error", Toast.LENGTH_LONG).show();
+                        Log.e("ITEM SET ERROR", "Error parsing JSON", e);
                     }
-                } catch (Exception e) {
-                    Toast.makeText(context, "Item save error", Toast.LENGTH_LONG).show();
-                    Log.e("ITEM SET ERROR", "Error parsing JSON", e);
-                }
+                });
             }
 
             @Override
             public void onError(String error) {
-                Log.e("ITEM SET ERROR", "Error parsing JSON");
+                runOnUiThread(() -> {
+                    Toast.makeText(context, "Item set error", Toast.LENGTH_LONG).show();
+                    Log.e("ITEM SET ERROR", error);
+                });
             }
         });
     }
@@ -410,33 +422,39 @@ public class ListAdapter extends BaseAdapter {
         NetworkManager.performPostRequest(Endpoints.SET_ITEM.getEndpoint(), jsonRequest, new NetworkManager.ResultCallback() {
             @Override
             public void onSuccess(String result) {
-                try {
-                    JSONObject jsonResponse = new JSONObject(result);
-                    String status = jsonResponse.getString("status");
-                    String message = jsonResponse.getString("message");
-                    if ("success".equals(status)) {
-                        listener.onListAction();
-                    } else {
-                        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+                runOnUiThread(() -> {
+                    try {
+                        JSONObject jsonResponse = new JSONObject(result);
+                        String status = jsonResponse.getString("status");
+                        String message = jsonResponse.getString("message");
+                        if ("success".equals(status)) {
+                            listener.onListAction();
+                        } else {
+                            Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+                        }
+                    } catch (Exception e) {
+                        Toast.makeText(context, "Item set error", Toast.LENGTH_LONG).show();
+                        Log.e("ITEM SET ERROR", "Error parsing JSON", e);
                     }
-                } catch (Exception e) {
-                    Toast.makeText(context, "Item save error", Toast.LENGTH_LONG).show();
-                    Log.e("ITEM SET ERROR", "Error parsing JSON", e);
-                }
+                });
             }
 
             @Override
             public void onError(String error) {
-                Log.e("ITEM SET ERROR", "Error parsing JSON");
+                runOnUiThread(() -> {
+                    Toast.makeText(context, "Item set error", Toast.LENGTH_LONG).show();
+                    Log.e("ITEM SET ERROR", error);
+                });
             }
         });
     }
 
     private void deleteItem(int itemId) {
-            JSONObject jsonRequest = JsonUtils.deleteItemJson(itemId);
-            NetworkManager.performPostRequest(Endpoints.DELETE_ITEM.getEndpoint(), jsonRequest, new NetworkManager.ResultCallback() {
-                @Override
-                public void onSuccess(String result) {
+        JSONObject jsonRequest = JsonUtils.deleteItemJson(itemId);
+        NetworkManager.performPostRequest(Endpoints.DELETE_ITEM.getEndpoint(), jsonRequest, new NetworkManager.ResultCallback() {
+            @Override
+            public void onSuccess(String result) {
+                runOnUiThread(() -> {
                     try {
                         JSONObject jsonResponse = new JSONObject(result);
                         String status = jsonResponse.getString("status");
@@ -450,13 +468,17 @@ public class ListAdapter extends BaseAdapter {
                         Toast.makeText(context, "Item delete error", Toast.LENGTH_LONG).show();
                         Log.e("ITEM DELETE ERROR", "Error parsing JSON", e);
                     }
-                }
+                });
+            }
 
-                @Override
-                public void onError(String error) {
-                    Log.e("ITEM DELETE ERROR", "Error parsing JSON");
-                }
-            });
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> {
+                    Toast.makeText(context, "Item delete error", Toast.LENGTH_LONG).show();
+                    Log.e("ITEM DELETE ERROR", error);
+                });
+            }
+        });
     }
 
     private void deleteCategory(int categoryId) {
@@ -483,7 +505,10 @@ public class ListAdapter extends BaseAdapter {
 
             @Override
             public void onError(String error) {
-                runOnUiThread(() -> Toast.makeText(context, "Delete category error", Toast.LENGTH_LONG).show());
+                runOnUiThread(() -> {
+                    Toast.makeText(context, "Delete category error", Toast.LENGTH_LONG).show();
+                    Log.e("DELETE CATEGORY REQUEST", error);
+                });
             }
         });
     }
@@ -513,7 +538,10 @@ public class ListAdapter extends BaseAdapter {
 
             @Override
             public void onError(String error) {
-                runOnUiThread(() -> Toast.makeText(context, "Edit category error", Toast.LENGTH_LONG).show());
+                runOnUiThread(() -> {
+                    Toast.makeText(context, "Edit category error", Toast.LENGTH_LONG).show();
+                    Log.e("EDIT CATEGORY REQUEST", error);
+                });
             }
         });
     }
