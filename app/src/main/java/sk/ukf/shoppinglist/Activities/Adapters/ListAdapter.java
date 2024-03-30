@@ -412,6 +412,7 @@ public class ListAdapter extends BaseAdapter {
                 runOnUiThread(() -> {
                     Toast.makeText(context, "Item set error", Toast.LENGTH_LONG).show();
                     Log.e("ITEM SET ERROR", error);
+                    errorListener.onErrorActivityStarted();
                 });
             }
         });
@@ -444,6 +445,7 @@ public class ListAdapter extends BaseAdapter {
                 runOnUiThread(() -> {
                     Toast.makeText(context, "Item set error", Toast.LENGTH_LONG).show();
                     Log.e("ITEM SET ERROR", error);
+                    errorListener.onErrorActivityStarted();
                 });
             }
         });
@@ -476,6 +478,7 @@ public class ListAdapter extends BaseAdapter {
                 runOnUiThread(() -> {
                     Toast.makeText(context, "Item delete error", Toast.LENGTH_LONG).show();
                     Log.e("ITEM DELETE ERROR", error);
+                    errorListener.onErrorActivityStarted();
                 });
             }
         });
@@ -508,6 +511,7 @@ public class ListAdapter extends BaseAdapter {
                 runOnUiThread(() -> {
                     Toast.makeText(context, "Delete category error", Toast.LENGTH_LONG).show();
                     Log.e("DELETE CATEGORY REQUEST", error);
+                    errorListener.onErrorActivityStarted();
                 });
             }
         });
@@ -541,6 +545,7 @@ public class ListAdapter extends BaseAdapter {
                 runOnUiThread(() -> {
                     Toast.makeText(context, "Edit category error", Toast.LENGTH_LONG).show();
                     Log.e("EDIT CATEGORY REQUEST", error);
+                    errorListener.onErrorActivityStarted();
                 });
             }
         });
