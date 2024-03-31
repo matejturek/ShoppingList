@@ -8,6 +8,7 @@
     android:padding="16dp">
 
     <EditText
+        android:autofillHints="emailAddress"
         android:id="@+id/email_et"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -44,7 +45,6 @@
 
         <Button
             android:id="@+id/login_btn"
-            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
@@ -53,7 +53,6 @@
 
         <Button
             android:id="@+id/register_btn"
-            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"

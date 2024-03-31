@@ -15,13 +15,10 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import sk.ukf.shoppinglist.Activities.Adapters.InvitationAdapter;
-import sk.ukf.shoppinglist.Activities.Adapters.ListAdapter;
 import sk.ukf.shoppinglist.Models.Invitation;
-import sk.ukf.shoppinglist.Models.ListItem;
 import sk.ukf.shoppinglist.Utils.Endpoints;
 import sk.ukf.shoppinglist.Utils.NetworkManager;
 import sk.ukf.shoppinglist.R;
@@ -60,7 +57,7 @@ public class ListManagementActivity extends AppCompatActivity implements Invitat
         submitBtn.setOnClickListener(view -> {
             String name = nameEt.getText().toString().trim();
             String notes = notesEt.getText().toString().trim();
-            if (isValidInput(name, notes)) {
+            if (isValidInput(name)) {
                 if (mode == MODE_CREATE) {
                     createList(name, notes);
                 } else {
@@ -128,7 +125,7 @@ public class ListManagementActivity extends AppCompatActivity implements Invitat
         });
 
     }
-    private boolean isValidInput(String name, String notes) {
+    private boolean isValidInput(String name) {
         if (name.isEmpty()) {
             nameEt.setError("Enter list name");
             return false;

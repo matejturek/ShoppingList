@@ -2,10 +2,10 @@ package sk.ukf.shoppinglist.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -47,9 +47,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-        logoutBtn.setOnClickListener(view -> {
-            logout();
-        });
+        logoutBtn.setOnClickListener(view -> logout());
         getUserDetails();
     }
     private boolean isValidInput(String name) {
@@ -139,11 +137,13 @@ public class ProfileActivity extends AppCompatActivity {
 
     }
 
+    @SuppressLint("SetTextI18n")
     private void fillValues(String name) {
         welcomeUserTv.setText("Welcome " + name);
         dynamicLetterTv.setText(String.valueOf(name.charAt(0)).toUpperCase());
     }
 
+    @SuppressLint("SetTextI18n")
     private void fillValues(String email, String name) {
         emailEt.setText(email);
         nameEt.setText(name);

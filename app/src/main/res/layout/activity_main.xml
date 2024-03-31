@@ -22,12 +22,11 @@
 
     <Button
         android:id="@+id/myInvitations_btn"
-        android:layout_gravity="bottom|center"
         android:layout_width="wrap_content"
-        android:layout_height="56dp"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom|center"
         android:layout_margin="16dp"
-        android:text="@string/list_sharing"/>
-
+        android:text="@string/list_sharing" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
@@ -39,7 +38,9 @@
         android:contentDescription="@string/add_list"
         android:elevation="6dp"
         android:src="@drawable/ic_add_white"
-        app:tint="@android:color/white" />
+        app:tint="@android:color/white"
+        app:shapeAppearanceOverlay="@style/RoundedFAB" />
+
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

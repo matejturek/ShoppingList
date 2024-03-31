@@ -66,10 +66,14 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
             String item = newItemEt.getText().toString().trim();
             int categoryId = -1;
             if (allCategories.size() > 0) {
-                categoryId = allCategories.get(categorySpinner.getSelectedItemPosition()).getId();
+                int position = categorySpinner.getSelectedItemPosition();
+                if (position < allCategories.size()) {
+                    categoryId = allCategories.get(position).getId();
+                }
             }
             if (isValidInput(item)) {
                 createItem(item, categoryId);
+                newItemEt.setText("");
             }
         });
         categoriesNames = new ArrayList<>();
@@ -134,7 +138,7 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         }
 
         sortedCategories = getCategoryData();
-
+        categoriesNames = new ArrayList<>();
         for (Category category: allCategories) {
             categoriesNames.add(category.getName());
         }
@@ -204,7 +208,6 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
                         String status = jsonResponse.getString("status");
                         String message = jsonResponse.getString("message");
                         if ("success".equals(status)) {
-                            getItems(listId);
                             init();
                         } else {
                             Toast.makeText(ListActivity.this, message, Toast.LENGTH_LONG).show();

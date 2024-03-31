@@ -199,12 +199,7 @@ public class MainActivity extends AppCompatActivity {
             } else if (item.getItemId() == R.id.menu_invite) {
                 ListItem listItem = ((ListItem) listview.getItemAtPosition(position));
                 String listId = String.valueOf(listItem.getId());
-                InvitationDialog.showCreateDialog(MainActivity.this, new InvitationDialog.OnCreateClickListener() {
-                    @Override
-                    public void onCreateClick(String email) {
-                        invitePerson(listId, email);
-                    }
-                });
+                InvitationDialog.showCreateDialog(MainActivity.this, email -> invitePerson(listId, email));
                 return true;
             } else if (item.getItemId() == R.id.menu_delete) {
                 ListItem listItem = ((ListItem) listview.getItemAtPosition(position));
@@ -255,10 +250,19 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(MainActivity.this, "Login error", Toast.LENGTH_LONG).show();
                             Log.e("LOGIN REQUEST", "Error: " + message);
                             SharedPreferencesManager.clearData(MainActivity.this);
+                            Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
+                            loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(loginIntent);
+                            finish();
                         }
                     } catch (Exception e) {
                         Toast.makeText(MainActivity.this, "Login error", Toast.LENGTH_LONG).show();
                         Log.e("LOGIN REQUEST", "Error parsing JSON", e);
+                        Intent errorIntent = new Intent(MainActivity.this, ErrorActivity.class);
+                        errorIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(errorIntent);
+                        finish();
+
                     }
                 });
             }

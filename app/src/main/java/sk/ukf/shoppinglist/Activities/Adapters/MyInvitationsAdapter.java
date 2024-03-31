@@ -10,9 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 
 import org.json.JSONObject;
 
@@ -46,8 +47,9 @@ public class MyInvitationsAdapter extends ArrayAdapter<Invitation> {
     public interface CallbackListener {
         void onInvitationAction();
     }
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.my_invitations_layout, parent, false);
         }
@@ -71,9 +73,7 @@ public class MyInvitationsAdapter extends ArrayAdapter<Invitation> {
                 acceptIcon.setOnClickListener(view -> {
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     builder.setMessage("Do you want to accept this invitation?")
-                            .setPositiveButton("Yes", (dialog, id) -> {
-                                acceptInvitation(invitation.getId());
-                            })
+                            .setPositiveButton("Yes", (dialog, id) -> acceptInvitation(invitation.getId()))
                             .setNegativeButton("No", (dialog, id) -> dialog.dismiss());
                     AlertDialog dialog = builder.create();
                     dialog.show();
@@ -82,9 +82,7 @@ public class MyInvitationsAdapter extends ArrayAdapter<Invitation> {
             removeIcon.setOnClickListener(view -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setMessage("Do you want to remove this invitation?")
-                        .setPositiveButton("Yes", (dialog, id) -> {
-                            deleteInvitation(invitation.getId());
-                        })
+                        .setPositiveButton("Yes", (dialog, id) -> deleteInvitation(invitation.getId()))
                         .setNegativeButton("No", (dialog, id) -> dialog.dismiss());
 
                 // Create and show the dialog

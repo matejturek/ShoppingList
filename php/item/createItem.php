@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $jsonData = json_decode($rawPostData, true);
 
     // Check if required fields are present
-    if (isset($jsonData['listId']) && isset($jsonData['name'])) {
+    if (isset ($jsonData['listId']) && isset ($jsonData['name'])) {
         // Your processing logic here
 
         // Assuming you have a MySQLi connection
@@ -20,19 +20,29 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         // Check for connection errors
         if ($mysqli->connect_error) {
-            die("Connection failed: " . $mysqli->connect_error);
+            die ("Connection failed: " . $mysqli->connect_error);
         }
 
-        // Insert a new record into the items table
-        $query = "INSERT INTO items (listId, name, quantity, status) VALUES (?, ?, 1, 0)";
+        // Define the SQL query
+        $query = "INSERT INTO items (listId, categoryId, name, quantity, status) VALUES (?, ?, ?, 1, 0)";
 
+        // Prepare the query
         $stmt = $mysqli->prepare($query);
-        $stmt->bind_param("ss", $jsonData['listId'], $jsonData['name']);
+
+        // Bind parameters
+        if (isset ($jsonData['categoryId'])) {
+            $stmt->bind_param("sss", $jsonData['listId'], $jsonData['categoryId'], $jsonData['name']);
+        } else {
+            $stmt->bind_param("ss", $jsonData['listId'], $jsonData['name']);
+        }
+
+        // Execute the statement
         $stmt->execute();
 
         // Get the ID of the newly created item
         $itemId = $stmt->insert_id;
 
+        // Close the statement
         $stmt->close();
 
         // Close the connection
@@ -46,6 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         echo json_encode(array("status" => "error", "message" => "Invalid request. Please provide listId and name in the JSON data."));
     }
 } else {
+    // Respond with an error message
     echo json_encode(array("status" => "error", "message" => "No data received."));
 }
 ?>

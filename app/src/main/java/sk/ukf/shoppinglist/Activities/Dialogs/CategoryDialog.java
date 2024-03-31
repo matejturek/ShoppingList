@@ -2,7 +2,6 @@ package sk.ukf.shoppinglist.Activities.Dialogs;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,7 +46,10 @@ public class CategoryDialog {
                 .setTitle("Create category")
                 .setPositiveButton("Create", (dialog, which) -> {
                     String name = nameEditText.getText().toString();
-                    String category = categories.get(categorySpinner.getSelectedItemPosition());
+                    String category = null;
+                    if (categories.size() > 0) {
+                        category = categories.get(categorySpinner.getSelectedItemPosition());
+                    }
                     listener.onCreateClick(name, category);
                 })
                 .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());

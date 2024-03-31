@@ -43,6 +43,7 @@
             android:orientation="horizontal">
 
             <EditText
+                android:hint="@string/add"
                 android:id="@+id/newItem_et"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -51,6 +52,7 @@
                 android:background="@drawable/edittext_background"
                 android:drawablePadding="8dp"
                 android:elevation="6dp"
+                android:padding="10dp"
                 android:inputType="text"
                 android:importantForAutofill="no" />
 
