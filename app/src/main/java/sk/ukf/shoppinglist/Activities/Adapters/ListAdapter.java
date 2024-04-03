@@ -65,6 +65,13 @@ public class ListAdapter extends BaseAdapter {
         void onListAction();
     }
 
+    public void clearData() {
+        categories.clear();
+        categoriesNames.clear();
+        items.clear();
+        notifyDataSetChanged();
+    }
+
     private ArrayList<Category> sortCategories(ArrayList<Category> unsortedCategories) {
         unsortedCategories.sort(Comparator.comparing(Category::getName));
         return unsortedCategories;

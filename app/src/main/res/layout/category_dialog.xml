@@ -1,33 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/colorAccent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/name_et"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="14dp"
-        android:background="@drawable/edittext_background"
-        android:elevation="6dp"
-        android:hint="@string/name"
-        android:inputType="text"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp" />
+        android:background="@color/colorAccent"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    <Spinner
-        android:id="@+id/category_et"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="14dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/edittext_background"
-        android:elevation="6dp"
-        android:hint="@string/parent_category"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp" />
+        <EditText
+            android:id="@+id/name_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="14dp"
+            android:background="@drawable/edittext_background"
+            android:elevation="6dp"
+            android:hint="@string/name"
+            android:inputType="text"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp" />
 
-</LinearLayout>
+        <Spinner
+            android:id="@+id/category_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="14dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/edittext_background"
+            android:elevation="6dp"
+            android:hint="@string/parent_category"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp" />
+
+    </LinearLayout>
+
+</ScrollView>

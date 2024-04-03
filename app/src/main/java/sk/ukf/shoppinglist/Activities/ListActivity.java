@@ -48,6 +48,7 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
     private boolean itemsCompleted = false;
     ImageView profileIv, menuIv;
     ArrayList<String> categoriesNames;
+    ListAdapter adapter;
 
 
     @Override
@@ -92,6 +93,7 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
 
     @Override
     public void onListAction() {
+        adapter.clearData();
         init();
     }
 
@@ -148,6 +150,7 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
             ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categoriesNames);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             categorySpinner.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
         } else {
             ViewGroup parent = (ViewGroup) categorySpinner.getParent();
             if (parent != null) {
@@ -155,8 +158,10 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
             }
         }
 
-        ListAdapter adapter = new ListAdapter(ListActivity.this, sortedCategories, categoriesNames, items, ListActivity.this, ListActivity.this);
+        adapter = new ListAdapter(ListActivity.this, sortedCategories, categoriesNames, items, ListActivity.this, ListActivity.this);
+        adapter.notifyDataSetChanged();
         listView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
         menuIv.setVisibility(View.VISIBLE);
     }
 
@@ -198,7 +203,7 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
 
     private void createItem(String item, int categoryId) {
 
-        JSONObject jsonRequest = JsonUtils.createItem(listId, item, categoryId);
+        JSONObject jsonRequest = JsonUtils.createItem(listId, item, categoryId > 0 ? categoryId : null);
         NetworkManager.performPostRequest(Endpoints.CREATE_ITEM.getEndpoint(), jsonRequest, new NetworkManager.ResultCallback() {
             @Override
             public void onSuccess(String result) {
@@ -208,6 +213,7 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
                         String status = jsonResponse.getString("status");
                         String message = jsonResponse.getString("message");
                         if ("success".equals(status)) {
+                            adapter.clearData();
                             init();
                         } else {
                             Toast.makeText(ListActivity.this, message, Toast.LENGTH_LONG).show();
