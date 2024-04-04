@@ -196,14 +196,11 @@ public class JsonUtils {
     }
 
 
-    public static JSONObject createCategory(String listId, String category, int parentCategoryId) {
+    public static JSONObject createCategory(String listId, String category) {
         JSONObject jsonRequest = new JSONObject();
         try {
             jsonRequest.put("listId", listId);
             jsonRequest.put("name", category);
-            if (parentCategoryId >= 0) {
-                jsonRequest.put("parentCategoryId", parentCategoryId);
-            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -254,14 +251,11 @@ public class JsonUtils {
         return jsonRequest;
     }
 
-    public static JSONObject editCategoryJson(int categoryId, String name, int parentId ) {
+    public static JSONObject editCategoryJson(int categoryId, String name) {
         JSONObject jsonRequest = new JSONObject();
         try {
             jsonRequest.put("categoryId", categoryId);
             jsonRequest.put("name", name);
-            if (parentId >= 0) {
-                jsonRequest.put("parentCategoryId", parentId);
-            }
         } catch (JSONException e) {
             e.printStackTrace();
         }

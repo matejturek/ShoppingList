@@ -4,4 +4,20 @@
         android:id="@+id/create_category"
         android:title="@string/create_new_category"/>
 
+    <item
+        android:id="@+id/search"
+        android:title="@string/search"/>
+
+    <item
+        android:id="@+id/clear_search"
+        android:title="@string/clear_search"/>
+
+    <item
+        android:id="@+id/sort_asc"
+        android:title="@string/sort_ascending"/>
+
+    <item
+        android:id="@+id/sort_desc"
+        android:title="@string/sort_descending"/>
+
 </menu>

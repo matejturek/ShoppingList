@@ -44,6 +44,7 @@ public class ListAdapter extends BaseAdapter {
     final private ArrayList<String> categoriesNames;
     final private ArrayList<Item> items;
     final private ArrayList<Object> mergedData;
+    final private ArrayList<Object> unfilteredData;
     private final CallbackListener listener;
     private final ErrorActivityCallback errorListener;
 
@@ -53,6 +54,7 @@ public class ListAdapter extends BaseAdapter {
         this.categoriesNames = categoriesNames;
         this.items = sortItems(items);
         this.mergedData = generateMergedData();
+        this.unfilteredData = this.mergedData;
         this.listener = listener;
         this.errorListener = errorListener;
     }
@@ -69,6 +71,59 @@ public class ListAdapter extends BaseAdapter {
         categories.clear();
         categoriesNames.clear();
         items.clear();
+        notifyDataSetChanged();
+    }
+
+    public void clearSearch() {
+        mergedData.clear();
+        mergedData.addAll(unfilteredData);
+        notifyDataSetChanged();
+    }
+    public void search(String query) {
+        ArrayList<Object> filteredList = new ArrayList<>();
+
+        for (Object data : unfilteredData) {
+            if (data instanceof Category) {
+                for (Item item: ((Category) data).getItems()) {
+                    if (item.getName().toLowerCase().contains(query.toLowerCase())) {
+                        filteredList.add(data);
+                    }
+                }
+            }
+            if (data instanceof Item) {
+                Item item = (Item) data;
+                if (item.getName().toLowerCase().contains(query.toLowerCase())) {
+                    filteredList.add(data);
+                }
+            }
+        }
+
+        mergedData.clear();
+        mergedData.addAll(filteredList);
+        notifyDataSetChanged();
+    }
+
+    public void sort(boolean ascending) {
+        ArrayList<Object> filteredList = new ArrayList<>();
+
+        for (Object data : unfilteredData) {
+            if (data instanceof Category) {
+                filteredList.addAll(((Category) data).getItems());
+            }
+            if (data instanceof Item) {
+                filteredList.add(data);
+            }
+        }
+
+
+        filteredList.sort((o1, o2) -> {
+            String name1 = ((Item) o1).getName().toLowerCase();
+            String name2 = ((Item) o2).getName().toLowerCase();
+            return ascending ? name1.compareTo(name2) : name2.compareTo(name1);
+        });
+
+        mergedData.clear();
+        mergedData.addAll(filteredList);
         notifyDataSetChanged();
     }
 
@@ -144,18 +199,10 @@ public class ListAdapter extends BaseAdapter {
                     holder.categoryNameTextView = convertView.findViewById(R.id.category);
                     holder.containerLayout = convertView.findViewById(R.id.containerLayout);
                     convertView.setOnLongClickListener(view -> {
-                        CategoryDialog.showCreateDialog(context, new CategoryDialog.OnCreateClickListener() {
-                            @Override
-                            public void onCreateClick(String name, String parentCategory) {
-//                                Category foundCategory = categories.stream()
-//                                        .filter(category -> categoryName.equals(category.getName()))
-//                                        .findFirst()
-//                                        .orElse(null);
-
-                                Category category = (Category) getItem(position);
-                                editCategory(category.getId(), name, parentCategory);
-                            }
-                        }, () -> deleteCategory(categories.get(position).getId()), categoriesNames);
+                        CategoryDialog.showCreateDialog(context, name -> {
+                            Category category = (Category) getItem(position);
+                            editCategory(category.getId(), name);
+                        }, () -> deleteCategory(categories.get(position).getId()));
                         return false;
                     });
 
@@ -230,7 +277,6 @@ public class ListAdapter extends BaseAdapter {
                                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, uri);
 
                                 if (browserIntent.resolveActivity(context.getPackageManager()) != null) {
-                                    //TODO check if works on real phone
                                     context.startActivity(browserIntent);
                                 } else {
                                 }
@@ -295,7 +341,6 @@ public class ListAdapter extends BaseAdapter {
                                         Intent browserIntent = new Intent(Intent.ACTION_VIEW, uri);
 
                                         if (browserIntent.resolveActivity(context.getPackageManager()) != null) {
-                                            //TODO check if works on real phone
                                             context.startActivity(browserIntent);
                                         } else {
                                         }
@@ -350,7 +395,6 @@ public class ListAdapter extends BaseAdapter {
                         Intent browserIntent = new Intent(Intent.ACTION_VIEW, uri);
 
                         if (browserIntent.resolveActivity(context.getPackageManager()) != null) {
-                            //TODO check if works on real phone
                             context.startActivity(browserIntent);
                         } else {
                         }
@@ -524,9 +568,9 @@ public class ListAdapter extends BaseAdapter {
         });
     }
 
-    private void editCategory(int categoryId, String category, String parentCategory) {
+    private void editCategory(int categoryId, String category) {
 
-        JSONObject jsonRequest = JsonUtils.editCategoryJson(categoryId, category, Integer.parseInt(parentCategory));
+        JSONObject jsonRequest = JsonUtils.editCategoryJson(categoryId, category);
         NetworkManager.performPostRequest(Endpoints.SET_CATEGORY.getEndpoint(), jsonRequest, new NetworkManager.ResultCallback() {
             @Override
             public void onSuccess(String result) {

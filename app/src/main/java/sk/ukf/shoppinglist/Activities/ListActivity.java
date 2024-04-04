@@ -27,6 +27,7 @@ import java.util.Map;
 import sk.ukf.shoppinglist.Activities.Adapters.InvitationAdapter;
 import sk.ukf.shoppinglist.Activities.Adapters.ListAdapter;
 import sk.ukf.shoppinglist.Activities.Dialogs.CategoryDialog;
+import sk.ukf.shoppinglist.Activities.Dialogs.SearchDialog;
 import sk.ukf.shoppinglist.Models.Category;
 import sk.ukf.shoppinglist.Models.Item;
 import sk.ukf.shoppinglist.R;
@@ -122,14 +123,24 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         if (item.getItemId() == R.id.create_category) {
             CategoryDialog.showCreateDialog(this, new CategoryDialog.OnCreateClickListener() {
                 @Override
-                public void onCreateClick(String name, String categoryName) {
-                    Category foundCategory = sortedCategories.stream()
-                            .filter(category -> categoryName.equals(category.getName()))
-                            .findFirst()
-                            .orElse(null);
-                    createCategory(name, (foundCategory != null ? foundCategory.getId() : -1));
+                public void onCreateClick(String name) {
+                    createCategory(name);
                 }
-            }, null, categoriesNames);
+            }, null);
+        } else if (item.getItemId() == R.id.search) {
+            SearchDialog.showCreateDialog(this, new SearchDialog.OnSearchClickListener() {
+                @Override
+                public void onSearchClick(String query) {
+                    adapter.search(query);
+                }
+            });
+        } else if (item.getItemId() == R.id.clear_search) {
+            adapter.clearData();
+            init();
+        }else if (item.getItemId() == R.id.sort_asc) {
+            adapter.sort(true);
+        } else if (item.getItemId() == R.id.sort_desc) {
+            adapter.sort(false);
         }
         return false;
     }
@@ -240,9 +251,9 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
     }
 
 
-    private void createCategory(String category, int parentCategory) {
+    private void createCategory(String category) {
 
-        JSONObject jsonRequest = JsonUtils.createCategory(listId, category, parentCategory);
+        JSONObject jsonRequest = JsonUtils.createCategory(listId, category);
         NetworkManager.performPostRequest(Endpoints.CREATE_CATEGORY.getEndpoint(), jsonRequest, new NetworkManager.ResultCallback() {
             @Override
             public void onSuccess(String result) {
