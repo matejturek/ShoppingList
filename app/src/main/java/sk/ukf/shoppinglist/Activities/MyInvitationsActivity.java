@@ -32,6 +32,7 @@ public class MyInvitationsActivity extends AppCompatActivity implements MyInvita
         setContentView(R.layout.activity_invitations);
 
         invitationsLv = findViewById(R.id.invitations_lv);
+        invitationsLv.setDivider(null);
 
         getMyInvitations();
     }

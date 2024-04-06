@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         listview = findViewById(R.id.listView);
+        listview.setDivider(null);
         profileIv = findViewById(R.id.profileIcon);
         createListFab = findViewById(R.id.fab);
         myInvitationsBtn = findViewById(R.id.myInvitations_btn);
@@ -343,6 +344,7 @@ public class MainActivity extends AppCompatActivity {
                         ListAdapter adapter = new ListAdapter(data);
 
                         ListView listView = findViewById(R.id.listView);
+                        listView.setDivider(null);
                         listView.setAdapter(adapter);
 
                     } catch (Exception e) {
