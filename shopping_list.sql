@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hostiteľ: 127.0.0.1
--- Čas generovania: St 20.Mar 2024, 19:50
+-- Čas generovania: Sun 07.Apr 2024, 12:27
 -- Verzia serveru: 10.4.27-MariaDB
 -- Verzia PHP: 8.0.25
 
@@ -30,7 +30,6 @@ SET time_zone = "+00:00";
 CREATE TABLE `categories` (
   `categoryId` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
-  `parentCategoryId` int(11) DEFAULT NULL,
   `listId` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -38,13 +37,8 @@ CREATE TABLE `categories` (
 -- Sťahujem dáta pre tabuľku `categories`
 --
 
-INSERT INTO `categories` (`categoryId`, `name`, `parentCategoryId`, `listId`) VALUES
-(1, 'category', NULL, 5),
-(3, 'category2', NULL, 5),
-(6, 'aaaa', NULL, 5),
-(7, 'x', 1, 5),
-(8, 'b', 1, 5),
-(9, 'bbb', 1, 5);
+INSERT INTO `categories` (`categoryId`, `name`, `listId`) VALUES
+(13, 'Shirts', 8);
 
 -- --------------------------------------------------------
 
@@ -64,7 +58,7 @@ CREATE TABLE `invitations` (
 --
 
 INSERT INTO `invitations` (`invitationId`, `userId`, `listId`, `status`) VALUES
-(2, 3, 5, 0);
+(7, 12, 7, 1);
 
 -- --------------------------------------------------------
 
@@ -88,15 +82,15 @@ CREATE TABLE `items` (
 --
 
 INSERT INTO `items` (`itemId`, `listId`, `categoryId`, `name`, `quantity`, `status`, `link`, `shelf`) VALUES
-(1, 5, NULL, 'xxx', 1, 0, NULL, NULL),
-(2, 5, NULL, 'bbbb', 1, 1, NULL, NULL),
-(3, 5, 1, 'aaabxx', 1, 1, 'www.google.com', ''),
-(4, 5, 3, 'dsafdasf2', 0, 1, NULL, NULL),
-(5, 5, 1, 'aaa', 1, 0, NULL, NULL),
-(6, 5, 3, 'dsafdasf', 1, 0, NULL, NULL),
-(7, 5, NULL, 'bbbc', 1, 0, '0', ''),
-(8, 5, NULL, 'bbb', 1, 0, NULL, NULL),
-(9, 5, NULL, 'bbb', 1, 0, NULL, NULL);
+(31, 7, NULL, 'Milk', 1, 0, NULL, 'Dairy'),
+(32, 7, NULL, 'Eggs', 1, 0, NULL, 'Dairy'),
+(33, 7, NULL, 'Bread', 1, 0, NULL, 'Dairy'),
+(35, 7, NULL, 'Bananas', 1, 0, NULL, 'Fruit'),
+(36, 7, NULL, 'Spaghetti', 1, 0, NULL, NULL),
+(44, 8, NULL, 'Black', 1, 0, NULL, NULL),
+(46, 8, NULL, 'White', 1, 0, NULL, NULL),
+(47, 8, NULL, 'Long', 1, 0, NULL, NULL),
+(49, 8, NULL, 'Short', 1, 0, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -118,7 +112,8 @@ CREATE TABLE `lists` (
 --
 
 INSERT INTO `lists` (`listId`, `userId`, `name`, `created`, `edited`, `notes`) VALUES
-(5, 3, 'xb', '2024-02-17 18:12:50', '2024-02-17 18:12:50', 'x');
+(7, 11, 'Food', '2024-04-07 09:04:21', '2024-04-07 09:04:21', 'Daily food'),
+(8, 12, 'Clothes', '2024-04-07 09:41:31', '2024-04-07 09:41:31', '');
 
 -- --------------------------------------------------------
 
@@ -138,11 +133,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`userId`, `email`, `name`, `password`) VALUES
-(3, 'mato.turek@gmail.com', 'matej', '$2y$10$RlLgoUji/5xCpfKZ.dkWg.65gLVQ500w7yYIXXJRqhjWyBy81WQjC'),
-(5, 'mato.turek2@gmail.com', 'mato', '$2y$10$TgkCwI5LkB0f3JtxPy5K0uQBsR3qBzMwD.l2LAM4e4OHk7HKBu9RS'),
-(6, 'mato.turek3@gmail.com', 'mato', '$2y$10$orNFK2aqcx5OgDglfc4/i.64tMrQ65wSxsI7MKg1mwBHBbmMxWfmy'),
-(7, 'mato.turek43@gmail.com', 'mato', '$2y$10$.S8NMB8qw78mXm9kRPnjKefbn9atEditcKXYnqcLzQRc8bewIrXpm'),
-(8, 'mato.turek5@gmail.com', 'mato', '$2y$10$7q7BmEq//6CXv31/RyeH5uIcPtZbexy0PVi5MHuNsTI7DHjV9aJY6');
+(11, 'mato.turek@gmail.com', 'matej-test1', '$2y$10$2LImJqY7ZutswWYJKZxW3OiTZ9FEpknP9Vxo34lr.u/XdTDDddR1W'),
+(12, 'mato.turek2@gmail.com', 'matej2', '$2y$10$/SQuDALO.07nd1YZnarRU.W0mgL0SgNrUryzlnx4ydhzymIjx/Ipu');
 
 --
 -- Kľúče pre exportované tabuľky
@@ -153,7 +145,6 @@ INSERT INTO `users` (`userId`, `email`, `name`, `password`) VALUES
 --
 ALTER TABLE `categories`
   ADD PRIMARY KEY (`categoryId`),
-  ADD KEY `parentCategoryId` (`parentCategoryId`),
   ADD KEY `fk_categories_lists` (`listId`);
 
 --
@@ -193,31 +184,31 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT pre tabuľku `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `categoryId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `categoryId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT pre tabuľku `invitations`
 --
 ALTER TABLE `invitations`
-  MODIFY `invitationId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `invitationId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT pre tabuľku `items`
 --
 ALTER TABLE `items`
-  MODIFY `itemId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `itemId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT pre tabuľku `lists`
 --
 ALTER TABLE `lists`
-  MODIFY `listId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `listId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT pre tabuľku `users`
 --
 ALTER TABLE `users`
-  MODIFY `userId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `userId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- Obmedzenie pre exportované tabuľky
@@ -227,7 +218,6 @@ ALTER TABLE `users`
 -- Obmedzenie pre tabuľku `categories`
 --
 ALTER TABLE `categories`
-  ADD CONSTRAINT `categories_ibfk_1` FOREIGN KEY (`parentCategoryId`) REFERENCES `categories` (`categoryId`),
   ADD CONSTRAINT `fk_categories_lists` FOREIGN KEY (`listId`) REFERENCES `lists` (`listId`);
 
 --
