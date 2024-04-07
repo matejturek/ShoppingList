@@ -51,9 +51,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
             // Execute the statement
             if ($insertStmt->execute()) {
-                echo "Registration successful!";
+                echo json_encode(array("status" => "success", "message" => "Registration successful"));
             } else {
-                echo "Error: " . $insertStmt->error;
+                echo json_encode(array("status" => "error", "message" => "Registration error"));
             }
 
             // Close the statement for insertion
@@ -65,7 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $mysqli->close();
     } else {
         // Respond with an error message
-        echo "Invalid request. Please provide email, name, and password in the JSON data.";
+        echo json_encode(array("status" => "error", "message" => "Registration error"));
     }
 } else {
     echo "No data received.";

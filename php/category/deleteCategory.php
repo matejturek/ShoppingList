@@ -23,24 +23,32 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             die("Connection failed: " . $mysqli->connect_error);
         }
 
-        // Delete category from the categories table
-        $query = "DELETE FROM categories WHERE categoryId = ?";
+        // Delete items where categoryId matches the provided value
+        $categoryId = $jsonData['categoryId'];
+        $deleteQuery = "DELETE FROM items WHERE categoryId = ?";
 
-        $stmt = $mysqli->prepare($query);
-        $stmt->bind_param("s", $jsonData['categoryId']);
-        $stmt->execute();
+        // Prepare and execute the delete query
+        $stmtDelete = $mysqli->prepare($deleteQuery);
+        $stmtDelete->bind_param("s", $categoryId);
+        $deleteExecuted = $stmtDelete->execute();
 
-        $stmt->close();
+        // Check if the deletion was successful
+        if ($deleteExecuted) {
+            $message = 'Items deleted successfully.';
+        } else {
+            $message = 'Failed to delete items.';
+        }
+
+        $stmtDelete->close();
 
         // Close the connection
         $mysqli->close();
 
-        // Check if the deletion was successful
-        if ($mysqli->affected_rows > 0) {
-            $response = array('status' => 'success', 'message' => 'Category deleted successfully.');
-        } else {
-            $response = array('status' => 'error', 'message' => 'Failed to delete category.');
-        }
+        // Construct the response
+        $response = array(
+            'status' => $deleteExecuted ? 'success' : 'error',
+            'message' => $message
+        );
 
         // Respond with the JSON response
         echo json_encode($response);

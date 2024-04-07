@@ -3,17 +3,17 @@ require_once '../config.php';
 
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
-    if (isset ($_GET['userId'])) {
+    if (isset($_GET['userId'])) {
         $mysqli = new mysqli($servername, $username, $password, $dbname);
 
         if ($mysqli->connect_error) {
-            die ("Connection failed: " . $mysqli->connect_error);
+            die("Connection failed: " . $mysqli->connect_error);
         }
 
         $query = "SELECT DISTINCT lists.listId, lists.name 
-                  FROM lists 
-                  LEFT JOIN invitations ON lists.userId = invitations.userId 
-                  WHERE lists.userId = ? OR (invitations.userId = ? AND invitations.status = 1)";
+            FROM lists 
+            LEFT JOIN invitations ON lists.listId = invitations.listId 
+            WHERE lists.userId = ? OR (invitations.userId = ? AND invitations.status = 1)";
 
         $stmt = $mysqli->prepare($query);
         $stmt->bind_param("ss", $_GET['userId'], $_GET['userId']);

@@ -133,8 +133,9 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void logout() {
         SharedPreferencesManager.clearData(ProfileActivity.this);
-        finish();
-
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     @SuppressLint("SetTextI18n")

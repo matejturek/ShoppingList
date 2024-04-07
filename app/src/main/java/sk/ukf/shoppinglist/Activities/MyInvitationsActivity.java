@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -26,6 +27,8 @@ public class MyInvitationsActivity extends AppCompatActivity implements MyInvita
 
     ListView invitationsLv;
 
+    ImageView profileIv;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,7 +36,12 @@ public class MyInvitationsActivity extends AppCompatActivity implements MyInvita
 
         invitationsLv = findViewById(R.id.invitations_lv);
         invitationsLv.setDivider(null);
-
+        profileIv = findViewById(R.id.profileIcon);
+        profileIv.setOnClickListener(view -> {
+            Intent intent = new Intent(MyInvitationsActivity.this, ProfileActivity.class);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        });
         getMyInvitations();
     }
 

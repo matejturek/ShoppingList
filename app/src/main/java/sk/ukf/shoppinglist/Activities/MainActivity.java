@@ -84,7 +84,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        init();
+        String userId = SharedPreferencesManager.getUserId(MainActivity.this);
+        String email = SharedPreferencesManager.getEmail(MainActivity.this);
+        String password = SharedPreferencesManager.getPassword(MainActivity.this);
+
+        if (email.length() > 0 && password.length() > 0 && userId.length() > 0) {
+            getLists(userId);
+        }
     }
 
     @Override

@@ -5,7 +5,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $rawPostData = file_get_contents("php://input");
     $jsonData = json_decode($rawPostData, true);
-    if (isset($jsonData['itemId']) && isset($jsonData['name']) && isset($jsonData['quantity'])) {
+    if (!empty($jsonData['itemId']) && !empty($jsonData['name']) && !empty($jsonData['quantity']) && strlen($jsonData['itemId']) > 0 && strlen($jsonData['name']) > 0 && strlen($jsonData['quantity']) > 0) {
         $mysqli = new mysqli($servername, $username, $password, $dbname);
 
         if ($mysqli->connect_error) {
@@ -14,11 +14,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         $query = "UPDATE items SET name = ?, quantity = ?";
 
-        if (isset($jsonData['shelf'])) {
+        if (!empty($jsonData['shelf'])) {
             $query .= ", shelf = ?";
         }
 
-        if (isset($jsonData['link'])) {
+        if (!empty($jsonData['link'])) {
             $query .= ", link = ?";
         }
         $query .= " WHERE itemId = ?";
@@ -28,14 +28,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $name = $jsonData['name'];
         $quantity = $jsonData['quantity'];
 
-        if (isset($jsonData['shelf']) && isset($jsonData['link'])) {
+        if (!empty($jsonData['shelf']) && !empty($jsonData['link'])) {
             $shelf = $jsonData['shelf'];
             $link = $jsonData['link'];
             $stmt->bind_param("sssii", $name, $quantity, $shelf, $link, $itemId);
-        } elseif (isset($jsonData['shelf'])) {
+        } elseif (!empty($jsonData['shelf'])) {
             $shelf = $jsonData['shelf'];
             $stmt->bind_param("sssi", $name, $quantity, $shelf, $itemId);
-        } elseif (isset($jsonData['link'])) {
+        } elseif (!empty($jsonData['link'])) {
             $link = $jsonData['link'];
             $stmt->bind_param("sssi", $name, $quantity, $link, $itemId);
         } else {

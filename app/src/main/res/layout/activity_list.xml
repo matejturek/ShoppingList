@@ -27,7 +27,7 @@
         android:paddingHorizontal="10dp">
 
         <Spinner
-            android:id="@+id/type_sp"
+            android:id="@+id/category_sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="14dp"

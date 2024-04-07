@@ -23,18 +23,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             die("Connection failed: " . $mysqli->connect_error);
         }
 
-        if (isset($jsonData['parentCategoryId'])) {
-            $query = "INSERT INTO categories (name, listId, parentCategoryId) VALUES (?, ?, ?)"; // Fixed placeholders here
+        $query = "INSERT INTO categories (name, listId) VALUES (?, ?)"; // Fixed placeholders here
 
-            $stmt = $mysqli->prepare($query);
-            $stmt->bind_param("sss", $jsonData['name'], $jsonData['listId'], $jsonData['parentCategoryId']);
-
-        } else {
-            $query = "INSERT INTO categories (name, listId) VALUES (?, ?)"; // Fixed placeholders here
-
-            $stmt = $mysqli->prepare($query);
-            $stmt->bind_param("ss", $jsonData['name'], $jsonData['listId']);
-        }
+        $stmt = $mysqli->prepare($query);
+        $stmt->bind_param("ss", $jsonData['name'], $jsonData['listId']);
         $stmt->execute();
         $categoryId = $stmt->insert_id;
         $stmt->close();

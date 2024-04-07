@@ -22,6 +22,7 @@ import androidx.core.content.ContextCompat;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -54,7 +55,8 @@ public class ListAdapter extends BaseAdapter {
         this.categoriesNames = categoriesNames;
         this.items = sortItems(items);
         this.mergedData = generateMergedData();
-        this.unfilteredData = this.mergedData;
+        this.unfilteredData = new ArrayList<>();
+        this.unfilteredData.addAll(this.mergedData);
         this.listener = listener;
         this.errorListener = errorListener;
     }
@@ -86,7 +88,7 @@ public class ListAdapter extends BaseAdapter {
             if (data instanceof Category) {
                 for (Item item: ((Category) data).getItems()) {
                     if (item.getName().toLowerCase().contains(query.toLowerCase())) {
-                        filteredList.add(data);
+                        filteredList.add(item);
                     }
                 }
             }
@@ -209,7 +211,6 @@ public class ListAdapter extends BaseAdapter {
                     if (position % 2 == 0) {
                         convertView.setBackgroundColor(ContextCompat.getColor(context, R.color.colorAccent));
                     } else {
-                        // Reset background color for even categories
                         convertView.setBackgroundColor(Color.TRANSPARENT);
                     }
                     break;
@@ -225,6 +226,11 @@ public class ListAdapter extends BaseAdapter {
                         ItemDialog.showCreateDialog(context, (quantity, name, shelf, link) -> setItem(items.get(position).getId(), quantity, name, shelf, link), () -> deleteItem(items.get(position).getId()), items.get(position));
                         return false;
                     });
+                    if (position % 2 == 0) {
+                        convertView.setBackgroundColor(ContextCompat.getColor(context, R.color.colorAccent));
+                    } else {
+                        convertView.setBackgroundColor(Color.TRANSPARENT);
+                    }
 
                     break;
                 default:
@@ -244,7 +250,6 @@ public class ListAdapter extends BaseAdapter {
                 holder.categoryNameTextView.setText(categoryName);
                 holder.containerLayout.removeAllViews();
 
-                List<Category> subcategories = category.getSubcategories();
                 List<Item> items = category.getItems();
                 if (items != null && !items.isEmpty()) {
                     for (Item categoryItem : items) {
@@ -299,72 +304,6 @@ public class ListAdapter extends BaseAdapter {
                         });
 
                         holder.containerLayout.addView(itemView);
-                    }
-                }
-                if (subcategories != null && !subcategories.isEmpty()) {
-                    for (Category subcategory : subcategories) {
-                        View subcategoryView = inflater.inflate(R.layout.list_category_layout, parent, false);
-                        TextView subcategoryNameTextView = subcategoryView.findViewById(R.id.category);
-                        subcategoryNameTextView.setText(subcategory.getName());
-                        holder.containerLayout.addView(subcategoryView);
-
-                        List<Item> subcategoryItems = subcategory.getItems();
-                        if (subcategoryItems != null && !subcategoryItems.isEmpty()) {
-                            for (Item subcategoryItem : subcategoryItems) {
-                                View itemView = inflater.inflate(R.layout.list_item_layout, parent, false);
-                                // Bind data for Item
-                                CheckBox checkBox = itemView.findViewById(R.id.checkBox);
-                                TextView quantityTv = itemView.findViewById(R.id.quantity_tv);
-                                TextView nameTv = itemView.findViewById(R.id.name_tv);
-                                TextView shelfTv = itemView.findViewById(R.id.shelf_tv);
-                                ImageView linkIv = itemView.findViewById(R.id.link_iv);
-
-                                checkBox.setOnCheckedChangeListener(null);
-                                checkBox.setChecked(subcategoryItem.getStatus());
-                                quantityTv.setText(String.valueOf(subcategoryItem.getQuantity()));
-                                nameTv.setText(subcategoryItem.getName());
-                                if (subcategoryItem.getShelf() != null && subcategoryItem.getShelf().length() > 0) {
-                                    shelfTv.setText(subcategoryItem.getShelf());
-                                }
-
-                                checkBox.setChecked(subcategoryItem.getStatus());
-                                quantityTv.setText(String.valueOf(subcategoryItem.getQuantity()));
-                                nameTv.setText(subcategoryItem.getName());
-                                if (subcategoryItem.getShelf() != null && subcategoryItem.getShelf().length() > 0) {
-                                    shelfTv.setText(subcategoryItem.getShelf());
-                                }
-
-                                if (subcategoryItem.getLink() != null && subcategoryItem.getLink().length() > 0) {
-                                    linkIv.setOnClickListener(view -> {
-                                        Uri uri = Uri.parse(subcategoryItem.getLink());
-
-                                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, uri);
-
-                                        if (browserIntent.resolveActivity(context.getPackageManager()) != null) {
-                                            context.startActivity(browserIntent);
-                                        } else {
-                                        }
-                                    });
-                                } else {
-                                    if (linkIv != null) {
-                                        ViewGroup parentEl = (ViewGroup) linkIv.getParent();
-                                        if (parentEl != null) {
-                                            parentEl.removeView(linkIv);
-                                        }
-                                    }
-                                }
-                                itemView.setOnLongClickListener(view -> {
-                                    ItemDialog.showCreateDialog(context, (quantity, name, shelf, link) -> setItem(subcategoryItem.getId(), quantity, name, shelf, link), () -> deleteItem(subcategoryItem.getId()), subcategoryItem);
-                                    return false;
-                                });
-
-                                checkBox.setOnCheckedChangeListener((compoundButton, checked) -> {
-                                    setItemChecked(String.valueOf(subcategoryItem.getId()), checked);
-                                });
-
-                                holder.containerLayout.addView(itemView);
-                            }
-                        }
                     }
                 }
 

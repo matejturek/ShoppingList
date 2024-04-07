@@ -18,7 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         }
 
         // Retrieve lists associated with the user through the ownerId field
-        $query = "SELECT categoryId, name, parentCategoryId FROM categories WHERE listId = ?";
+        $query = "SELECT categoryId, name FROM categories WHERE listId = ?";
 
         $stmt = $mysqli->prepare($query);
 

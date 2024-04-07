@@ -79,7 +79,7 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
             }
         });
         categoriesNames = new ArrayList<>();
-        categorySpinner = findViewById(R.id.type_sp);
+        categorySpinner = findViewById(R.id.category_sp);
 
         menuIv.setOnClickListener(view -> showPopupMenu(view));
         menuIv.setVisibility(View.INVISIBLE);
@@ -181,18 +181,7 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         Map<Integer, Category> categoryMap = new HashMap<>();
 
         for (Category category : allCategories) {
-            int parentId = category.getParentId();
-            if (parentId == -1) {
-                rootCategories.add(category);
-            } else {
-                Category parentCategory = categoryMap.get(parentId);
-                if (parentCategory != null) {
-                    if (parentCategory.getSubcategories() == null) {
-                        parentCategory.setSubcategories(new ArrayList<>());
-                    }
-                    parentCategory.getSubcategories().add(category);
-                }
-            }
+            rootCategories.add(category);
             for (Item item : items) {
                 if (item.getCategoryId() == category.getId()) {
                     category.addItem(item);
@@ -214,7 +203,7 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
 
     private void createItem(String item, int categoryId) {
 
-        JSONObject jsonRequest = JsonUtils.createItem(listId, item, categoryId > 0 ? categoryId : null);
+        JSONObject jsonRequest = JsonUtils.createItem(listId, item, categoryId);
         NetworkManager.performPostRequest(Endpoints.CREATE_ITEM.getEndpoint(), jsonRequest, new NetworkManager.ResultCallback() {
             @Override
             public void onSuccess(String result) {
@@ -307,8 +296,7 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
                             JSONObject jsonObject = jsonResponse.getJSONObject(i);
                             int id = jsonObject.getInt("categoryId");
                             String name = jsonObject.getString("name");
-                            int parentId = jsonObject.optInt("parentCategoryId", -1);
-                            allCategories.add(new Category(id, name, parentId));
+                            allCategories.add(new Category(id, name));
                         }
 
                     } catch (Exception e) {

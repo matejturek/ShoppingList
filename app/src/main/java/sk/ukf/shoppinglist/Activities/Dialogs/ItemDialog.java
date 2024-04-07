@@ -5,7 +5,11 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Spinner;
 
+import java.util.ArrayList;
+
+import sk.ukf.shoppinglist.Models.Category;
 import sk.ukf.shoppinglist.Models.Item;
 import sk.ukf.shoppinglist.R;
 
@@ -39,7 +43,7 @@ public class ItemDialog {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setView(dialogView)
-                .setTitle("Create category")
+                .setTitle("Edit item")
                 .setPositiveButton("Edit", (dialog, which) -> {
                     int quantity = Integer.parseInt(quantityEt.getText().toString());
                     String name = nameEt.getText().toString();
