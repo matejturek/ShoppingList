@@ -1,65 +1,100 @@
 <?php
+// Include the configuration file
 require_once '../config.php';
 
+// Check if data is sent via POST
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
+    // Read raw POST data
     $rawPostData = file_get_contents("php://input");
+
+    // Decode JSON data
     $jsonData = json_decode($rawPostData, true);
-    if (!empty($jsonData['itemId']) && !empty($jsonData['name']) && !empty($jsonData['quantity']) && strlen($jsonData['itemId']) > 0 && strlen($jsonData['name']) > 0 && strlen($jsonData['quantity']) > 0) {
+
+    // Check if required fields are present
+    if (isset($jsonData['itemId'])) {
+
+        // Establish a MySQLi connection
         $mysqli = new mysqli($servername, $username, $password, $dbname);
 
+        // Check for connection errors
         if ($mysqli->connect_error) {
             die("Connection failed: " . $mysqli->connect_error);
         }
 
-        $query = "UPDATE items SET name = ?, quantity = ?";
+        // Construct the base query
+        $query = "UPDATE items SET";
 
-        if (!empty($jsonData['shelf'])) {
-            $query .= ", shelf = ?";
+        // Initialize array to store bind parameters and values
+        $bindParams = "";
+        $bindValues = array();
+
+        // Check and add parameters to the query
+        if (isset($jsonData['name'])) {
+            $query .= " name = ?,";
+            $bindParams .= "s";
+            $bindValues[] = &$jsonData['name'];
+        }
+        if (isset($jsonData['categoryId'])) {
+            $query .= " categoryId = ?,";
+            $bindParams .= "i";
+            $bindValues[] = &$jsonData['categoryId'];
+        }
+        if (isset($jsonData['quantity'])) {
+            $query .= " quantity = ?,";
+            $bindParams .= "i";
+            $bindValues[] = &$jsonData['quantity'];
+        }
+        if (isset($jsonData['shelf'])) {
+            $query .= " shelf = ?,";
+            $bindParams .= "s";
+            $bindValues[] = &$jsonData['shelf'];
+        }
+        if (isset($jsonData['link'])) {
+            $query .= " link = ?,";
+            $bindParams .= "s";
+            $bindValues[] = &$jsonData['link'];
         }
 
-        if (!empty($jsonData['link'])) {
-            $query .= ", link = ?";
-        }
+        // Remove trailing comma
+        $query = rtrim($query, ',');
+
+        // Add the WHERE clause
         $query .= " WHERE itemId = ?";
+
+        // Append itemId to bind parameters
+        $bindParams .= "i";
+        $bindValues[] = &$jsonData['itemId'];
+
+        // Prepare the statement
         $stmt = $mysqli->prepare($query);
 
-        $itemId = $jsonData['itemId'];
-        $name = $jsonData['name'];
-        $quantity = $jsonData['quantity'];
+        // Dynamically bind parameters
+        $stmt->bind_param($bindParams, ...$bindValues);
 
-        if (!empty($jsonData['shelf']) && !empty($jsonData['link'])) {
-            $shelf = $jsonData['shelf'];
-            $link = $jsonData['link'];
-            $stmt->bind_param("sssii", $name, $quantity, $shelf, $link, $itemId);
-        } elseif (!empty($jsonData['shelf'])) {
-            $shelf = $jsonData['shelf'];
-            $stmt->bind_param("sssi", $name, $quantity, $shelf, $itemId);
-        } elseif (!empty($jsonData['link'])) {
-            $link = $jsonData['link'];
-            $stmt->bind_param("sssi", $name, $quantity, $link, $itemId);
-        } else {
-            $stmt->bind_param("ssi", $name, $quantity, $itemId);
-        }
-
+        // Execute the query
         $stmt->execute();
-        if ($stmt->error) {
-            echo "SQL Error: " . $stmt->error . "<br>";
-        }
 
+        // Check if the update was successful
         if ($stmt->affected_rows > 0) {
             $response = array('status' => 'success', 'message' => 'Item values updated successfully.');
         } else {
-            $response = array('status' => 'error', 'message' => 'Failed to update item values.');
+            $response = array('status' => 'error', 'message' => 'Failed to update item values.' . $query . json_encode($bindValues));
         }
 
+        // Respond with the JSON response
         echo json_encode($response);
+
+        // Close the statement and the database connection
         $stmt->close();
         $mysqli->close();
+
     } else {
-        echo json_encode(array('status' => 'error', 'message' => 'Invalid request. Please provide itemId, name, and quantity in the JSON data.'));
+        // Respond with an error message
+        echo json_encode(array('status' => 'error', 'message' => 'Invalid request. Please provide itemId in the JSON data.'));
     }
 } else {
+    // Respond with an error message
     echo json_encode(array('status' => 'error', 'message' => 'No data received.'));
 }
 ?>

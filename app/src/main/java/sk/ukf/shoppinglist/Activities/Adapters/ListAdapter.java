@@ -223,7 +223,9 @@ public class ListAdapter extends BaseAdapter {
                     holder.shelfTv = convertView.findViewById(R.id.shelf_tv);
                     holder.linkIv = convertView.findViewById(R.id.link_iv);
                     convertView.setOnLongClickListener(view -> {
-                        ItemDialog.showCreateDialog(context, (quantity, name, shelf, link) -> setItem(items.get(position).getId(), quantity, name, shelf, link), () -> deleteItem(items.get(position).getId()), items.get(position));
+
+                        int adjustedPosition = getAdjustedPosition(position);
+                        ItemDialog.showCreateDialog(context, (quantity, name, shelf, link, categoryId) -> setItem(items.get(adjustedPosition).getId(), quantity, name, shelf, link, categoryId), () -> deleteItem(items.get(position).getId()), items.get(position), categories);
                         return false;
                     });
                     if (position % 2 == 0) {
@@ -295,7 +297,7 @@ public class ListAdapter extends BaseAdapter {
                             }
                         }
                         itemView.setOnLongClickListener(view -> {
-                            ItemDialog.showCreateDialog(context, (quantity, name, shelf, link) -> setItem(categoryItem.getId(), quantity, name, shelf, link), () -> deleteItem(categoryItem.getId()), categoryItem);
+                            ItemDialog.showCreateDialog(context, (quantity, name, shelf, link, categoryId) -> setItem(categoryItem.getId(), quantity, name, shelf, link, categoryId), () -> deleteItem(categoryItem.getId()), categoryItem, categories);
                             return false;
                         });
 
@@ -368,6 +370,19 @@ public class ListAdapter extends BaseAdapter {
         ImageView linkIv;
     }
 
+    private int getAdjustedPosition(int position) {
+        int categoryCount = 0;
+        for (int i = 0; i < mergedData.size(); i++) {
+            if (mergedData.get(i) instanceof Category) {
+                categoryCount++;
+            }
+            if (categoryCount == position) {
+                return i;
+            }
+        }
+        return -1; // Return -1 if no adjustment is possible
+    }
+
 
     private void runOnUiThread(Runnable runnable) {
         Handler handler = new Handler(Looper.getMainLooper());
@@ -408,8 +423,8 @@ public class ListAdapter extends BaseAdapter {
         });
     }
 
-    public void setItem(int itemId, int quantity, String name, String shelf, String link) {
-        JSONObject jsonRequest = JsonUtils.setItem(itemId, quantity, name, shelf, link);
+    public void setItem(int itemId, int quantity, String name, String shelf, String link, int categoryId) {
+        JSONObject jsonRequest = JsonUtils.setItem(itemId, quantity, name, shelf, link, categoryId);
         NetworkManager.performPostRequest(Endpoints.SET_ITEM.getEndpoint(), jsonRequest, new NetworkManager.ResultCallback() {
             @Override
             public void onSuccess(String result) {

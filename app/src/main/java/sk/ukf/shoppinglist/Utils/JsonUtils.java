@@ -284,7 +284,7 @@ public class JsonUtils {
         return jsonRequest;
     }
 
-    public static JSONObject setItem(int itemId, int quantity, String name, String shelf, String link) {
+    public static JSONObject setItem(int itemId, int quantity, String name, String shelf, String link, int categoryId) {
         JSONObject jsonRequest = new JSONObject();
         try {
             jsonRequest.put("itemId", itemId);
@@ -292,6 +292,9 @@ public class JsonUtils {
             jsonRequest.put("name", name);
             jsonRequest.put("shelf", shelf);
             jsonRequest.put("link", link);
+            if (categoryId > 0) {
+                jsonRequest.put("categoryId", categoryId);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }

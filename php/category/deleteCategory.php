@@ -23,23 +23,35 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             die("Connection failed: " . $mysqli->connect_error);
         }
 
-        // Delete items where categoryId matches the provided value
+        // Update items to set categoryId to NULL where categoryId matches a specific value
         $categoryId = $jsonData['categoryId'];
-        $deleteQuery = "DELETE FROM items WHERE categoryId = ?";
+        $updateQuery = "UPDATE items SET categoryId = NULL WHERE categoryId = ?";
+        $deleteQuery = "DELETE FROM categories WHERE categoryId = ?";
 
-        // Prepare and execute the delete query
-        $stmtDelete = $mysqli->prepare($deleteQuery);
-        $stmtDelete->bind_param("s", $categoryId);
-        $deleteExecuted = $stmtDelete->execute();
+        // Prepare and execute the update query
+        $stmtUpdate = $mysqli->prepare($updateQuery);
+        $stmtUpdate->bind_param("s", $categoryId);
+        $updateExecuted = $stmtUpdate->execute();
 
-        // Check if the deletion was successful
-        if ($deleteExecuted) {
-            $message = 'Items deleted successfully.';
+        // Check if the update was successful
+        if ($updateExecuted) {
+            // Prepare and execute the delete query only if update was successful
+            $stmtDelete = $mysqli->prepare($deleteQuery);
+            $stmtDelete->bind_param("s", $categoryId);
+            $deleteExecuted = $stmtDelete->execute();
+
+            if ($deleteExecuted) {
+                $message = 'Category deleted successfully.';
+            } else {
+                $message = 'Failed to delete category.';
+            }
+
+            $stmtDelete->close();
         } else {
-            $message = 'Failed to delete items.';
+            $message = 'Failed to update items.';
         }
 
-        $stmtDelete->close();
+        $stmtUpdate->close();
 
         // Close the connection
         $mysqli->close();
