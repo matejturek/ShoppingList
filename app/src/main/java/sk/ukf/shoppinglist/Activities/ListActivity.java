@@ -6,10 +6,12 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -38,9 +40,9 @@ import sk.ukf.shoppinglist.Utils.NetworkManager;
 public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener, ListAdapter.CallbackListener, ListAdapter.ErrorActivityCallback {
 
     ListView listView;
-    EditText newItemEt;
-    Button addItemBtn;
-    Spinner categorySpinner;
+    EditText newItemEt, searchEt;
+    Button addItemBtn, filterBtn, cancelBtn, searchBtn;
+    Spinner categorySpinner, sortSpinner;
     String listId;
     ArrayList<Category> allCategories = new ArrayList<>();
     ArrayList<Category> sortedCategories = new ArrayList<>();
@@ -50,6 +52,8 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
     ImageView profileIv, menuIv;
     ArrayList<String> categoriesNames;
     ListAdapter adapter;
+
+    LinearLayout filterLl, addLl;
 
 
     @Override
@@ -64,6 +68,69 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         addItemBtn = findViewById(R.id.addItem_btn);
         menuIv = findViewById(R.id.menu);
         profileIv = findViewById(R.id.profileIcon);
+        filterBtn = findViewById(R.id.filter_btn);
+        cancelBtn = findViewById(R.id.cancel_btn);
+        filterLl = findViewById(R.id.filter_ll);
+        addLl = findViewById(R.id.add_ll);
+        searchEt = findViewById(R.id.search_et);
+        searchBtn = findViewById(R.id.search_btn);
+        sortSpinner = findViewById(R.id.sort_sp);
+
+        filterBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                filterLl.setVisibility(View.VISIBLE);
+                addLl.setVisibility(View.GONE);
+            }
+        });
+
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                filterLl.setVisibility(View.GONE);
+                addLl.setVisibility(View.VISIBLE);
+                adapter.clearSearch();
+            }
+        });
+
+
+        String[] sortOptions = {"CLEAR", "ascending", "descending"};
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, sortOptions);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sortSpinner.setAdapter(spinnerAdapter);
+        spinnerAdapter.notifyDataSetChanged();
+
+        sortSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                String selectedSortOption = sortOptions[position];
+                if (selectedSortOption.equals("ascending")) {
+                    adapter.sort(true);
+                } else if (selectedSortOption.equals("descending")) {
+                    adapter.sort(false);
+                } else {
+                    adapter.clearSearch();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // Do nothing when nothing is selected
+            }
+        });
+        searchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String searchQuery = searchEt.getText().toString();
+                if (searchQuery.length() > 0) {
+                    adapter.search(searchQuery);
+                } else {
+                    adapter.clearSearch();
+                }
+            }
+        });
+
+
         addItemBtn.setOnClickListener(view -> {
             String item = newItemEt.getText().toString().trim();
             int categoryId = -1;
@@ -127,21 +194,22 @@ public class ListActivity extends AppCompatActivity implements PopupMenu.OnMenuI
                     createCategory(name);
                 }
             }, null);
-        } else if (item.getItemId() == R.id.search) {
-            SearchDialog.showCreateDialog(this, new SearchDialog.OnSearchClickListener() {
-                @Override
-                public void onSearchClick(String query) {
-                    adapter.search(query);
-                }
-            });
-        } else if (item.getItemId() == R.id.clear_search) {
-            adapter.clearData();
-            init();
-        }else if (item.getItemId() == R.id.sort_asc) {
-            adapter.sort(true);
-        } else if (item.getItemId() == R.id.sort_desc) {
-            adapter.sort(false);
         }
+//        else if (item.getItemId() == R.id.search) {
+//            SearchDialog.showCreateDialog(this, new SearchDialog.OnSearchClickListener() {
+//                @Override
+//                public void onSearchClick(String query) {
+//                    adapter.search(query);
+//                }
+//            });
+//        } else if (item.getItemId() == R.id.clear_search) {
+//            adapter.clearData();
+//            init();
+//        }else if (item.getItemId() == R.id.sort_asc) {
+//            adapter.sort(true);
+//        } else if (item.getItemId() == R.id.sort_desc) {
+//            adapter.sort(false);
+//        }
         return false;
     }
 
